@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>OBS Overlay</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 32px;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #1e1e1e;
+      font-family: "HelveticaNeue", Arial, sans-serif;
+    }
+
+    .category-stack {
+      position: relative;
+      width: 1050px;
+      max-width: 95%;
+      height: 380px;
+      background-color: transparent;
+      overflow: hidden;
+    }
+
+    .category-card {
+      position: absolute;
+      top: 100%; /* start hidden below the screen */
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      border-radius: 48px;
+      transition: top 0.8s ease; /* smooth vertical slide */
+      box-sizing: border-box;
+    }
+    .category-card.active {
+      top: 0; /* slides up into place */
+    }
+
+    /* "Cow-skin" radial gradient background */
+    .gradient-container {
+      background:
+        radial-gradient(
+          circle at 20% 30%, 
+          #d6d2d3 0%, 
+          #d6d2d3 15%, 
+          transparent 40%
+        ),
+        radial-gradient(
+          circle at 40% 75%, 
+          #d6d2d3 0%, 
+          #d6d2d3 15%, 
+          transparent 30%
+        ),
+        radial-gradient(
+          circle at 80% 80%, 
+          #efb8fa 20%, 
+          #efb8fa 40%, 
+          transparent 80%
+        ),
+        #ededed; /* fallback color */
+
+      border-radius: 48px;
+      width: 100%;
+      padding: 16px;
+      box-sizing: border-box;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Reusable base for block-title container */
+    .block-title-container {
+      padding: 0 24px 4px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start; /* or space-between if needed */
+    }
+    .block-title {
+      font-family: "HelveticaNeue", Arial, sans-serif;
+      font-weight: bold;
+      font-size: 36px;
+      color: #ff00ec;
+      line-height: 1.5;
+      margin: 0;
+      padding-bottom: 8px;
+    }
+    .block-title-logo-left {
+      margin-right: 24px;
+      height: 48px;
+      width: 48px;
+      object-fit: contain;
+      padding-bottom: 8px;
+    }
+    .block-title-logo-1 {
+      margin-left: 16px;
+      height: 42px;
+      width: 42px;
+      object-fit: contain;
+      padding-bottom: 8px;
+      border-radius: 16px;
+    }
+    .block-title-logo-2 {
+      margin-left: 16px;
+      height: 42px;
+      width: 42px;
+      object-fit: contain;
+      padding-bottom: 8px;
+    }
+    .block-title-logo-3 {
+      margin-left: 16px;
+      height: 38px;
+      width: 38px;
+      object-fit: contain;
+      padding-bottom: 8px;
+    }
+
+    .title-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+    .video-info-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      padding-top: 32px;
+    }
+    .title-container-background {
+      position: absolute;
+      top: 0; 
+      bottom: 0; 
+      left: 0; 
+      right: 0;
+      border-top-right-radius: 48px;
+      border-bottom-right-radius: 48px;
+      background-color: #232323; 
+      opacity: 0.1;
+      z-index: 1; 
+    }
+
+    /* Carousel container for all categories except the final "still" card */
+    .carousel-container {
+      position: relative;
+      width: 100%;
+      height: 230px;
+      border-radius: 48px;
+      overflow: hidden;
+      flex: 1; 
+    }
+    .slide-wrapper {
+      display: flex;
+      height: 100%;
+      transition: transform 0.8s ease;
+    }
+    .slide-item {
+      min-width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      border-radius: 48px;
+      box-sizing: border-box;
+      overflow: hidden;
+      position: relative;
+      background-color: transparent;
+    }
+
+    /*******************************************
+     * MATCH CARD
+     ********************************************/
+    .title-container-match-background {
+      position: absolute;
+      top: 0; bottom: 0; left: 0; right: 0;
+      border-radius: 48px;
+      background-color: #232323; 
+      opacity: 0.3;
+      z-index: 1; 
+    }
+    .match-card-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      border-radius: 48px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      z-index: 2;
+      overflow: hidden;
+      padding-top: 16px;
+    }
+    /* top row: game logo + date in custom FR format */
+    .match-top-row {
+      display: flex;
+      width: 90%;
+      flex:1;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 3; /* above overlay */
+    }
+    .match-bottom-row {
+      display: flex;
+      flex:2.3;
+      width: 100%;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-evenly;
+      gap: 12px;
+      z-index: 3; /* above overlay */
+    }
+    .game-logo {
+      height: 56px;
+      width: auto;
+      object-fit: contain;
+    }
+    .match-date {
+      font-family: "HelveticaNeue", Arial, sans-serif;
+      font-size: 40px;
+      font-weight: bold;
+      color: #FFFFFF;
+    }
+
+    /* below that top row: teams, match name, link row */
+    .match-card-center {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 3; /* above overlay */
+      padding: 8px;
+    }
+    .teams-row {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 24px;
+      margin: 12px 0;
+    }
+    .team-name {
+      font-family: "HelveticaNeue", Arial, sans-serif;
+      font-weight: bold;
+      font-size: 40px;
+      color: white;
+      line-height: 40px;
+    }
+    .versus-text {
+      font-family: "HelveticaNeue", Arial, sans-serif;
+      font-weight: bold;
+      font-size: 40px;
+      color: #efb8fa;
+      line-height: 40px;
+    }
+    .match-name {
+      font-family: "HelveticaNeue", Arial, sans-serif;
+      font-size: 32px;
+      font-weight: bold;
+      color: #efb8fa;
+      margin-bottom: 6px;
+      text-align: center;
+    }
+    .match-details-date-link {
+      font-family: "HelveticaNeue", Arial, sans-serif;
+      font-weight: bold;
+      font-size: 40px;
+      color: white;
+      margin: 2px 0;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px; 
+    }
+    .platform-logo {
+      height: 72px;
+      width: 72px;
+      object-fit: contain;
+    }
+    /* team logos for match */
+    .logos-row {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-evenly;
+      width: 100%;
+      gap: 16px;
+      z-index: 3;
+      margin-bottom: 8px;
+    }
+    .logo-img {
+      width: 120px;
+      height: 120px;
+      object-fit: contain;
+    }
+    .logo-placeholder {
+      width: 120px;
+      height: 120px;
+      border-radius: 16px;
+      background-color: #4f4e4e;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+    }
+
+    /*******************************************
+     * NEWS & VIDEOS 
+     ********************************************/
+    .thumbnail-square {
+      height: 300px; 
+      width: 300px;
+      object-fit: contain;
+      flex-shrink: 0;
+      border-top-left-radius: 48px;
+      border-bottom-left-radius: 48px;
+    }
+    .news-title {
+      position: relative;
+      font-weight: bold;
+      font-size: 36px;
+      line-height: 36px;
+      color: #FFFFFF;
+      z-index: 2; 
+      margin: 0;
+      text-align: center;
+      padding-left: 24px;
+      padding-right: 24px;
+    }
+    .thumbnail-video {
+      height: 300px; 
+      width: auto;
+      object-fit: contain;
+      flex-shrink: 0;
+    }
+    .video-title {
+      font-family: "HelveticaNeue", Arial, sans-serif;
+      font-weight: bold;
+      font-size: 36px;
+      color: #FFFFFF;
+      margin: 0;
+      text-align: center;
+      z-index: 2;
+      padding-left: 24px;
+      padding-right: 24px;
+    }
+
+    /*******************************************
+     * SHOP ITEMS CARD
+     ********************************************/
+    .shop-item {
+      position: relative;
+      width: 800px;
+      height: 275px;
+      margin: 8px;
+      border-radius: 32px;
+      overflow: hidden;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-around;
+      padding-left: 32px;
+      padding-right: 32px;
+      background-image: url("https://gmrxbbhhyyrtmsftofdp.supabase.co/storage/v1/object/public/gentle-mates-assets//M8_Maillot2025_Banniere%20(1).png");
+      background-size: cover;
+      background-position: center;
+      z-index: 0;
+    }
+    .shop-item img {
+      width: 270px;
+      height: 270px;
+      object-fit: cover;
+      z-index: 1;
+    }
+    .shop-item .shop-item-title {
+      font-family: "HelveticaNeue", Arial, sans-serif;
+      font-size: 32px;
+      font-weight: bold;
+      color: white;
+      margin-top: 4px;
+      text-align: center;
+      z-index: 1;
+    }
+
+    /*******************************************
+     * FINAL STILL CARD
+     ********************************************/
+    .still-card-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      border-radius: 48px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    .still-card-text {
+      font-family: "HelveticaNeue", Arial, sans-serif;
+      font-weight: bold;
+      font-size: 48px;
+      color: white;
+      margin-bottom: 32px;
+      max-width: 80%;
+    }
+    .store-logos-row {
+      display: flex;
+      flex-direction: row;
+      align-items: space-evenly;
+      justify-content: center;
+      gap: 32px;
+    }
+    .m8-app-logo {
+      width: 140px;
+      height: auto;
+      object-fit: contain;
+      border-radius: 16px;
+    }
+    .app-store-logo {
+      width: 140px;
+      height: auto;
+      object-fit: contain;
+    }
+    .play-store-logo {
+      width: 120px;
+      height: auto;
+      object-fit: contain;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="category-stack" id="category-stack"></div>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+    import { DateTime } from 'https://cdn.jsdelivr.net/npm/luxon/+esm';
+
+    /* 
+      Supabase setup 
+    */
+    const SUPABASE_URL = 'https://gmrxbbhhyyrtmsftofdp.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdtcnhiYmhoeXlydG1zZnRvZmRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDc0MDAxNTEsImV4cCI6MjAyMjk3NjE1MX0.JYVVlCII2iL97cevWvQi0Hlz0Gt_nZjonb9ApnNDscc';
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    /*
+      Constants
+    */
+    const DISPLAY_TIME = 5000;
+    const STILL_CARD_DISPLAY_TIME = 8000; /* 10s for the final still card */
+    const SHOP_ITEM_DISPLAY_COUNT = 2;     /* show all shop items 5 times each */
+
+    // const DISPLAY_TIME = 5000;  
+    // const STILL_CARD_DISPLAY_TIME = 8000; /* 10s for the final still card */
+    // const SHOP_ITEM_DISPLAY_COUNT = 2;     /* show all shop items 5 times each */
+
+    /* logos */
+    const TWITCH_LOGO_URL = "https://gmrxbbhhyyrtmsftofdp.supabase.co/storage/v1/object/public/gentle-mates-assets/livedata-overlay/twitch-logo-twitch-icon-transparent-free-png.webp";
+    const YOUTUBE_LOGO_URL = "https://gmrxbbhhyyrtmsftofdp.supabase.co/storage/v1/object/public/gentle-mates-assets/livedata-overlay/Youtube_logo.png";
+    const YOUTUBE_LOGO_BLOCK_TITLE = "https://gmrxbbhhyyrtmsftofdp.supabase.co/storage/v1/object/public/gentle-mates-assets/livedata-overlay/Youtube_logo.png";
+    const APP_STORE_LOGO_URL = "https://gmrxbbhhyyrtmsftofdp.supabase.co/storage/v1/object/public/gentle-mates-assets/livedata-overlay/Logo_App_Store_d'Apple.png";   /* replace w/ real link */
+    const PLAY_STORE_LOGO_URL = "https://gmrxbbhhyyrtmsftofdp.supabase.co/storage/v1/object/public/gentle-mates-assets/livedata-overlay/google-play-store-logo-A9F117BED5-seeklogo.com.png"; /* replace w/ real link */
+    const M8_APP_LOGO_URL = "https://gmrxbbhhyyrtmsftofdp.supabase.co/storage/v1/object/public/gentle-mates-assets//ICONE-512.png"
+    const SHOP_ITEM_BACKGROUND = "https://gmrxbbhhyyrtmsftofdp.supabase.co/storage/v1/object/public/gentle-mates-assets//M8_Maillot2025_Banniere%20(1).png"
+
+    /*
+      Utility for formatting link
+    */
+    function parseLiveLink(link) {
+      if (!link) {
+        return { platformLogo: null, displayName: "" };
+      }
+      const lowerLink = link.toLowerCase();
+      if (lowerLink.includes("twitch.tv")) {
+        const splitted = lowerLink.split("twitch.tv/");
+        if (splitted.length > 1) {
+          let channelName = splitted[1].split("?")[0].split("/")[0];
+          channelName = channelName.toUpperCase();
+          return { platformLogo: TWITCH_LOGO_URL, displayName: channelName };
+        }
+        return { platformLogo: TWITCH_LOGO_URL, displayName: "TWITCH" };
+      }
+      if (lowerLink.includes("youtube.com")) {
+        const splitted = lowerLink.split("youtube.com/@");
+        if (splitted.length > 1) {
+          let channelName = splitted[1].split("?")[0].split("/")[0];
+          channelName = channelName.toUpperCase();
+          return { platformLogo: YOUTUBE_LOGO_URL, displayName: channelName };
+        }
+        return { platformLogo: YOUTUBE_LOGO_URL, displayName: "YOUTUBE" };
+      }
+      // fallback
+      return { platformLogo: null, displayName: link };
+    }
+
+    /*
+      Database fetch functions
+    */
+    async function fetchTeam(teamId) {
+      if (!teamId) return null;
+      const { data, error } = await supabase
+        .from('teams')
+        .select('id, name, white_logo_url')
+        .eq('id', teamId)
+        .single();
+      if (error || !data) {
+        console.error('Error or no data fetching team:', error);
+        return null;
+      }
+      return { id: data.id, name: data.name, logoUrl: data.white_logo_url };
+    }
+
+    async function fetchGame(gameId) {
+      if (!gameId) return null;
+      const { data, error } = await supabase
+        .from('games')
+        .select('id, name, colored_logo_url')
+        .eq('id', gameId)
+        .single();
+      if (error || !data) {
+        console.error('Error or no data fetching game:', error);
+        return null;
+      }
+      return { id: data.id, name: data.name, logoUrl: data.colored_logo_url };
+    }
+
+    async function fetchAllMatches() {
+      try {
+        const now = DateTime.utc().toISO();
+        const { data, error } = await supabase
+          .from('matches')
+          .select('*')
+          .gt('live_datetime', now)
+          // .eq('is_featured_match', true)
+          .order('live_datetime', { ascending: true })
+          .limit(7);
+        if (error) {
+          console.error('Error fetching matches:', error);
+          return [];
+        }
+        const matches = [];
+        for (let match of data) {
+          // fetch teams
+          const [teamA, teamABis, teamB, game] = await Promise.all([
+            fetchTeam(match.team_a_id),
+            fetchTeam(match.team_a_bis_id),
+            fetchTeam(match.team_b_id),
+            fetchGame(match.game_id),
+          ]);
+
+          // Format date/time in French w/ day of week, no year
+          // e.g. "Mercredi 5 Mars 20:00"
+          let customDate = DateTime.fromISO(match.live_datetime)
+            .setLocale('fr')
+            .toFormat("cccc d LLL HH:mm"); // e.g. "mercredi 5 mars 20:00"
+          // Optionally uppercase first letter
+          customDate = customDate.charAt(0).toUpperCase() + customDate.slice(1);
+
+          // Function to format date/time in French with dynamic day labels
+          function formatCustomDate(isoDate) {
+            const customDate = DateTime.fromISO(isoDate).setLocale('fr');
+            const today = DateTime.local().startOf('day');
+            const tomorrow = today.plus({ days: 1 });
+
+            let formattedDate;
+
+            if (customDate.hasSame(today, 'day')) {
+              formattedDate = `Aujourd'hui ${customDate.toFormat('HH:mm')}`;
+            } else if (customDate.hasSame(tomorrow, 'day')) {
+              formattedDate = `Demain ${customDate.toFormat('HH:mm')}`;
+            } else {
+              formattedDate = customDate.toFormat("cccc d LLL HH:mm");
+              formattedDate = formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
+            }
+
+            return formattedDate;
+          }
+
+          // Build leftTeamsText
+          let leftTeamsText = "?";
+          if (teamA || teamABis) {
+            const aName = teamA?.name || "?";
+            if (teamABis?.name) {
+              leftTeamsText = aName + " & " + teamABis.name;
+            } else {
+              leftTeamsText = aName;
+            }
+          }
+          let rightTeamText = teamB?.name || "?";
+
+          const { platformLogo, displayName } = parseLiveLink(match.twitch_live_link);
+
+          matches.push({
+            matchName: match.name || "",
+            teamA,
+            teamABis,
+            teamB,
+            game, // includes game.logoUrl
+            leftTeamsText,
+            rightTeamText,
+            dateStr: formatCustomDate(match.live_datetime),
+            link: match.twitch_live_link || "",
+            linkPlatformLogo: platformLogo,
+            linkPlatformName: displayName,
+          });
+        }
+        return matches;
+      } catch (err) {
+        console.error('Unexpected error fetching matches:', err);
+        return [];
+      }
+    }
+
+    async function fetchNews() {
+      try {
+        const { data, error } = await supabase
+          .from('news')
+          .select('*')
+          .eq('is_active', true)
+          .order('id', { ascending: false })
+          .limit(3);
+        if (error) {
+          console.error('Error fetching news:', error);
+          return [];
+        }
+        return data.map(n => ({
+          title: n.title || 'Aucun titre',
+          thumbnail: n.image_url || null
+        }));
+      } catch (err) {
+        console.error('Unexpected error fetching news:', err);
+        return [];
+      }
+    }
+
+    async function fetchVideos() {
+      try {
+        const { data, error } = await supabase
+          .from('youtube_videos')
+          .select('*')
+          .order('post_date', { ascending: false })
+          .limit(3);
+        if (error) {
+          console.error('Error fetching videos:', error);
+          return [];
+        }
+        return data.map(v => ({
+          videoTitle: v.title_fr || 'Aucun titre',
+          // videoDate: DateTime.fromISO(v.post_date).toLocaleString(DateTime.DATETIME_MED),
+          thumbnail: v.thumbnail_url || null
+        }));
+      } catch (err) {
+        console.error('Unexpected error fetching videos:', err);
+        return [];
+      }
+    }
+
+    async function fetchShopItems() {
+      try {
+        const { data, error } = await supabase
+          .from('shop_items')
+          .select('*')
+          .eq('is_featured', true)
+          .limit(3); // or any limit you want
+        if (error) {
+          console.error('Error fetching shop items:', error);
+          return [];
+        }
+        return data.map(s => ({
+          title: s.title || "Sans nom",
+          imageUrl: s.image_url || null
+        }));
+      } catch (err) {
+        console.error('Unexpected error fetching shop items:', err);
+        return [];
+      }
+    }
+
+    /*
+      We'll define 5 categories:
+
+      1) Matches  (was "Nos matchs à l'affiche" => keep same or rename)
+      2) News     (renamed to "News à lire sur l'App Gentle Mates" with app store + play store logos)
+      3) Videos   (renamed to "À voir sur la chaîne YouTube Gentle Mates" with YT logo on the left)
+      4) Shop     ("Dispo maintenant sur le shop Gentle Mates")
+      5) Final Still Card (no sub-items, just one big static message)
+    */
+    let categories = [
+      { key: "matches", title: "Nos prochains matchs", items: [], cardElement: null },
+      { key: "news", title: "News à lire sur l'App Gentle Mates", items: [], cardElement: null },
+      { key: "videos", title: "/ Gentle Mates", items: [], cardElement: null },
+      { key: "shop", title: "gentlemates.com/shop", items: [], cardElement: null },
+      { key: "finalStill", title: "", items: [], cardElement: null }
+    ];
+
+    // For shop items, track how many loops we've done
+    let shopLoops = 0;
+    let MAX_SHOP_LOOPS = 1; // show them 5 times
+
+    // We'll store the "still card" timing
+    let finalStillTimeout = null;
+
+    async function init() {
+      const [matches, news, videos, shopItems] = await Promise.all([
+        fetchAllMatches(),
+        fetchNews(),
+        fetchVideos(),
+        fetchShopItems(),
+      ]);
+
+      // Assign each to the right category
+      categories.find(c => c.key==="matches").items = matches;
+      categories.find(c => c.key==="news").items = news;
+      categories.find(c => c.key==="videos").items = videos;
+      categories.find(c => c.key==="shop").items = shopItems;
+      // finalStill has no items
+
+      buildCategoryCards();
+      startCycle();
+    }
+
+    init();
+
+    function buildCategoryCards() {
+      const stack = document.getElementById('category-stack');
+      stack.innerHTML = '';
+
+      categories.forEach(cat => {
+        const card = document.createElement('div');
+        card.classList.add('category-card');
+        cat.cardElement = card;
+
+        const gradientDiv = document.createElement('div');
+        gradientDiv.classList.add('gradient-container');
+
+        // Special cases for block title:
+        let blockTitleContainer = document.createElement('div');
+        blockTitleContainer.classList.add('block-title-container');
+
+        let blockTitleLogoLeft = null;
+        let blockTitleLogoRight = null;
+
+        let blockTitle = document.createElement('h1');
+        blockTitle.classList.add('block-title');
+        blockTitle.textContent = cat.title;
+
+        // Distinguish categories
+        if (cat.key === "news") {
+          // "News à lire sur l'App Gentle Mates"
+          // small App Store + Play Store logos on the right
+          // We'll append them after the <h1>
+          blockTitleContainer.appendChild(blockTitle);
+          // right side logos
+          let m8AppLogo = document.createElement('img');
+          m8AppLogo.classList.add('block-title-logo-1');
+          m8AppLogo.src = M8_APP_LOGO_URL;
+          blockTitleContainer.appendChild(m8AppLogo);
+
+          let appStoreLogo = document.createElement('img');
+          appStoreLogo.classList.add('block-title-logo-2');
+          appStoreLogo.src = APP_STORE_LOGO_URL;
+          blockTitleContainer.appendChild(appStoreLogo);
+
+          let playStoreLogo = document.createElement('img');
+          playStoreLogo.classList.add('block-title-logo-3');
+          playStoreLogo.src = PLAY_STORE_LOGO_URL;
+          blockTitleContainer.appendChild(playStoreLogo);
+
+        } else if (cat.key === "videos") {
+          // "À voir sur la chaîne YouTube Gentle Mates"
+          // YT logo on the left, bigger
+          let ytLogo = document.createElement('img');
+          ytLogo.classList.add('block-title-logo-left');
+          ytLogo.src = YOUTUBE_LOGO_BLOCK_TITLE; // bigger/different from match item
+          blockTitleContainer.appendChild(ytLogo);
+
+          blockTitleContainer.appendChild(blockTitle);
+
+        } else if (cat.key === "finalStill") {
+          // no block title, so skip
+        } else {
+          // default
+          blockTitleContainer.appendChild(blockTitle);
+        }
+
+        // Append blockTitleContainer if we have a title
+        if (cat.key !== "finalStill") {
+          gradientDiv.appendChild(blockTitleContainer);
+        }
+
+        // Now build the main content
+        if (cat.key === "finalStill") {
+          // Just a single still card
+          let stillCard = document.createElement('div');
+          stillCard.classList.add('still-card-container');
+
+          let textElt = document.createElement('div');
+          textElt.classList.add('still-card-text');
+          textElt.textContent = "Téléchargez l'Application officielle Gentle Mates";
+          stillCard.appendChild(textElt);
+
+          let logosRow = document.createElement('div');
+          logosRow.classList.add('store-logos-row');
+
+          let m8App = document.createElement('img');
+          m8App.classList.add('m8-app-logo');
+          m8App.src = M8_APP_LOGO_URL;
+          logosRow.appendChild(m8App);
+
+          let appStore = document.createElement('img');
+          appStore.classList.add('app-store-logo');
+          appStore.src = APP_STORE_LOGO_URL;
+          logosRow.appendChild(appStore);
+
+          let playStore = document.createElement('img');
+          playStore.classList.add('play-store-logo');
+          playStore.src = PLAY_STORE_LOGO_URL;
+          logosRow.appendChild(playStore);
+
+          stillCard.appendChild(logosRow);
+
+          gradientDiv.appendChild(stillCard);
+
+        } else if (cat.key === "shop") {
+          // "Dispo maintenant sur le shop Gentle Mates"
+          // Instead of items that turn one by one, we want a horizontally
+          // scrolling set of squares for each shop item
+          let carouselContainer = document.createElement('div');
+          carouselContainer.classList.add('carousel-container');
+
+          let slideWrapper = document.createElement('div');
+          slideWrapper.classList.add('slide-wrapper');
+
+          // Build shop item squares
+          cat.items.forEach(it => {
+            let slideItem = document.createElement('div');
+            slideItem.classList.add('slide-item');
+
+            // inside: a "shop-item" container
+            let shopItemDiv = document.createElement('div');
+            shopItemDiv.classList.add('shop-item');
+
+            if (it.imageUrl) {
+              let img = document.createElement('img');
+              img.src = it.imageUrl;
+              shopItemDiv.appendChild(img);
+            }
+            // product title
+            let titleElt = document.createElement('div');
+            titleElt.classList.add('shop-item-title');
+            titleElt.textContent = it.title;
+            shopItemDiv.appendChild(titleElt);
+
+            slideItem.appendChild(shopItemDiv);
+            slideWrapper.appendChild(slideItem);
+          });
+
+          carouselContainer.appendChild(slideWrapper);
+          gradientDiv.appendChild(carouselContainer);
+
+          cat.slideWrapper = slideWrapper; // so we can animate it
+          cat.currentLoop = 0; // track how many loops we've done
+          cat.currentItemIndex = 0;
+
+        } else if (cat.key === "videos") {
+          // "À voir sur la chaîne YouTube Gentle Mates"
+          // We separate the title from the date
+          let carouselContainer = document.createElement('div');
+          carouselContainer.classList.add('carousel-container');
+          let slideWrapper = document.createElement('div');
+          slideWrapper.classList.add('slide-wrapper');
+
+          cat.items.forEach(video => {
+            let slideItem = document.createElement('div');
+            slideItem.classList.add('slide-item');
+
+            let container = document.createElement('div');
+            container.classList.add('title-container');
+            
+            // background overlay
+            let overlay = document.createElement('div');
+            overlay.classList.add('title-container-background');
+            container.appendChild(overlay);
+
+            // If there's a thumbnail
+            if (video.thumbnail) {
+              let thumb = document.createElement('img');
+              thumb.classList.add('thumbnail-video');
+              thumb.src = video.thumbnail;
+              container.appendChild(thumb);
+            }
+
+            // Title
+            let titleElt = document.createElement('h2');
+            titleElt.classList.add('video-title');
+            titleElt.textContent = video.videoTitle;
+            container.appendChild(titleElt);
+
+            slideItem.appendChild(container);
+            slideWrapper.appendChild(slideItem);
+          });
+
+          carouselContainer.appendChild(slideWrapper);
+          gradientDiv.appendChild(carouselContainer);
+          cat.slideWrapper = slideWrapper;
+          cat.currentItemIndex = 0;
+
+        } else if (cat.key === "news") {
+          // "News à lire sur l'App Gentle Mates"
+          let carouselContainer = document.createElement('div');
+          carouselContainer.classList.add('carousel-container');
+          let slideWrapper = document.createElement('div');
+          slideWrapper.classList.add('slide-wrapper');
+
+          cat.items.forEach(newsItem => {
+            let slideItem = document.createElement('div');
+            slideItem.classList.add('slide-item');
+
+            if (newsItem.thumbnail) {
+              const img = document.createElement('img');
+              img.classList.add('thumbnail-square');
+              img.src = newsItem.thumbnail;
+              slideItem.appendChild(img);
+            }
+
+            let titleContainer = document.createElement('div');
+            titleContainer.classList.add('title-container');
+
+            let overlayBg = document.createElement('div');
+            overlayBg.classList.add('title-container-background');
+
+            let newsTitle = document.createElement('h2');
+            newsTitle.classList.add('news-title');
+            newsTitle.textContent = newsItem.title;
+
+            titleContainer.appendChild(overlayBg);
+            titleContainer.appendChild(newsTitle);
+            slideItem.appendChild(titleContainer);
+
+            slideWrapper.appendChild(slideItem);
+          });
+
+          carouselContainer.appendChild(slideWrapper);
+          gradientDiv.appendChild(carouselContainer);
+          cat.slideWrapper = slideWrapper;
+          cat.currentItemIndex = 0;
+
+        } else {
+          // "matches"
+          let carouselContainer = document.createElement('div');
+          carouselContainer.classList.add('carousel-container');
+          let slideWrapper = document.createElement('div');
+          slideWrapper.classList.add('slide-wrapper');
+
+          cat.items.forEach(item => {
+            let slideItem = document.createElement('div');
+            slideItem.classList.add('slide-item');
+
+            // top-level container
+            let matchContainer = document.createElement('div');
+            matchContainer.classList.add('match-card-container');
+
+            // background overlay
+            let overlayBg = document.createElement('div');
+            overlayBg.classList.add('title-container-match-background');
+            matchContainer.appendChild(overlayBg);
+
+            // top row: game logo + date
+            let topRow = document.createElement('div');
+            topRow.classList.add('match-top-row');
+
+            // game logo
+            if (item.game && item.game.logoUrl) {
+              let gameImg = document.createElement('img');
+              gameImg.classList.add('game-logo');
+              gameImg.src = item.game.logoUrl;
+              topRow.appendChild(gameImg);
+            }
+            // date
+            let dateSpan = document.createElement('div');
+            dateSpan.classList.add('match-date');
+            dateSpan.textContent = item.dateStr;
+            topRow.appendChild(dateSpan);
+
+            matchContainer.appendChild(topRow);
+
+            let bottomRow = document.createElement('div');
+            bottomRow.classList.add('match-bottom-row');
+            
+            if (item.teamA && item.teamA.logoUrl) {
+              let teamALogo = document.createElement('img');
+              teamALogo.classList.add('logo-img');
+              teamALogo.src = item.teamA.logoUrl;
+              bottomRow.appendChild(teamALogo);
+            }
+
+            if (item.teamABis && item.teamABis.logoUrl) {
+              let teamABisLogo = document.createElement('img');
+              teamABisLogo.classList.add('logo-img');
+              teamABisLogo.src = item.teamABis.logoUrl;
+              bottomRow.appendChild(teamABisLogo);
+            }
+
+            // teams row
+            let centerCol = document.createElement('div');
+            centerCol.classList.add('match-card-center');
+
+            // Teams row
+            let teamsRow = document.createElement('div');
+            teamsRow.classList.add('teams-row');
+
+            let leftTeamSpan = document.createElement('span');
+            leftTeamSpan.classList.add('team-name');
+            leftTeamSpan.textContent = item.leftTeamsText;
+            let vsSpan = document.createElement('span');
+            vsSpan.classList.add('versus-text');
+            vsSpan.textContent = "VS";
+            let rightTeamSpan = document.createElement('span');
+            rightTeamSpan.classList.add('team-name');
+            rightTeamSpan.textContent = item.rightTeamText;
+            teamsRow.appendChild(leftTeamSpan);
+            teamsRow.appendChild(vsSpan);
+            teamsRow.appendChild(rightTeamSpan);
+
+            // match name
+            let matchNameDiv = document.createElement('div');
+            matchNameDiv.classList.add('match-name');
+            matchNameDiv.textContent = item.matchName;
+
+            // date + link line => we'll treat the link as the "platform"
+            let dateLink = document.createElement('div');
+            dateLink.classList.add('match-details-date-link');
+
+            // we only show link platform if any
+            if (item.linkPlatformLogo) {
+              let platformImg = document.createElement('img');
+              platformImg.classList.add('platform-logo');
+              platformImg.src = item.linkPlatformLogo;
+              dateLink.appendChild(platformImg);
+
+              let nameSpan = document.createElement('span');
+              nameSpan.textContent = item.linkPlatformName;
+              dateLink.appendChild(nameSpan);
+            } else if (item.linkPlatformName) {
+              let fallback = document.createElement('span');
+              fallback.textContent = item.linkPlatformName;
+              dateLink.appendChild(fallback);
+            }
+
+            centerCol.appendChild(teamsRow);
+            centerCol.appendChild(matchNameDiv);
+            centerCol.appendChild(dateLink);
+
+            bottomRow.appendChild(centerCol);
+
+            if (item.teamB && item.teamB.logoUrl) {
+              let teamBLogo = document.createElement('img');
+              teamBLogo.classList.add('logo-img');
+              teamBLogo.src = item.teamB.logoUrl;
+              bottomRow.appendChild(teamBLogo);
+            } else {
+              let placeholder = document.createElement('div');
+              placeholder.classList.add('logo-placeholder');
+              placeholder.textContent = "?";
+              bottomRow.appendChild(placeholder);
+            }
+
+            matchContainer.appendChild(bottomRow);
+            slideItem.appendChild(matchContainer);
+            slideWrapper.appendChild(slideItem);
+          });
+
+          carouselContainer.appendChild(slideWrapper);
+          gradientDiv.appendChild(carouselContainer);
+          cat.slideWrapper = slideWrapper;
+          cat.currentItemIndex = 0;
+        }
+
+        card.appendChild(gradientDiv);
+        stack.appendChild(card);
+      });
+    }
+
+    /* 
+      Cycle logic: we iterate over categories. 
+      Each category either has a standard "carousel" approach or custom logic 
+      (like shop items or final still card).
+    */
+    let currentCategoryIndex = 0; 
+    let standardTimer = null;
+
+    function startCycle() {
+      showCategoryCard(0);
+      scheduleNextItem();
+    }
+
+    function showCategoryCard(index) {
+      categories.forEach((cat, i) => {
+        if (i === index) {
+          cat.cardElement.classList.add('active');
+        } else {
+          cat.cardElement.classList.remove('active');
+        }
+      });
+    }
+
+    function scheduleNextItem() {
+      let cat = categories[currentCategoryIndex];
+      // handle finalStill category differently
+      if (cat.key === "finalStill") {
+        // no sub-items, just a single still
+        standardTimer = setTimeout(() => {
+          moveToNextCategory(true); // jump to first
+        }, STILL_CARD_DISPLAY_TIME);
+        return;
+      }
+
+      // handle shop category differently
+      if (cat.key === "shop") {
+        // We'll do a custom horizontal infinite scroll
+        // skip after 5 loops
+        doShopScrolling(cat);
+        return;
+      }
+
+      // otherwise, standard approach
+      if (!cat.items || cat.items.length === 0) {
+        moveToNextCategory(false);
+        return;
+      }
+
+      standardTimer = setTimeout(() => {
+        if (cat.currentItemIndex < cat.items.length - 1) {
+          cat.currentItemIndex++;
+          updateSlidePosition(cat);
+          scheduleNextItem();
+        } else {
+          moveToNextCategory(false);
+        }
+      }, DISPLAY_TIME);
+    }
+
+    function updateSlidePosition(cat) {
+      let offset = -1 * cat.currentItemIndex * 100;
+      cat.slideWrapper.style.transform = `translateX(${offset}%)`;
+    }
+
+    function moveToNextCategory(goFirst=false) {
+      clearTimeout(standardTimer);
+      let cat = categories[currentCategoryIndex];
+      cat.currentItemIndex = 0;
+      if (cat.slideWrapper) {
+        updateSlidePosition(cat);
+      }
+
+      if (goFirst) {
+        // jump back to first category
+        currentCategoryIndex = 0;
+      } else {
+        currentCategoryIndex++;
+        if (currentCategoryIndex >= categories.length) {
+          currentCategoryIndex = 0; 
+        }
+      }
+      showCategoryCard(currentCategoryIndex);
+      scheduleNextItem();
+    }
+
+    /* SHOP ITEM SCROLLING & LOOP */
+    function doShopScrolling(cat) {
+      if (!cat.items || cat.items.length === 0) {
+        moveToNextCategory(false);
+        return;
+      }
+      // We'll treat cat.currentItemIndex the same way, 
+      // but we want to do a continuous loop of items up to 5 times
+      standardTimer = setTimeout(() => {
+        if (cat.currentItemIndex < cat.items.length - 1) {
+          cat.currentItemIndex++;
+          updateSlidePosition(cat);
+          doShopScrolling(cat);
+        } else {
+          // one loop done
+          cat.currentItemIndex = 0;
+          updateSlidePosition(cat);
+          cat.currentLoop = (cat.currentLoop||0)+1;
+          if (cat.currentLoop < SHOP_ITEM_DISPLAY_COUNT) {
+            // do another loop
+            doShopScrolling(cat);
+          } else {
+            // done with 5 loops
+            cat.currentLoop = 0;
+            moveToNextCategory(false);
+          }
+        }
+      }, DISPLAY_TIME);
+    }
+
+  </script>
+</body>
+</html>
