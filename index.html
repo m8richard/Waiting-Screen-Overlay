@@ -1,1218 +1,1006 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>OBS Overlay</title>
-  <style>
-    body {
-      margin: 0;
-      padding: 32px;
-      overflow: hidden;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      background-color: #1e1e1e;
-      font-family: "HelveticaNeue", Arial, sans-serif;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gentle Mates Cards Carousel</title>
+    <style>
+        @font-face {
+            font-family: 'HelveticaNeue';
+            src: local('HelveticaNeue'), local('Helvetica Neue');
+            font-weight: normal;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'HelveticaNeue';
+            src: local('HelveticaNeue-Bold'), local('Helvetica Neue Bold');
+            font-weight: 700;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'HelveticaNeue-Bold';
+            src: local('HelveticaNeue-Bold'), local('Helvetica Neue Bold');
+            font-weight: bold;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'HelveticaBoldExtended';
+            src: url('https://gmrxbbhhyyrtmsftofdp.supabase.co/storage/v1/object/public/gentle-mates-assets/livedata-overlay/HelveticaNeue-BlackExt.otf') format('opentype');
+            font-weight: bold;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'TuskerGrotesk';
+            src: url('https://gmrxbbhhyyrtmsftofdp.supabase.co/storage/v1/object/public/gentle-mates-assets/livedata-overlay/Tusker-Grotesk.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
 
-    .category-stack {
-      position: relative;
-      width: 1050px;
-      max-width: 95%;
-      height: 380px;
-      background-color: transparent;
-      overflow: hidden;
-    }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #121212;
+            overflow: hidden;
+            font-family: 'HelveticaNeue', sans-serif;
+        }
 
-    .category-card {
-      position: absolute;
-      top: 100%; /* start hidden below the screen */
-      left: 0;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      border-radius: 48px;
-      transition: top 0.8s ease; /* smooth vertical slide */
-      box-sizing: border-box;
-    }
-    .category-card.active {
-      top: 0; /* slides up into place */
-    }
+        .carousel-container {
+            width: 1204px;
+            height: 633px;
+            position: relative;
+            border-radius: 40px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            background-color: #FFFFFF; /* Background color to prevent seeing through */
+        }
 
-    /* "Cow-skin" radial gradient background */
-    .gradient-container {
-      background:
-        radial-gradient(
-          circle at 20% 30%, 
-          #d6d2d3 0%, 
-          #d6d2d3 15%, 
-          transparent 40%
-        ),
-        radial-gradient(
-          circle at 40% 75%, 
-          #d6d2d3 0%, 
-          #d6d2d3 15%, 
-          transparent 30%
-        ),
-        radial-gradient(
-          circle at 80% 80%, 
-          #efb8fa 20%, 
-          #efb8fa 40%, 
-          transparent 80%
-        ),
-        #ededed; /* fallback color */
+        .card {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            transition: opacity 1s ease, transform 1s ease;
+            transform: scale(0.95);
+            display: flex;
+            flex-direction: column;
+            border-radius: 40px;
+            overflow: hidden;
+            z-index: 1;
+        }
 
-      border-radius: 48px;
-      width: 100%;
-      padding: 16px;
-      box-sizing: border-box;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-    }
+        .card.active {
+            opacity: 1;
+            transform: scale(1);
+            z-index: 3;
+        }
 
-    /* Reusable base for block-title container */
-    .block-title-container {
-      padding: 0 24px 4px 24px;
-      display: flex;
-      align-items: center;
-      justify-content: flex-start; /* or space-between if needed */
-    }
-    .block-title {
-      font-family: "HelveticaNeue", Arial, sans-serif;
-      font-weight: bold;
-      font-size: 36px;
-      color: #ff00ec;
-      line-height: 1.5;
-      margin: 0;
-      padding-bottom: 8px;
-    }
-    .block-title-logo-left {
-      margin-right: 24px;
-      height: 48px;
-      width: 48px;
-      object-fit: contain;
-      padding-bottom: 8px;
-    }
-    .block-title-logo-1 {
-      margin-left: 16px;
-      height: 42px;
-      width: 42px;
-      object-fit: contain;
-      padding-bottom: 8px;
-      border-radius: 16px;
-    }
-    .block-title-logo-2 {
-      margin-left: 16px;
-      height: 42px;
-      width: 42px;
-      object-fit: contain;
-      padding-bottom: 8px;
-    }
-    .block-title-logo-3 {
-      margin-left: 16px;
-      height: 38px;
-      width: 38px;
-      object-fit: contain;
-      padding-bottom: 8px;
-    }
+        .card.previous {
+            z-index: 2;
+        }
 
-    .title-container {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-sizing: border-box;
-      overflow: hidden;
-    }
-    .video-info-container {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-around;
-      padding-top: 32px;
-    }
-    .title-container-background {
-      position: absolute;
-      top: 0; 
-      bottom: 0; 
-      left: 0; 
-      right: 0;
-      border-top-right-radius: 48px;
-      border-bottom-right-radius: 48px;
-      background-color: #232323; 
-      opacity: 0.1;
-      z-index: 1; 
-    }
+        .card-header {
+            height: 90px; /* Fixed height for all headers */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 36px;
+        }
 
-    /* Carousel container for all categories except the final "still" card */
-    .carousel-container {
-      position: relative;
-      width: 100%;
-      height: 230px;
-      border-radius: 48px;
-      overflow: hidden;
-      flex: 1; 
-    }
-    .slide-wrapper {
-      display: flex;
-      height: 100%;
-      transition: transform 0.8s ease;
-    }
-    .slide-item {
-      min-width: 100%;
-      height: 100%;
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      justify-content: center;
-      border-radius: 48px;
-      box-sizing: border-box;
-      overflow: hidden;
-      position: relative;
-      background-color: transparent;
-    }
+        .header-text {
+            color: #973a6e;
+            font-family: 'HelveticaBoldExtended', sans-serif;
+            font-size: 48px;
+            text-align: center;
+        }
 
-    /*******************************************
-     * MATCH CARD
-     ********************************************/
-    .title-container-match-background {
-      position: absolute;
-      top: 0; bottom: 0; left: 0; right: 0;
-      border-radius: 48px;
-      background-color: #232323; 
-      opacity: 0.3;
-      z-index: 1; 
-    }
-    .match-card-container {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      border-radius: 48px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      z-index: 2;
-      overflow: hidden;
-      padding-top: 16px;
-    }
-    /* top row: game logo + date in custom FR format */
-    .match-top-row {
-      display: flex;
-      width: 90%;
-      flex:1;
-      flex-direction: row;
-      align-items: center;
-      justify-content: space-between;
-      z-index: 3; /* above overlay */
-    }
-    .match-bottom-row {
-      display: flex;
-      flex:2.3;
-      width: 100%;
-      flex-direction: row;
-      align-items: center;
-      justify-content: space-evenly;
-      gap: 12px;
-      z-index: 3; /* above overlay */
-    }
-    .game-logo {
-      height: 56px;
-      width: auto;
-      object-fit: contain;
-    }
-    .match-date {
-      font-family: "HelveticaNeue", Arial, sans-serif;
-      font-size: 40px;
-      font-weight: bold;
-      color: #FFFFFF;
-    }
+        .date-text {
+            font-size: 48px;
+            color: #2D2D2D;
+            font-family: 'HelveticaNeue-Bold', sans-serif;
+        }
 
-    /* below that top row: teams, match name, link row */
-    .match-card-center {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      z-index: 3; /* above overlay */
-      padding: 8px;
-    }
-    .teams-row {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      gap: 24px;
-      margin: 12px 0;
-    }
-    .team-name {
-      font-family: "HelveticaNeue", Arial, sans-serif;
-      font-weight: bold;
-      font-size: 40px;
-      color: white;
-      line-height: 40px;
-    }
-    .versus-text {
-      font-family: "HelveticaNeue", Arial, sans-serif;
-      font-weight: bold;
-      font-size: 40px;
-      color: #efb8fa;
-      line-height: 40px;
-    }
-    .match-name {
-      font-family: "HelveticaNeue", Arial, sans-serif;
-      font-size: 32px;
-      font-weight: bold;
-      color: #efb8fa;
-      margin-bottom: 6px;
-      text-align: center;
-    }
-    .match-details-date-link {
-      font-family: "HelveticaNeue", Arial, sans-serif;
-      font-weight: bold;
-      font-size: 40px;
-      color: white;
-      margin: 2px 0;
-      text-align: center;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px; 
-    }
-    .platform-logo {
-      height: 72px;
-      width: 72px;
-      object-fit: contain;
-    }
-    /* team logos for match */
-    .logos-row {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      justify-content: space-evenly;
-      width: 100%;
-      gap: 16px;
-      z-index: 3;
-      margin-bottom: 8px;
-    }
-    .logo-img {
-      width: 120px;
-      height: 120px;
-      object-fit: contain;
-    }
-    .logo-placeholder {
-      width: 120px;
-      height: 120px;
-      border-radius: 16px;
-      background-color: #4f4e4e;
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 48px;
-    }
+        .card-body {
+            flex: 1; /* Take remaining space */
+            position: relative;
+            display: flex;
+            padding: 24px 16px;
+        }
 
-    /*******************************************
-     * NEWS & VIDEOS 
-     ********************************************/
-    .thumbnail-square {
-      height: 300px; 
-      width: 300px;
-      object-fit: contain;
-      flex-shrink: 0;
-      border-top-left-radius: 48px;
-      border-bottom-left-radius: 48px;
-    }
-    .news-title {
-      position: relative;
-      font-weight: bold;
-      font-size: 36px;
-      line-height: 36px;
-      color: #FFFFFF;
-      z-index: 2; 
-      margin: 0;
-      text-align: center;
-      padding-left: 24px;
-      padding-right: 24px;
-    }
-    .thumbnail-video {
-      height: 300px; 
-      width: auto;
-      object-fit: contain;
-      flex-shrink: 0;
-    }
-    .video-title {
-      font-family: "HelveticaNeue", Arial, sans-serif;
-      font-weight: bold;
-      font-size: 36px;
-      color: #FFFFFF;
-      margin: 0;
-      text-align: center;
-      z-index: 2;
-      padding-left: 24px;
-      padding-right: 24px;
-    }
+        .card-body.row {
+            flex-direction: row;
+        }
 
-    /*******************************************
-     * SHOP ITEMS CARD
-     ********************************************/
-    .shop-item {
-      position: relative;
-      width: 800px;
-      height: 275px;
-      margin: 8px;
-      border-radius: 32px;
-      overflow: hidden;
-      flex-shrink: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: space-around;
-      padding-left: 32px;
-      padding-right: 32px;
-      background-image: url("https://gmrxbbhhyyrtmsftofdp.supabase.co/storage/v1/object/public/gentle-mates-assets//M8_Maillot2025_Banniere%20(1).png");
-      background-size: cover;
-      background-position: center;
-      z-index: 0;
-    }
-    .shop-item img {
-      width: 270px;
-      height: 270px;
-      object-fit: cover;
-      z-index: 1;
-    }
-    .shop-item .shop-item-title {
-      font-family: "HelveticaNeue", Arial, sans-serif;
-      font-size: 32px;
-      font-weight: bold;
-      color: white;
-      margin-top: 4px;
-      text-align: center;
-      z-index: 1;
-    }
+        .card-body.column {
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
 
-    /*******************************************
-     * FINAL STILL CARD
-     ********************************************/
-    .still-card-container {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      border-radius: 48px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-    }
-    .still-card-text {
-      font-family: "HelveticaNeue", Arial, sans-serif;
-      font-weight: bold;
-      font-size: 48px;
-      color: white;
-      margin-bottom: 32px;
-      max-width: 80%;
-    }
-    .store-logos-row {
-      display: flex;
-      flex-direction: row;
-      align-items: space-evenly;
-      justify-content: center;
-      gap: 32px;
-    }
-    .m8-app-logo {
-      width: 140px;
-      height: auto;
-      object-fit: contain;
-      border-radius: 16px;
-    }
-    .app-store-logo {
-      width: 140px;
-      height: auto;
-      object-fit: contain;
-    }
-    .play-store-logo {
-      width: 120px;
-      height: auto;
-      object-fit: contain;
-    }
+        .background-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background-image: url('https://gmrxbbhhyyrtmsftofdp.supabase.co/storage/v1/object/public/gentle-mates-assets/livedata-overlay/silver-background.png');
+            background-size: cover;
+        }
 
-  </style>
+        .card-footer {
+            height: 90px; /* Fixed height for all footers */
+            background-color: #FCFCFC;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        /* MatchCard Specific */
+        .matchCard .card-header {
+            background-color: #F77514;
+            justify-content: space-between;
+        }
+
+        .matchCard .card-body {
+            justify-content: center; /* Center vertically */
+            align-items: center; /* Center horizontally */
+        }
+
+        .game-logo {
+            width: 200px;
+            height: 60px;
+        }
+
+        .match-name-container {
+            height: auto;
+            width: 800px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .match-name {
+            color: #2D2D2D;
+            font-family: 'TuskerGrotesk', sans-serif;
+            font-size: 96px;
+            text-align: center;
+            margin-right: 24px;
+        }
+
+        .info-container {
+            height: 224px;
+            width: 352px;
+            border-radius: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .matchCard .info-container {
+            background-color: #F77514;
+        }
+
+        .info-text {
+            color: #2D2D2D;
+            font-family: 'TuskerGrotesk', sans-serif;
+            font-size: 112px;
+            text-align: center;
+        }
+
+        .live-logo-link {
+            display: flex;
+            flex: 1;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .platform-logo {
+            height: 40px;
+            width: auto;
+            margin-right: 16px;
+        }
+
+        .channel {
+            color: #2D2D2D;
+            font-family: 'HelveticaBoldExtended', sans-serif;
+            font-size: 48px;
+            text-align: center;
+        }
+
+        /* MatchCard2 Specific */
+        .matchCard2 .card-header {
+            background-color: #EE0073;
+            justify-content: space-between;
+        }
+
+        .matchCard2 .info-container {
+            background-color: #EE0073;
+        }
+
+        .body-container {
+            width: 100%;
+            display: flex;
+            justify-content: space-evenly;
+            align-items: center;
+        }
+
+        .team-container {
+            width: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .team-logo {
+            height: 240px;
+            width: 240px;
+            margin-bottom: 24px;
+            object-fit: contain;
+        }
+
+        .team-name {
+            font-size: 40px;
+            color: #2D2D2D;
+            font-family: 'HelveticaNeue', sans-serif;
+            text-align: center;
+        }
+
+        .match-name-container-small {
+            height: 72px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0 48px;
+            margin-top: 24px;
+        }
+
+        .match-name-small {
+            color: #2D2D2D;
+            font-family: 'HelveticaBoldExtended', sans-serif;
+            font-size: 40px;
+            text-align: center;
+        }
+
+        /* YoutubeCard Specific */
+        #youtubeCard .card-header {
+            background-color: #FF0000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .youtube-icon-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding-top: 26px;
+        }
+
+        .youtube-text {
+            color: #B20000;
+            font-family: 'HelveticaBoldExtended', sans-serif;
+            font-size: 48px;
+            text-align: center;
+        }
+
+        .youtube-card-container {
+            flex: 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .youtube-thumbnail {
+            width: 736px;
+            height: 414px;
+            border-radius: 16px;
+            object-fit: cover;
+        }
+
+        .youtube-title {
+            width: 736px;
+            color: #232323;
+            font-family: 'HelveticaBoldExtended', sans-serif;
+            font-size: 32px;
+            line-height: 36px;
+            text-align: center;
+            padding-top: 4px;
+        }
+
+        .side-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .channel-info {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .m8-logo {
+            width: 64px;
+            height: 64px;
+            border-radius: 16px;
+        }
+
+        .channel-name {
+            color: #232323;
+            font-family: 'HelveticaNeue', sans-serif;
+            font-weight: 700;
+            font-size: 32px;
+            text-align: center;
+        }
+
+        .new-video {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 24px 0;
+        }
+
+        .new-video-text {
+            color: #232323;
+            font-family: 'TuskerGrotesk', sans-serif;
+            letter-spacing: 2px;
+            font-size: 104px;
+            line-height: 120px;
+            text-align: center;
+        }
+
+        /* ShopCard Specific */
+        #shopCard .card-header {
+            background-color: #fc61b7;
+            justify-content: center;
+        }
+
+        .shop-images-container {
+            flex: 1.45;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            height: 100%;
+        }
+
+        .shop-item {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+        }
+
+        .shop-item-1 {
+            height: 560px;
+            width: 560px;
+            z-index: 2;
+            transform: translate(-280px, -280px);
+        }
+
+        .shop-item-2 {
+            height: 480px;
+            width: 480px;
+            z-index: 1;
+            transform: translate(-400px, -280px);
+        }
+
+        .shop-item-3 {
+            height: 480px;
+            width: 480px;
+            z-index: 1;
+            transform: translate(-90px, -280px);
+        }
+
+        .shop-url-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #fc61b7;
+            width: 450px;
+            height: 60px;
+            border-radius: 12px;
+            margin-top: 16px;
+        }
+
+        .shop-url {
+            color: #973a6e;
+            font-family: 'HelveticaNeue', sans-serif;
+            font-weight: 900;
+            font-size: 32px;
+            text-align: center;
+        }
+
+        .merch-text {
+            color: #232323;
+            font-family: 'TuskerGrotesk', sans-serif;
+            letter-spacing: 2px;
+            font-size: 104px;
+            line-height: 120px;
+            text-align: center;
+        }
+
+        /* DownloadTheApp Specific */
+        #downloadTheApp {
+            background: #EDEDED;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #downloadTheApp .card-body {
+            height: 633px; /* Full card height since no header/footer */
+        }
+
+        .phone-animation-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .side-info-container {
+            flex: 1.6;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-evenly;
+            align-items: center;
+            padding: 0 32px;
+        }
+
+        .app-promo-text-1 {
+            color: #232323;
+            font-family: 'HelveticaBoldExtended', sans-serif;
+            font-size: 48px;
+            line-height: 64px;
+            text-align: center;
+        }
+
+        .app-promo-text-2 {
+            color: #FF00EC;
+            font-family: 'HelveticaBoldExtended', sans-serif;
+            font-size: 40px;
+            line-height: 56px;
+            text-align: center;
+        }
+
+        .qr-codes-container {
+            display: flex;
+            gap: 24px;
+            justify-content: center;
+        }
+
+        .qr-code {
+            height: 280px;
+            width: 280px;
+            border-radius: 24px;
+            border: 8px solid #D6D2D3;
+        }
+
+        /* Phone Animation */
+        .phone {
+            position: relative;
+            width: 280px;
+            height: 570px;
+            background-color: black;
+            border-radius: 53px;
+            overflow: visible;
+            transform-style: preserve-3d;
+            animation: phoneRotation 24s infinite linear;
+            box-shadow: 0px 12px 18px rgba(0, 0, 0, 0.45);
+        }
+
+        @keyframes phoneRotation {
+            0% { transform: perspective(1200px) rotateY(-35deg) rotateX(8deg); }
+            25% { transform: perspective(1200px) rotateY(0deg) rotateX(-8deg); }
+            50% { transform: perspective(1200px) rotateY(35deg) rotateX(8deg); }
+            75% { transform: perspective(1200px) rotateY(0deg) rotateX(-8deg); }
+            100% { transform: perspective(1200px) rotateY(-35deg) rotateX(8deg); }
+        }
+
+        .inner-bevel {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            right: 2px;
+            bottom: 2px;
+            border: 2px solid black;
+            border-radius: 51px;
+            z-index: 5;
+        }
+
+        .screen {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            right: 15px;
+            bottom: 15px;
+            border-radius: 39px;
+            background-color: #000;
+            overflow: hidden;
+            z-index: 10;
+        }
+
+        .screen-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Loading indicator */
+        .loading {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            font-size: 24px;
+            z-index: 100;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
 </head>
 <body>
-  <div class="category-stack" id="category-stack"></div>
+    <div class="loading">
+        <div class="spinner"></div>
+    </div>
+    
+    <div class="carousel-container">
+        <!-- Cards will be dynamically loaded here -->
 
-  <script type="module">
-    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-    import { DateTime } from 'https://cdn.jsdelivr.net/npm/luxon/+esm';
+        <!-- ShopCard -->
+        <div id="shopCard" class="card">
+            <div class="card-header">
+                <div class="header-text">MERCH GENTLE MATES</div>
+            </div>
+            <div class="card-body row">
+                <div class="background-image"></div>
+                <div class="shop-images-container">
+                    <img class="shop-item shop-item-1" src="https://cdn.shopify.com/s/files/1/0727/9575/0735/files/M8_Maillot2025_Frontcopie.png?v=1733336697" alt="Shop Item 1">
+                    <img class="shop-item shop-item-2" src="https://cdn.shopify.com/s/files/1/0727/9575/0735/files/M8_NOEL_MERCH_ZIP_FRONT.png?v=1733263364" alt="Shop Item 2">
+                    <img class="shop-item shop-item-3" src="https://cdn.shopify.com/s/files/1/0727/9575/0735/files/M8_NOEL_MERCH_POLAIRE_GREEN_FRONTV3.png?v=1733336980" alt="Shop Item 3">
+                </div>
+                <div class="side-info">
+                    <div class="merch-text">MERCH DISPONIBLE</div>
+                    <div class="shop-url-container">
+                        <div class="shop-url">GENTLEMATES.COM/SHOP</div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    /* 
-      Supabase setup 
-    */
-    const SUPABASE_URL = 'https://gmrxbbhhyyrtmsftofdp.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdtcnhiYmhoeXlydG1zZnRvZmRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDc0MDAxNTEsImV4cCI6MjAyMjk3NjE1MX0.JYVVlCII2iL97cevWvQi0Hlz0Gt_nZjonb9ApnNDscc';
-    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        <!-- DownloadTheApp -->
+        <div id="downloadTheApp" class="card">
+            <div class="card-body row">
+                <div class="background-image"></div>
+                <div class="phone-animation-container">
+                    <div class="phone">
+                        <div class="inner-bevel"></div>
+                        <div class="screen">
+                            <img class="screen-image" src="https://gmrxbbhhyyrtmsftofdp.supabase.co/storage/v1/object/public/gentle-mates-assets/livedata-overlay/gentle-mates-app-screen.png" alt="App Screen">
+                        </div>
+                    </div>
+                </div>
+                <div class="side-info-container">
+                    <div class="app-promo-text-1">L'EXPÉRIENCE GENTLE MATES À PORTÉE DE MAIN</div>
+                    <div class="qr-codes-container">
+                        <img class="qr-code" src="https://gmrxbbhhyyrtmsftofdp.supabase.co/storage/v1/object/public/gentle-mates-assets/livedata-overlay/app_store_qr.png" alt="App Store QR">
+                        <img class="qr-code" src="https://gmrxbbhhyyrtmsftofdp.supabase.co/storage/v1/object/public/gentle-mates-assets/livedata-overlay/play_store_qr.png" alt="Play Store QR">
+                    </div>
+                    <div class="app-promo-text-2">Téléchargez l'App !</div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    /*
-      Constants
-    */
-    const DISPLAY_TIME = 5000;
-    const STILL_CARD_DISPLAY_TIME = 8000; /* 10s for the final still card */
-    const SHOP_ITEM_DISPLAY_COUNT = 2;     /* show all shop items 5 times each */
-
-    // const DISPLAY_TIME = 5000;  
-    // const STILL_CARD_DISPLAY_TIME = 8000; /* 10s for the final still card */
-    // const SHOP_ITEM_DISPLAY_COUNT = 2;     /* show all shop items 5 times each */
-
-    /* logos */
-    const TWITCH_LOGO_URL = "https://gmrxbbhhyyrtmsftofdp.supabase.co/storage/v1/object/public/gentle-mates-assets/livedata-overlay/twitch-logo-twitch-icon-transparent-free-png.webp";
-    const YOUTUBE_LOGO_URL = "https://gmrxbbhhyyrtmsftofdp.supabase.co/storage/v1/object/public/gentle-mates-assets/livedata-overlay/Youtube_logo.png";
-    const YOUTUBE_LOGO_BLOCK_TITLE = "https://gmrxbbhhyyrtmsftofdp.supabase.co/storage/v1/object/public/gentle-mates-assets/livedata-overlay/Youtube_logo.png";
-    const APP_STORE_LOGO_URL = "https://gmrxbbhhyyrtmsftofdp.supabase.co/storage/v1/object/public/gentle-mates-assets/livedata-overlay/Logo_App_Store_d'Apple.png";   /* replace w/ real link */
-    const PLAY_STORE_LOGO_URL = "https://gmrxbbhhyyrtmsftofdp.supabase.co/storage/v1/object/public/gentle-mates-assets/livedata-overlay/google-play-store-logo-A9F117BED5-seeklogo.com.png"; /* replace w/ real link */
-    const M8_APP_LOGO_URL = "https://gmrxbbhhyyrtmsftofdp.supabase.co/storage/v1/object/public/gentle-mates-assets//ICONE-512.png"
-    const SHOP_ITEM_BACKGROUND = "https://gmrxbbhhyyrtmsftofdp.supabase.co/storage/v1/object/public/gentle-mates-assets//M8_Maillot2025_Banniere%20(1).png"
-
-    /*
-      Utility for formatting link
-    */
-    function parseLiveLink(link) {
-      if (!link) {
-        return { platformLogo: null, displayName: "" };
-      }
-      const lowerLink = link.toLowerCase();
-      if (lowerLink.includes("twitch.tv")) {
-        const splitted = lowerLink.split("twitch.tv/");
-        if (splitted.length > 1) {
-          let channelName = splitted[1].split("?")[0].split("/")[0];
-          channelName = channelName.toUpperCase();
-          return { platformLogo: TWITCH_LOGO_URL, displayName: channelName };
-        }
-        return { platformLogo: TWITCH_LOGO_URL, displayName: "TWITCH" };
-      }
-      if (lowerLink.includes("youtube.com")) {
-        const splitted = lowerLink.split("youtube.com/@");
-        if (splitted.length > 1) {
-          let channelName = splitted[1].split("?")[0].split("/")[0];
-          channelName = channelName.toUpperCase();
-          return { platformLogo: YOUTUBE_LOGO_URL, displayName: channelName };
-        }
-        return { platformLogo: YOUTUBE_LOGO_URL, displayName: "YOUTUBE" };
-      }
-      // fallback
-      return { platformLogo: null, displayName: link };
-    }
-
-    /*
-      Database fetch functions
-    */
-    async function fetchTeam(teamId) {
-      if (!teamId) return null;
-      const { data, error } = await supabase
-        .from('teams')
-        .select('id, name, white_logo_url')
-        .eq('id', teamId)
-        .single();
-      if (error || !data) {
-        console.error('Error or no data fetching team:', error);
-        return null;
-      }
-      return { id: data.id, name: data.name, logoUrl: data.white_logo_url };
-    }
-
-    async function fetchGame(gameId) {
-      if (!gameId) return null;
-      const { data, error } = await supabase
-        .from('games')
-        .select('id, name, colored_logo_url')
-        .eq('id', gameId)
-        .single();
-      if (error || !data) {
-        console.error('Error or no data fetching game:', error);
-        return null;
-      }
-      return { id: data.id, name: data.name, logoUrl: data.colored_logo_url };
-    }
-
-    async function fetchAllMatches() {
-      try {
-        const now = DateTime.utc().toISO();
-        const { data, error } = await supabase
-          .from('matches')
-          .select('*')
-          .gt('live_datetime', now)
-          // .eq('is_featured_match', true)
-          .order('live_datetime', { ascending: true })
-          .limit(7);
-        if (error) {
-          console.error('Error fetching matches:', error);
-          return [];
-        }
-        const matches = [];
-        for (let match of data) {
-          // fetch teams
-          const [teamA, teamABis, teamB, game] = await Promise.all([
-            fetchTeam(match.team_a_id),
-            fetchTeam(match.team_a_bis_id),
-            fetchTeam(match.team_b_id),
-            fetchGame(match.game_id),
-          ]);
-
-          // Format date/time in French w/ day of week, no year
-          // e.g. "Mercredi 5 Mars 20:00"
-          let customDate = DateTime.fromISO(match.live_datetime)
-            .setLocale('fr')
-            .toFormat("cccc d LLL HH:mm"); // e.g. "mercredi 5 mars 20:00"
-          // Optionally uppercase first letter
-          customDate = customDate.charAt(0).toUpperCase() + customDate.slice(1);
-
-          // Function to format date/time in French with dynamic day labels
-          function formatCustomDate(isoDate) {
-            const customDate = DateTime.fromISO(isoDate).setLocale('fr');
-            const today = DateTime.local().startOf('day');
-            const tomorrow = today.plus({ days: 1 });
-
-            let formattedDate;
-
-            if (customDate.hasSame(today, 'day')) {
-              formattedDate = `Aujourd'hui ${customDate.toFormat('HH:mm')}`;
-            } else if (customDate.hasSame(tomorrow, 'day')) {
-              formattedDate = `Demain ${customDate.toFormat('HH:mm')}`;
-            } else {
-              formattedDate = customDate.toFormat("cccc d LLL HH:mm");
-              formattedDate = formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
+    <script type="module">
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                // Import required libraries
+                const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm');
+                const { DateTime } = await import('https://cdn.jsdelivr.net/npm/luxon/+esm');
+                
+                // Supabase setup
+                const SUPABASE_URL = 'https://gmrxbbhhyyrtmsftofdp.supabase.co';
+                const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdtcnhiYmhoeXlydG1zZnRvZmRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDc0MDAxNTEsImV4cCI6MjAyMjk3NjE1MX0.JYVVlCII2iL97cevWvQi0Hlz0Gt_nZjonb9ApnNDscc';
+                const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                
+                // Fetch upcoming matches
+                async function fetchUpcomingMatches() {
+                    const now = new Date().toISOString();
+                    const { data, error } = await supabase
+                        .from('matches')
+                        .select('*')
+                        .gt('live_datetime', now)
+                        .order('live_datetime', { ascending: true })
+                        .limit(3);
+                    
+                    if (error) {
+                        console.error('Error fetching matches:', error);
+                        return [];
+                    }
+                    return data;
+                }
+                
+                // Fetch game by ID
+                async function fetchGameById(gameId) {
+                    const { data, error } = await supabase
+                        .from('games')
+                        .select('*')
+                        .eq('id', gameId)
+                        .single();
+                    
+                    if (error) {
+                        console.error(`Error fetching game with id ${gameId}:`, error);
+                        return null;
+                    }
+                    return data;
+                }
+                
+                // Fetch team by ID
+                async function fetchTeamById(teamId) {
+                    if (!teamId) return null;
+                    
+                    const { data, error } = await supabase
+                        .from('teams')
+                        .select('*')
+                        .eq('id', teamId)
+                        .single();
+                    
+                    if (error) {
+                        console.error(`Error fetching team with id ${teamId}:`, error);
+                        return null;
+                    }
+                    return data;
+                }
+                
+                // Fetch latest YouTube video
+                async function fetchLatestYoutubeVideo() {
+                    const { data, error } = await supabase
+                        .from('youtube_videos')
+                        .select('*')
+                        .order('post_date', { ascending: false })
+                        .limit(1)
+                        .single();
+                    
+                    if (error) {
+                        console.error('Error fetching latest youtube video:', error);
+                        return null;
+                    }
+                    return data;
+                }
+                
+                // Format date and time
+                function formatDateTime(dateTimeStr) {
+                    const dateObj = new Date(dateTimeStr);
+                    
+                    // Format the date in French with weekday, day, and month
+                    const dateOptions = { weekday: "long", day: "numeric", month: "long" };
+                    let formattedDate = dateObj.toLocaleDateString("fr-FR", dateOptions);
+                    
+                    // Capitalize each word
+                    formattedDate = formattedDate
+                        .split(" ")
+                        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                        .join(" ");
+                    
+                    // Format the time as HHHMM (e.g. "21H30")
+                    const hours = dateObj.getHours();
+                    const minutes = dateObj.getMinutes();
+                    const formattedTime = `${hours.toString().padStart(2, "0")}H${minutes
+                        .toString()
+                        .padStart(2, "0")}`;
+                    
+                    return { date: formattedDate, time: formattedTime };
+                }
+                
+                // Extract channel name from URL
+                function extractChannelName(url) {
+                    if (!url) return "";
+                    const regex = /^(?:https?:\/\/)?(?:www\.)?(?:twitch\.tv\/|youtube\.com\/@)([^\/?]+)/i;
+                    const match = url.match(regex);
+                    return match ? match[1].toUpperCase() : "";
+                }
+                
+                // Get platform logo URL
+                function getPlatformLogo(url) {
+                    if (!url) return "";
+                    
+                    const youtubeLogoURL = "https://gmrxbbhhyyrtmsftofdp.supabase.co/storage/v1/object/public/gentle-mates-assets//youtube_colored_logo.png";
+                    const twitchLogoURL = "https://gmrxbbhhyyrtmsftofdp.supabase.co/storage/v1/object/public/gentle-mates-assets//twitch_colored_logo.png";
+                    
+                    if (url.toLowerCase().includes("youtube")) {
+                        return youtubeLogoURL;
+                    } else if (url.toLowerCase().includes("twitch")) {
+                        return twitchLogoURL;
+                    }
+                    
+                    return "";
+                }
+                
+                // Create HTML for MatchCard
+                function createMatchCardHTML(match, game) {
+                    const { date, time } = formatDateTime(match.live_datetime);
+                    const platformLogo = getPlatformLogo(match.twitch_live_link);
+                    const channelName = extractChannelName(match.twitch_live_link);
+                    const gameLogoURL = game?.dark_logo_url || "";
+                    const gameColor = game?.secondary_color || "#F77514";
+                    
+                    return `
+                        <div id="matchCard-${match.id}" class="card matchCard">
+                            <div class="card-header" style="background-color: ${gameColor};">
+                                <img class="game-logo" src="${gameLogoURL}" alt="Game Logo">
+                                <div class="date-text">${date}</div>
+                            </div>
+                            <div class="card-body row">
+                                <div class="background-image"></div>
+                                <div class="match-name-container">
+                                    <div class="match-name">${match.name}</div>
+                                </div>
+                                <div class="info-container" style="background-color: ${gameColor};">
+                                    <div class="info-text">${time}</div>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <div class="live-logo-link">
+                                    <img class="platform-logo" src="${platformLogo}" alt="Platform Logo">
+                                    <div class="channel">${channelName}</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                // Create HTML for MatchCard2
+                function createMatchCard2HTML(match, game, teamA, teamB) {
+                    const { date, time } = formatDateTime(match.live_datetime);
+                    const platformLogo = getPlatformLogo(match.twitch_live_link);
+                    const channelName = extractChannelName(match.twitch_live_link);
+                    const gameLogoURL = game?.dark_logo_url || "";
+                    const gameColor = game?.secondary_color || "#EE0073";
+                    const teamAName = teamA?.name || "Team A";
+                    const teamBName = teamB?.name || "Team B";
+                    const teamALogoURL = teamA?.dark_logo_url || "";
+                    const teamBLogoURL = teamB?.dark_logo_url || "";
+                    
+                    return `
+                        <div id="matchCard2-${match.id}" class="card matchCard2">
+                            <div class="card-header" style="background-color: ${gameColor};">
+                                <img class="game-logo" src="${gameLogoURL}" alt="Game Logo">
+                                <div class="date-text">${date}</div>
+                            </div>
+                            <div class="card-body column">
+                                <div class="background-image"></div>
+                                <div class="body-container">
+                                    <div class="team-container">
+                                        <img class="team-logo" src="${teamALogoURL}" alt="${teamAName} Logo">
+                                        <div class="team-name">${teamAName}</div>
+                                    </div>
+                                    <div class="info-container" style="background-color: ${gameColor};">
+                                        <div class="info-text">${time}</div>
+                                    </div>
+                                    <div class="team-container">
+                                        <img class="team-logo" src="${teamBLogoURL}" alt="${teamBName} Logo">
+                                        <div class="team-name">${teamBName}</div>
+                                    </div>
+                                </div>
+                                <div class="match-name-container-small">
+                                    <div class="match-name-small">${match.name}</div>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <div class="live-logo-link">
+                                    <img class="platform-logo" src="${platformLogo}" alt="Platform Logo">
+                                    <div class="channel">${channelName}</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                // Create HTML for YoutubeCard
+                function createYoutubeCardHTML(videoData) {
+                    const youtubeId = videoData.youtube_id;
+                    const thumbnailUrl = `https://i.ytimg.com/vi/${youtubeId}/maxresdefault.jpg`;
+                    const title = videoData.title_fr;
+                    
+                    // Check if video is less than 3 days old
+                    const postDate = new Date(videoData.post_date);
+                    const threeDaysAgo = new Date();
+                    threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
+                    
+                    const newVideoText = postDate > threeDaysAgo ? "NOUVELLE VIDÉO" : "DERNIÈRE VIDÉO";
+                    
+                    return `
+                        <div id="youtubeCard" class="card">
+                            <div class="card-header">
+                                <div class="youtube-icon-container">
+                                    <svg width="64" height="64" viewBox="0 0 24 24" style="align-self: center;">
+                                        <path
+                                            fill="#B20000"
+                                            d="M8.051 1.999h.089c.822.003 4.987.033 6.11.335a2.01 2.01 0 0 1 1.415 1.42c.101.38.172.883.22 1.402l.01.104.022.26.008.104c.065.914.073 1.77.074 1.957v.075c-.001.194-.01 1.108-.082 2.06l-.008.105-.009.104c-.05.572-.124 1.14-.235 1.558a2.01 2.01 0 0 1-1.415 1.42c-1.16.312-5.569.334-6.18.335h-.142c-.309 0-1.587-.006-2.927-.052l-.17-.006-.087-.004-.171-.007-.171-.007c-1.11-.049-2.167-.128-2.654-.26a2.01 2.01 0 0 1-1.415-1.419c-.111-.417-.185-.986-.235-1.558L.09 9.82l-.008-.104A31 31 0 0 1 0 7.68v-.123c.002-.215.01-.958.064-1.778l.007-.103.003-.052.008-.104.022-.26.01-.104c.048-.519.119-1.023.22-1.402a2.01 2.01 0 0 1 1.415-1.42c.487-.13 1.544-.21 2.654-.26l.17-.007.172-.006.086-.003.171-.007A100 100 0 0 1 7.858 2zM6.4 5.209v4.818l4.157-2.408z"
+                                        />
+                                        <path fill="#FF0000" d="M6.4 5.209v4.818l4.157-2.408z" />
+                                    </svg>
+                                </div>
+                                <div class="youtube-text">YOUTUBE</div>
+                            </div>
+                            <div class="card-body row">
+                                <div class="background-image"></div>
+                                <div class="youtube-card-container">
+                                    <img class="youtube-thumbnail" src="${thumbnailUrl}" alt="YouTube Thumbnail">
+                                    <div class="youtube-title">${title}</div>
+                                </div>
+                                <div class="side-info">
+                                    <div class="channel-info">
+                                        <img class="m8-logo" src="https://gmrxbbhhyyrtmsftofdp.supabase.co/storage/v1/object/public/gentle-mates-assets/livedata-overlay/m8_logo.png" alt="M8 Logo">
+                                        <div class="channel-name">GENTLE MATES</div>
+                                    </div>
+                                    <div class="new-video">
+                                        <div class="new-video-text">${newVideoText}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                // Main function to load all cards
+                async function loadCards() {
+                    const container = document.querySelector('.carousel-container');
+                    const shopCard = document.getElementById('shopCard');
+                    const downloadTheAppCard = document.getElementById('downloadTheApp');
+                    const loadingIndicator = document.querySelector('.loading');
+                    
+                    try {
+                        // Fetch all necessary data
+                        const matches = await fetchUpcomingMatches();
+                        const latestVideo = await fetchLatestYoutubeVideo();
+                        
+                        // Process matches and create cards
+                        const matchCards = [];
+                        
+                        for (const match of matches) {
+                            const game = await fetchGameById(match.game_id);
+                            
+                            if (match.team_b_id === null) {
+                                // Create MatchCard (type 1)
+                                const matchCardHTML = createMatchCardHTML(match, game);
+                                matchCards.push(matchCardHTML);
+                            } else {
+                                // Create MatchCard2 (type 2)
+                                const teamA = await fetchTeamById(match.team_a_id);
+                                const teamB = await fetchTeamById(match.team_b_id);
+                                const matchCard2HTML = createMatchCard2HTML(match, game, teamA, teamB);
+                                matchCards.push(matchCard2HTML);
+                            }
+                        }
+                        
+                        // Create YouTube card
+                        let youtubeCardHTML = '';
+                        if (latestVideo) {
+                            youtubeCardHTML = createYoutubeCardHTML(latestVideo);
+                        }
+                        
+                        // Insert cards in container in the correct order
+                        shopCard.remove();
+                        downloadTheAppCard.remove();
+                        
+                        // Insert match cards and YouTube card
+                        container.innerHTML = matchCards.join('') + youtubeCardHTML;
+                        
+                        // Re-add shop card and download app card
+                        container.appendChild(shopCard);
+                        container.appendChild(downloadTheAppCard);
+                        
+                        // Set up carousel
+                        setupCarousel();
+                    } catch (error) {
+                        console.error('Error loading cards:', error);
+                    } finally {
+                        // Hide loading indicator
+                        loadingIndicator.style.display = 'none';
+                    }
+                }
+                
+                // Set up carousel functionality with improved fade transition
+                function setupCarousel() {
+                    const cards = document.querySelectorAll('.card');
+                    let currentCardIndex = 0;
+                    let previousCardIndex = null;
+                    
+                    // Set durations for each card (5 seconds for most, 10 for downloadTheApp)
+                    const durations = Array(cards.length).fill(5000);
+                    // Find the index of downloadTheApp card and set its duration to 10 seconds
+                    const downloadAppIndex = Array.from(cards).findIndex(card => card.id === 'downloadTheApp');
+                    if (downloadAppIndex !== -1) {
+                        durations[downloadAppIndex] = 10000;
+                    }
+                    
+                    // Show the first card initially
+                    cards[currentCardIndex].classList.add('active');
+                    
+                    // Function to show a specific card with improved fade transition
+                    function showCard(nextIndex) {
+                        // Mark the current card as previous before activating the next one
+                        // This ensures the z-index stacking keeps the current card visible until the next is fully visible
+                        if (previousCardIndex !== null) {
+                            cards[previousCardIndex].classList.remove('previous');
+                        }
+                        
+                        cards[currentCardIndex].classList.add('previous');
+                        cards[currentCardIndex].classList.remove('active');
+                        
+                        // Show the next card (this will fade it in on top of the previous)
+                        cards[nextIndex].classList.add('active');
+                        
+                        // After transition completes, update indices
+                        setTimeout(() => {
+                            previousCardIndex = currentCardIndex;
+                            currentCardIndex = nextIndex;
+                            
+                            // Optional: Reset previous cards that aren't the immediate previous
+                            cards.forEach((card, index) => {
+                                if (index !== currentCardIndex && index !== previousCardIndex) {
+                                    card.classList.remove('active', 'previous');
+                                }
+                            });
+                        }, 1000); // Same as the CSS transition duration
+                    }
+                    
+                    // Function to cycle through cards
+                    function nextCard() {
+                        const nextIndex = (currentCardIndex + 1) % cards.length;
+                        showCard(nextIndex);
+                        
+                        // Schedule the next transition based on the next card's duration
+                        setTimeout(nextCard, durations[nextIndex]);
+                    }
+                    
+                    // Start the carousel after the first card's duration
+                    setTimeout(nextCard, durations[0]);
+                }
+                
+                // Start loading cards
+                await loadCards();
+                
+            } catch (error) {
+                console.error('Initialization error:', error);
+                document.querySelector('.loading').textContent = 'Error loading carousel. Please refresh the page.';
             }
-
-            return formattedDate;
-          }
-
-          // Build leftTeamsText
-          let leftTeamsText = "?";
-          if (teamA || teamABis) {
-            const aName = teamA?.name || "?";
-            if (teamABis?.name) {
-              leftTeamsText = aName + " & " + teamABis.name;
-            } else {
-              leftTeamsText = aName;
-            }
-          }
-          let rightTeamText = teamB?.name || "?";
-
-          const { platformLogo, displayName } = parseLiveLink(match.twitch_live_link);
-
-          matches.push({
-            matchName: match.name || "",
-            teamA,
-            teamABis,
-            teamB,
-            game, // includes game.logoUrl
-            leftTeamsText,
-            rightTeamText,
-            dateStr: formatCustomDate(match.live_datetime),
-            link: match.twitch_live_link || "",
-            linkPlatformLogo: platformLogo,
-            linkPlatformName: displayName,
-          });
-        }
-        return matches;
-      } catch (err) {
-        console.error('Unexpected error fetching matches:', err);
-        return [];
-      }
-    }
-
-    async function fetchNews() {
-      try {
-        const { data, error } = await supabase
-          .from('news')
-          .select('*')
-          .eq('is_active', true)
-          .order('id', { ascending: false })
-          .limit(3);
-        if (error) {
-          console.error('Error fetching news:', error);
-          return [];
-        }
-        return data.map(n => ({
-          title: n.title || 'Aucun titre',
-          thumbnail: n.image_url || null
-        }));
-      } catch (err) {
-        console.error('Unexpected error fetching news:', err);
-        return [];
-      }
-    }
-
-    async function fetchVideos() {
-      try {
-        const { data, error } = await supabase
-          .from('youtube_videos')
-          .select('*')
-          .order('post_date', { ascending: false })
-          .limit(3);
-        if (error) {
-          console.error('Error fetching videos:', error);
-          return [];
-        }
-        return data.map(v => ({
-          videoTitle: v.title_fr || 'Aucun titre',
-          // videoDate: DateTime.fromISO(v.post_date).toLocaleString(DateTime.DATETIME_MED),
-          thumbnail: v.thumbnail_url || null
-        }));
-      } catch (err) {
-        console.error('Unexpected error fetching videos:', err);
-        return [];
-      }
-    }
-
-    async function fetchShopItems() {
-      try {
-        const { data, error } = await supabase
-          .from('shop_items')
-          .select('*')
-          .eq('is_featured', true)
-          .limit(3); // or any limit you want
-        if (error) {
-          console.error('Error fetching shop items:', error);
-          return [];
-        }
-        return data.map(s => ({
-          title: s.title || "Sans nom",
-          imageUrl: s.image_url || null
-        }));
-      } catch (err) {
-        console.error('Unexpected error fetching shop items:', err);
-        return [];
-      }
-    }
-
-    /*
-      We'll define 5 categories:
-
-      1) Matches  (was "Nos matchs à l'affiche" => keep same or rename)
-      2) News     (renamed to "News à lire sur l'App Gentle Mates" with app store + play store logos)
-      3) Videos   (renamed to "À voir sur la chaîne YouTube Gentle Mates" with YT logo on the left)
-      4) Shop     ("Dispo maintenant sur le shop Gentle Mates")
-      5) Final Still Card (no sub-items, just one big static message)
-    */
-    let categories = [
-      { key: "matches", title: "CINQUIEME TEST", items: [], cardElement: null },
-      { key: "news", title: "News à lire sur l'App Gentle Mates", items: [], cardElement: null },
-      { key: "videos", title: "/ Gentle Mates", items: [], cardElement: null },
-      { key: "shop", title: "gentlemates.com/shop", items: [], cardElement: null },
-      { key: "finalStill", title: "", items: [], cardElement: null }
-    ];
-
-    // For shop items, track how many loops we've done
-    let shopLoops = 0;
-    let MAX_SHOP_LOOPS = 1; // show them 5 times
-
-    // We'll store the "still card" timing
-    let finalStillTimeout = null;
-
-    async function init() {
-      const [matches, news, videos, shopItems] = await Promise.all([
-        fetchAllMatches(),
-        fetchNews(),
-        fetchVideos(),
-        fetchShopItems(),
-      ]);
-
-      // Assign each to the right category
-      categories.find(c => c.key==="matches").items = matches;
-      categories.find(c => c.key==="news").items = news;
-      categories.find(c => c.key==="videos").items = videos;
-      categories.find(c => c.key==="shop").items = shopItems;
-      // finalStill has no items
-
-      buildCategoryCards();
-      startCycle();
-    }
-
-    init();
-
-    function buildCategoryCards() {
-      const stack = document.getElementById('category-stack');
-      stack.innerHTML = '';
-
-      categories.forEach(cat => {
-        const card = document.createElement('div');
-        card.classList.add('category-card');
-        cat.cardElement = card;
-
-        const gradientDiv = document.createElement('div');
-        gradientDiv.classList.add('gradient-container');
-
-        // Special cases for block title:
-        let blockTitleContainer = document.createElement('div');
-        blockTitleContainer.classList.add('block-title-container');
-
-        let blockTitleLogoLeft = null;
-        let blockTitleLogoRight = null;
-
-        let blockTitle = document.createElement('h1');
-        blockTitle.classList.add('block-title');
-        blockTitle.textContent = cat.title;
-
-        // Distinguish categories
-        if (cat.key === "news") {
-          // "News à lire sur l'App Gentle Mates"
-          // small App Store + Play Store logos on the right
-          // We'll append them after the <h1>
-          blockTitleContainer.appendChild(blockTitle);
-          // right side logos
-          let m8AppLogo = document.createElement('img');
-          m8AppLogo.classList.add('block-title-logo-1');
-          m8AppLogo.src = M8_APP_LOGO_URL;
-          blockTitleContainer.appendChild(m8AppLogo);
-
-          let appStoreLogo = document.createElement('img');
-          appStoreLogo.classList.add('block-title-logo-2');
-          appStoreLogo.src = APP_STORE_LOGO_URL;
-          blockTitleContainer.appendChild(appStoreLogo);
-
-          let playStoreLogo = document.createElement('img');
-          playStoreLogo.classList.add('block-title-logo-3');
-          playStoreLogo.src = PLAY_STORE_LOGO_URL;
-          blockTitleContainer.appendChild(playStoreLogo);
-
-        } else if (cat.key === "videos") {
-          // "À voir sur la chaîne YouTube Gentle Mates"
-          // YT logo on the left, bigger
-          let ytLogo = document.createElement('img');
-          ytLogo.classList.add('block-title-logo-left');
-          ytLogo.src = YOUTUBE_LOGO_BLOCK_TITLE; // bigger/different from match item
-          blockTitleContainer.appendChild(ytLogo);
-
-          blockTitleContainer.appendChild(blockTitle);
-
-        } else if (cat.key === "finalStill") {
-          // no block title, so skip
-        } else {
-          // default
-          blockTitleContainer.appendChild(blockTitle);
-        }
-
-        // Append blockTitleContainer if we have a title
-        if (cat.key !== "finalStill") {
-          gradientDiv.appendChild(blockTitleContainer);
-        }
-
-        // Now build the main content
-        if (cat.key === "finalStill") {
-          // Just a single still card
-          let stillCard = document.createElement('div');
-          stillCard.classList.add('still-card-container');
-
-          let textElt = document.createElement('div');
-          textElt.classList.add('still-card-text');
-          textElt.textContent = "Téléchargez l'Application officielle Gentle Mates";
-          stillCard.appendChild(textElt);
-
-          let logosRow = document.createElement('div');
-          logosRow.classList.add('store-logos-row');
-
-          let m8App = document.createElement('img');
-          m8App.classList.add('m8-app-logo');
-          m8App.src = M8_APP_LOGO_URL;
-          logosRow.appendChild(m8App);
-
-          let appStore = document.createElement('img');
-          appStore.classList.add('app-store-logo');
-          appStore.src = APP_STORE_LOGO_URL;
-          logosRow.appendChild(appStore);
-
-          let playStore = document.createElement('img');
-          playStore.classList.add('play-store-logo');
-          playStore.src = PLAY_STORE_LOGO_URL;
-          logosRow.appendChild(playStore);
-
-          stillCard.appendChild(logosRow);
-
-          gradientDiv.appendChild(stillCard);
-
-        } else if (cat.key === "shop") {
-          // "Dispo maintenant sur le shop Gentle Mates"
-          // Instead of items that turn one by one, we want a horizontally
-          // scrolling set of squares for each shop item
-          let carouselContainer = document.createElement('div');
-          carouselContainer.classList.add('carousel-container');
-
-          let slideWrapper = document.createElement('div');
-          slideWrapper.classList.add('slide-wrapper');
-
-          // Build shop item squares
-          cat.items.forEach(it => {
-            let slideItem = document.createElement('div');
-            slideItem.classList.add('slide-item');
-
-            // inside: a "shop-item" container
-            let shopItemDiv = document.createElement('div');
-            shopItemDiv.classList.add('shop-item');
-
-            if (it.imageUrl) {
-              let img = document.createElement('img');
-              img.src = it.imageUrl;
-              shopItemDiv.appendChild(img);
-            }
-            // product title
-            let titleElt = document.createElement('div');
-            titleElt.classList.add('shop-item-title');
-            titleElt.textContent = it.title;
-            shopItemDiv.appendChild(titleElt);
-
-            slideItem.appendChild(shopItemDiv);
-            slideWrapper.appendChild(slideItem);
-          });
-
-          carouselContainer.appendChild(slideWrapper);
-          gradientDiv.appendChild(carouselContainer);
-
-          cat.slideWrapper = slideWrapper; // so we can animate it
-          cat.currentLoop = 0; // track how many loops we've done
-          cat.currentItemIndex = 0;
-
-        } else if (cat.key === "videos") {
-          // "À voir sur la chaîne YouTube Gentle Mates"
-          // We separate the title from the date
-          let carouselContainer = document.createElement('div');
-          carouselContainer.classList.add('carousel-container');
-          let slideWrapper = document.createElement('div');
-          slideWrapper.classList.add('slide-wrapper');
-
-          cat.items.forEach(video => {
-            let slideItem = document.createElement('div');
-            slideItem.classList.add('slide-item');
-
-            let container = document.createElement('div');
-            container.classList.add('title-container');
-            
-            // background overlay
-            let overlay = document.createElement('div');
-            overlay.classList.add('title-container-background');
-            container.appendChild(overlay);
-
-            // If there's a thumbnail
-            if (video.thumbnail) {
-              let thumb = document.createElement('img');
-              thumb.classList.add('thumbnail-video');
-              thumb.src = video.thumbnail;
-              container.appendChild(thumb);
-            }
-
-            // Title
-            let titleElt = document.createElement('h2');
-            titleElt.classList.add('video-title');
-            titleElt.textContent = video.videoTitle;
-            container.appendChild(titleElt);
-
-            slideItem.appendChild(container);
-            slideWrapper.appendChild(slideItem);
-          });
-
-          carouselContainer.appendChild(slideWrapper);
-          gradientDiv.appendChild(carouselContainer);
-          cat.slideWrapper = slideWrapper;
-          cat.currentItemIndex = 0;
-
-        } else if (cat.key === "news") {
-          // "News à lire sur l'App Gentle Mates"
-          let carouselContainer = document.createElement('div');
-          carouselContainer.classList.add('carousel-container');
-          let slideWrapper = document.createElement('div');
-          slideWrapper.classList.add('slide-wrapper');
-
-          cat.items.forEach(newsItem => {
-            let slideItem = document.createElement('div');
-            slideItem.classList.add('slide-item');
-
-            if (newsItem.thumbnail) {
-              const img = document.createElement('img');
-              img.classList.add('thumbnail-square');
-              img.src = newsItem.thumbnail;
-              slideItem.appendChild(img);
-            }
-
-            let titleContainer = document.createElement('div');
-            titleContainer.classList.add('title-container');
-
-            let overlayBg = document.createElement('div');
-            overlayBg.classList.add('title-container-background');
-
-            let newsTitle = document.createElement('h2');
-            newsTitle.classList.add('news-title');
-            newsTitle.textContent = newsItem.title;
-
-            titleContainer.appendChild(overlayBg);
-            titleContainer.appendChild(newsTitle);
-            slideItem.appendChild(titleContainer);
-
-            slideWrapper.appendChild(slideItem);
-          });
-
-          carouselContainer.appendChild(slideWrapper);
-          gradientDiv.appendChild(carouselContainer);
-          cat.slideWrapper = slideWrapper;
-          cat.currentItemIndex = 0;
-
-        } else {
-          // "matches"
-          let carouselContainer = document.createElement('div');
-          carouselContainer.classList.add('carousel-container');
-          let slideWrapper = document.createElement('div');
-          slideWrapper.classList.add('slide-wrapper');
-
-          cat.items.forEach(item => {
-            let slideItem = document.createElement('div');
-            slideItem.classList.add('slide-item');
-
-            // top-level container
-            let matchContainer = document.createElement('div');
-            matchContainer.classList.add('match-card-container');
-
-            // background overlay
-            let overlayBg = document.createElement('div');
-            overlayBg.classList.add('title-container-match-background');
-            matchContainer.appendChild(overlayBg);
-
-            // top row: game logo + date
-            let topRow = document.createElement('div');
-            topRow.classList.add('match-top-row');
-
-            // game logo
-            if (item.game && item.game.logoUrl) {
-              let gameImg = document.createElement('img');
-              gameImg.classList.add('game-logo');
-              gameImg.src = item.game.logoUrl;
-              topRow.appendChild(gameImg);
-            }
-            // date
-            let dateSpan = document.createElement('div');
-            dateSpan.classList.add('match-date');
-            dateSpan.textContent = item.dateStr;
-            topRow.appendChild(dateSpan);
-
-            matchContainer.appendChild(topRow);
-
-            let bottomRow = document.createElement('div');
-            bottomRow.classList.add('match-bottom-row');
-            
-            if (item.teamA && item.teamA.logoUrl) {
-              let teamALogo = document.createElement('img');
-              teamALogo.classList.add('logo-img');
-              teamALogo.src = item.teamA.logoUrl;
-              bottomRow.appendChild(teamALogo);
-            }
-
-            if (item.teamABis && item.teamABis.logoUrl) {
-              let teamABisLogo = document.createElement('img');
-              teamABisLogo.classList.add('logo-img');
-              teamABisLogo.src = item.teamABis.logoUrl;
-              bottomRow.appendChild(teamABisLogo);
-            }
-
-            // teams row
-            let centerCol = document.createElement('div');
-            centerCol.classList.add('match-card-center');
-
-            // Teams row
-            let teamsRow = document.createElement('div');
-            teamsRow.classList.add('teams-row');
-
-            let leftTeamSpan = document.createElement('span');
-            leftTeamSpan.classList.add('team-name');
-            leftTeamSpan.textContent = item.leftTeamsText;
-            let vsSpan = document.createElement('span');
-            vsSpan.classList.add('versus-text');
-            vsSpan.textContent = "VS";
-            let rightTeamSpan = document.createElement('span');
-            rightTeamSpan.classList.add('team-name');
-            rightTeamSpan.textContent = item.rightTeamText;
-            teamsRow.appendChild(leftTeamSpan);
-            teamsRow.appendChild(vsSpan);
-            teamsRow.appendChild(rightTeamSpan);
-
-            // match name
-            let matchNameDiv = document.createElement('div');
-            matchNameDiv.classList.add('match-name');
-            matchNameDiv.textContent = item.matchName;
-
-            // date + link line => we'll treat the link as the "platform"
-            let dateLink = document.createElement('div');
-            dateLink.classList.add('match-details-date-link');
-
-            // we only show link platform if any
-            if (item.linkPlatformLogo) {
-              let platformImg = document.createElement('img');
-              platformImg.classList.add('platform-logo');
-              platformImg.src = item.linkPlatformLogo;
-              dateLink.appendChild(platformImg);
-
-              let nameSpan = document.createElement('span');
-              nameSpan.textContent = item.linkPlatformName;
-              dateLink.appendChild(nameSpan);
-            } else if (item.linkPlatformName) {
-              let fallback = document.createElement('span');
-              fallback.textContent = item.linkPlatformName;
-              dateLink.appendChild(fallback);
-            }
-
-            centerCol.appendChild(teamsRow);
-            centerCol.appendChild(matchNameDiv);
-            centerCol.appendChild(dateLink);
-
-            bottomRow.appendChild(centerCol);
-
-            if (item.teamB && item.teamB.logoUrl) {
-              let teamBLogo = document.createElement('img');
-              teamBLogo.classList.add('logo-img');
-              teamBLogo.src = item.teamB.logoUrl;
-              bottomRow.appendChild(teamBLogo);
-            } else {
-              let placeholder = document.createElement('div');
-              placeholder.classList.add('logo-placeholder');
-              placeholder.textContent = "?";
-              bottomRow.appendChild(placeholder);
-            }
-
-            matchContainer.appendChild(bottomRow);
-            slideItem.appendChild(matchContainer);
-            slideWrapper.appendChild(slideItem);
-          });
-
-          carouselContainer.appendChild(slideWrapper);
-          gradientDiv.appendChild(carouselContainer);
-          cat.slideWrapper = slideWrapper;
-          cat.currentItemIndex = 0;
-        }
-
-        card.appendChild(gradientDiv);
-        stack.appendChild(card);
-      });
-    }
-
-    /* 
-      Cycle logic: we iterate over categories. 
-      Each category either has a standard "carousel" approach or custom logic 
-      (like shop items or final still card).
-    */
-    let currentCategoryIndex = 0; 
-    let standardTimer = null;
-
-    function startCycle() {
-      showCategoryCard(0);
-      scheduleNextItem();
-    }
-
-    function showCategoryCard(index) {
-      categories.forEach((cat, i) => {
-        if (i === index) {
-          cat.cardElement.classList.add('active');
-        } else {
-          cat.cardElement.classList.remove('active');
-        }
-      });
-    }
-
-    function scheduleNextItem() {
-      let cat = categories[currentCategoryIndex];
-      // handle finalStill category differently
-      if (cat.key === "finalStill") {
-        // no sub-items, just a single still
-        standardTimer = setTimeout(() => {
-          moveToNextCategory(true); // jump to first
-        }, STILL_CARD_DISPLAY_TIME);
-        return;
-      }
-
-      // handle shop category differently
-      if (cat.key === "shop") {
-        // We'll do a custom horizontal infinite scroll
-        // skip after 5 loops
-        doShopScrolling(cat);
-        return;
-      }
-
-      // otherwise, standard approach
-      if (!cat.items || cat.items.length === 0) {
-        moveToNextCategory(false);
-        return;
-      }
-
-      standardTimer = setTimeout(() => {
-        if (cat.currentItemIndex < cat.items.length - 1) {
-          cat.currentItemIndex++;
-          updateSlidePosition(cat);
-          scheduleNextItem();
-        } else {
-          moveToNextCategory(false);
-        }
-      }, DISPLAY_TIME);
-    }
-
-    function updateSlidePosition(cat) {
-      let offset = -1 * cat.currentItemIndex * 100;
-      cat.slideWrapper.style.transform = `translateX(${offset}%)`;
-    }
-
-    function moveToNextCategory(goFirst=false) {
-      clearTimeout(standardTimer);
-      let cat = categories[currentCategoryIndex];
-      cat.currentItemIndex = 0;
-      if (cat.slideWrapper) {
-        updateSlidePosition(cat);
-      }
-
-      if (goFirst) {
-        // jump back to first category
-        currentCategoryIndex = 0;
-      } else {
-        currentCategoryIndex++;
-        if (currentCategoryIndex >= categories.length) {
-          currentCategoryIndex = 0; 
-        }
-      }
-      showCategoryCard(currentCategoryIndex);
-      scheduleNextItem();
-    }
-
-    /* SHOP ITEM SCROLLING & LOOP */
-    function doShopScrolling(cat) {
-      if (!cat.items || cat.items.length === 0) {
-        moveToNextCategory(false);
-        return;
-      }
-      // We'll treat cat.currentItemIndex the same way, 
-      // but we want to do a continuous loop of items up to 5 times
-      standardTimer = setTimeout(() => {
-        if (cat.currentItemIndex < cat.items.length - 1) {
-          cat.currentItemIndex++;
-          updateSlidePosition(cat);
-          doShopScrolling(cat);
-        } else {
-          // one loop done
-          cat.currentItemIndex = 0;
-          updateSlidePosition(cat);
-          cat.currentLoop = (cat.currentLoop||0)+1;
-          if (cat.currentLoop < SHOP_ITEM_DISPLAY_COUNT) {
-            // do another loop
-            doShopScrolling(cat);
-          } else {
-            // done with 5 loops
-            cat.currentLoop = 0;
-            moveToNextCategory(false);
-          }
-        }
-      }, DISPLAY_TIME);
-    }
-
-  </script>
+        });
+    </script>
 </body>
 </html>
