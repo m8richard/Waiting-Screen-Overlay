@@ -940,11 +940,11 @@
                     let previousCardIndex = null;
                     
                     // Set durations for each card (5 seconds for most, 10 for downloadTheApp)
-                    const durations = Array(cards.length).fill(5000);
+                    const durations = Array(cards.length).fill(10000);
                     // Find the index of downloadTheApp card and set its duration to 10 seconds
                     const downloadAppIndex = Array.from(cards).findIndex(card => card.id === 'downloadTheApp');
                     if (downloadAppIndex !== -1) {
-                        durations[downloadAppIndex] = 10000;
+                        durations[downloadAppIndex] = 15000;
                     }
                     
                     // Show the first card initially
