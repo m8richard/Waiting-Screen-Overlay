@@ -701,28 +701,49 @@
                 }
                 
                 // Format date and time
-                function formatDateTime(dateTimeStr) {
-                    const dateObj = new Date(dateTimeStr);
-                    
-                    // Format the date in French with weekday, day, and month
-                    const dateOptions = { weekday: "long", day: "numeric", month: "long" };
-                    let formattedDate = dateObj.toLocaleDateString("fr-FR", dateOptions);
-                    
-                    // Capitalize each word
-                    formattedDate = formattedDate
-                        .split(" ")
-                        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-                        .join(" ");
-                    
-                    // Format the time as HHHMM (e.g. "21H30")
-                    const hours = dateObj.getHours();
-                    const minutes = dateObj.getMinutes();
-                    const formattedTime = `${hours.toString().padStart(2, "0")}H${minutes
-                        .toString()
-                        .padStart(2, "0")}`;
-                    
-                    return { date: formattedDate, time: formattedTime };
-                }
+function formatDateTime(dateTimeStr) {
+    const dateObj = new Date(dateTimeStr);
+    const now = new Date();
+    
+    // Check if date is today
+    const isToday = dateObj.getDate() === now.getDate() &&
+                    dateObj.getMonth() === now.getMonth() &&
+                    dateObj.getFullYear() === now.getFullYear();
+    
+    // Check if date is tomorrow
+    const tomorrow = new Date(now);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const isTomorrow = dateObj.getDate() === tomorrow.getDate() &&
+                       dateObj.getMonth() === tomorrow.getMonth() &&
+                       dateObj.getFullYear() === tomorrow.getFullYear();
+    
+    let formattedDate;
+    
+    if (isToday) {
+        formattedDate = "Aujourd'hui";
+    } else if (isTomorrow) {
+        formattedDate = "Demain";
+    } else {
+        // Original format for other dates: weekday, day, and month in French
+        const dateOptions = { weekday: "long", day: "numeric", month: "long" };
+        formattedDate = dateObj.toLocaleDateString("fr-FR", dateOptions);
+        
+        // Capitalize each word
+        formattedDate = formattedDate
+            .split(" ")
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(" ");
+    }
+    
+    // Format the time as HHHMM (e.g. "21H30")
+    const hours = dateObj.getHours();
+    const minutes = dateObj.getMinutes();
+    const formattedTime = `${hours.toString().padStart(2, "0")}H${minutes
+        .toString()
+        .padStart(2, "0")}`;
+    
+    return { date: formattedDate, time: formattedTime };
+}
                 
                 // Extract channel name from URL
                 function extractChannelName(url) {
