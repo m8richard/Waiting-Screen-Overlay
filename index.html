@@ -87,7 +87,7 @@
     }
 
     .card-header {
-      height: 90px; /* Fixed height for all headers */
+      height: 120px; /* Fixed height for all headers */
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -97,14 +97,14 @@
     .header-text {
       color: #973a6e;
       font-family: 'HelveticaBoldExtended', sans-serif;
-      font-size: 48px;
+      font-size: 64px;
       text-align: center;
     }
 
     .date-text {
       color: #2D2D2D;
       font-family: 'HelveticaNeue-Bold', sans-serif;
-      font-size: 48px;
+      font-size: 64px;
     }
 
     .card-body {
@@ -116,6 +116,8 @@
 
     .card-body.row {
       flex-direction: row;
+      align-items: center;
+      justify-content: center;
     }
 
     .card-body.column {
@@ -136,7 +138,7 @@
     }
 
     .card-footer {
-      height: 90px; /* Fixed height for all footers */
+      height: 120px; /* Fixed height for all footers */
       background-color: #FCFCFC;
       display: flex;
       justify-content: center;
@@ -150,25 +152,25 @@
       flex: 1;
       align-items: center;
       justify-content: center;
-      gap: 16px;
+      gap: 40px;
     }
 
     .profile-picture {
-      height: 48px;
+      height: 80px;
       width: auto;
       border-radius: 8px;
       display: none;
     }
 
     .platform-logo {
-      height: 48px;
+      height: 80px;
       width: auto;
     }
 
     .channel {
       color: #2D2D2D;
       font-family: 'HelveticaBoldExtended', sans-serif;
-      font-size: 48px;
+      font-size: 80px;
       text-align: center;
     }
 
@@ -179,18 +181,18 @@
     }
 
     .matchCard .card-body {
-      justify-content: center; /* Center vertically */
-      align-items: center; /* Center horizontally */
+      justify-content: space-around;
+      align-items: center;
     }
 
     .game-logo {
-      width: 200px;
-      height: 60px;
+      width: 240px;
+      height: 72px;
     }
 
     .match-name-container {
       height: auto;
-      width: 800px;
+      max-width: 720px;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -205,8 +207,8 @@
     }
 
     .info-container {
-      height: 224px;
-      width: 352px;
+      height: 200px;
+      width: 320px;
       border-radius: 40px;
       display: flex;
       justify-content: center;
@@ -220,7 +222,7 @@
     .info-text {
       color: #2D2D2D;
       font-family: 'TuskerGrotesk', sans-serif;
-      font-size: 112px;
+      font-size: 96px;
       text-align: center;
     }
 
@@ -249,8 +251,9 @@
     }
 
     .team-logo {
-      height: 240px;
-      width: 240px;
+      height: 176px;
+      width: 176px;
+      margin-top: 16px;
       margin-bottom: 24px;
       object-fit: contain;
     }
@@ -269,7 +272,7 @@
       justify-content: center;
       align-items: center;
       padding: 0 48px;
-      margin-top: 24px;
+      margin-top: 8px;
     }
 
     .match-name-small {
@@ -290,13 +293,13 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      padding-top: 26px;
+      padding-top: 36px;
     }
 
     .youtube-text {
       color: #B20000;
       font-family: 'HelveticaBoldExtended', sans-serif;
-      font-size: 48px;
+      font-size: 64px;
       text-align: center;
     }
 
@@ -310,18 +313,18 @@
     }
 
     .youtube-thumbnail {
-      width: 736px;
-      height: 414px;
+      width: 662px;
+      height: 373px;
       border-radius: 16px;
       object-fit: cover;
     }
 
     .youtube-title {
-      width: 736px;
+      width: 700px;
       color: #232323;
       font-family: 'HelveticaBoldExtended', sans-serif;
       font-size: 32px;
-      line-height: 36px;
+      line-height: 34px;
       text-align: center;
       padding-top: 4px;
     }
@@ -359,15 +362,15 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      padding: 24px 0;
+      padding: 16px 0;
     }
 
     .new-video-text {
       color: #232323;
       font-family: 'TuskerGrotesk', sans-serif;
       letter-spacing: 2px;
-      font-size: 104px;
-      line-height: 120px;
+      font-size: 88px;
+      line-height: 96px;
       text-align: center;
     }
 
@@ -871,7 +874,7 @@
         <div id="youtubeCard" class="card">
           <div class="card-header">
             <div class="youtube-icon-container">
-              <svg width="64" height="64" viewBox="0 0 24 24" style="align-self: center;">
+              <svg width="80" height="80" viewBox="0 0 24 24" style="align-self: center;">
                 <path
                   fill="#B20000"
                   d="M8.051 1.999h.089c.822.003 4.987.033 6.11.335a2.01 2.01 0 0 1 1.415 1.42c.101.38.172.883.22 1.402l.01.104.022.26.008.104c.065.914.073 1.77.074 1.957v.075c-.001.194-.01 1.108-.082 2.06l-.008.105-.009.104c-.05.572-.124 1.14-.235 1.558a2.01 2.01 0 0 1-1.415 1.42c-1.16.312-5.569.334-6.18.335h-.142c-.309 0-1.587-.006-2.927-.052l-.17-.006-.087-.004-.171-.007-.171-.007c-1.11-.049-2.167-.128-2.654-.26a2.01 2.01 0 0 1-1.415-1.419c-.111-.417-.185-.986-.235-1.558L.09 9.82l-.008-.104A31 31 0 0 1 0 7.68v-.123c.002-.215.01-.958.064-1.778l.007-.103.003-.052.008-.104.022-.26.01-.104c.048-.519.119-1.023.22-1.402a2.01 2.01 0 0 1 1.415-1.42c.487-.13 1.544-.21 2.654-.26l.17-.007.172-.006.086-.003.171-.007A100 100 0 0 1 7.858 2zM6.4 5.209v4.818l4.157-2.408z"
