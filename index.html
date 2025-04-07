@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Gentle Mates Cards Carousel</title>
   <style>
+    /* ----------------- FONT DEFINITIONS ----------------- */
     @font-face {
       font-family: 'HelveticaNeue';
       src: local('HelveticaNeue'), local('Helvetica Neue');
@@ -36,6 +37,7 @@
       font-style: normal;
     }
 
+    /* ----------------- GLOBAL STYLES ----------------- */
     * {
       margin: 0;
       padding: 0;
@@ -59,7 +61,7 @@
       border-radius: 40px;
       overflow: hidden;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-      background-color: #FFFFFF; /* Background color to prevent seeing through */
+      background-color: #FFFFFF;
     }
 
     .card {
@@ -86,8 +88,9 @@
       z-index: 2;
     }
 
+    /* ----------------- HEADER & FOOTER ----------------- */
     .card-header {
-      height: 120px; /* Fixed height for all headers */
+      height: 120px; /* Fixed header height */
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -107,8 +110,45 @@
       font-size: 64px;
     }
 
+    .card-footer {
+      height: 120px; /* Fixed footer height */
+      background-color: #FCFCFC;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.1);
+    }
+
+    .live-logo-link {
+      display: flex;
+      flex: 1;
+      align-items: center;
+      justify-content: center;
+      gap: 40px;
+    }
+
+    .profile-picture {
+      height: 80px;
+      width: auto;
+      border-radius: 8px;
+      display: none;
+    }
+
+    .platform-logo {
+      height: 80px;
+      width: auto;
+    }
+
+    .channel {
+      color: #2D2D2D;
+      font-family: 'HelveticaBoldExtended', sans-serif;
+      font-size: 80px;
+      text-align: center;
+    }
+
+    /* ----------------- CARD BODY ----------------- */
     .card-body {
-      flex: 1; /* Take remaining space */
+      flex: 1;
       position: relative;
       display: flex;
       padding: 24px 16px;
@@ -137,44 +177,7 @@
       background-size: cover;
     }
 
-    .card-footer {
-      height: 120px; /* Fixed height for all footers */
-      background-color: #FCFCFC;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.1);
-    }
-
-    /* Footer element for live logo link */
-    .live-logo-link {
-      display: flex;
-      flex: 1;
-      align-items: center;
-      justify-content: center;
-      gap: 40px;
-    }
-
-    .profile-picture {
-      height: 80px;
-      width: auto;
-      border-radius: 8px;
-      display: none;
-    }
-
-    .platform-logo {
-      height: 80px;
-      width: auto;
-    }
-
-    .channel {
-      color: #2D2D2D;
-      font-family: 'HelveticaBoldExtended', sans-serif;
-      font-size: 80px;
-      text-align: center;
-    }
-
-    /* MatchCard Specific */
+    /* ----------------- MATCHCARD STYLES ----------------- */
     .matchCard .card-header {
       background-color: #F77514;
       justify-content: space-between;
@@ -226,7 +229,7 @@
       text-align: center;
     }
 
-    /* MatchCard2 Specific */
+    /* ----------------- MATCHCARD2 STYLES ----------------- */
     .matchCard2 .card-header {
       background-color: #EE0073;
       justify-content: space-between;
@@ -282,7 +285,7 @@
       text-align: center;
     }
 
-    /* YoutubeCard Specific */
+    /* ----------------- YOUTUBE CARD STYLES ----------------- */
     #youtubeCard .card-header {
       background-color: #FF0000;
       justify-content: center;
@@ -374,7 +377,7 @@
       text-align: center;
     }
 
-    /* ShopCard Specific */
+    /* ----------------- SHOP CARD STYLES ----------------- */
     #shopCard .card-header {
       background-color: #fc61b7;
       justify-content: center;
@@ -433,10 +436,10 @@
       font-weight: 900;
       font-size: 32px;
       text-align: center;
-      white-space: nowrap; /* Prevent text from wrapping */
-      overflow: hidden; /* Hide overflow */
-      width: 100%; /* Take full width of container */
-      display: block; /* Block element */
+      white-space: nowrap;
+      overflow: hidden;
+      width: 100%;
+      display: block;
     }
 
     .merch-text {
@@ -448,7 +451,7 @@
       text-align: center;
     }
 
-    /* DownloadTheApp Specific */
+    /* ----------------- DOWNLOAD THE APP CARD STYLES ----------------- */
     #downloadTheApp {
       background: #EDEDED;
       display: flex;
@@ -457,7 +460,7 @@
     }
 
     #downloadTheApp .card-body {
-      height: 633px; /* Full card height since no header/footer */
+      height: 633px;
     }
 
     .phone-animation-container {
@@ -506,7 +509,7 @@
       border: 8px solid #D6D2D3;
     }
 
-    /* Phone Animation */
+    /* ----------------- PHONE ANIMATION ----------------- */
     .phone {
       position: relative;
       width: 280px;
@@ -556,7 +559,7 @@
       object-fit: cover;
     }
 
-    /* Loading indicator */
+    /* ----------------- LOADING INDICATOR ----------------- */
     .loading {
       position: absolute;
       top: 0;
@@ -585,8 +588,15 @@
       to { transform: rotate(360deg); }
     }
 
-    /* Sequential Animation Styles */
-    /* MatchCard and MatchCard2 */
+    /* ----------------- SEQUENTIAL ANIMATION STYLES -----------------
+         Change the CSS transition durations below (these values control how quickly each element fades in)
+         and modify the delays in the JS functions to adjust the pause between each element's animation.
+         (They are currently set based on the following:
+            - MatchCard/MatchCard2 elements: transition 2.5s → now 0.83s (2.5/3)
+            - YouTube thumbnail: 2.5s → now 0.83s; YouTube title/side-info: 1.5s → now 0.5s;
+            - ShopCard shop-items: 2s → now 0.67s; ShopCard side-info: 1.5s → now 0.5s;
+            - DownloadTheApp phone: 2s → now 0.67s; DownloadTheApp promo texts: 1.5s → now 0.5s.)
+    */
     .matchCard .game-logo, 
     .matchCard .date-text,
     .matchCard .info-container,
@@ -600,71 +610,44 @@
     .matchCard2 .live-logo-link {
       opacity: 0;
       transform: translateY(20px);
-      transition: opacity 2.5s ease, transform 2.5s ease;
+      transition: opacity 0.83s ease, transform 0.83s ease;
     }
-
-    /* Special case for team containers to appear together */
-    .matchCard2 .team-container:nth-of-type(2) {
-      transition-delay: 0.2s;
-    }
-
-    /* YouTubeCard Animation */
     #youtubeCard .youtube-thumbnail {
       opacity: 0;
       transform: scale(1.3);
-      transition: opacity 2.5s ease, transform 2.5s ease;
+      transition: opacity 0.83s ease, transform 0.83s ease;
     }
-
     #youtubeCard .youtube-title {
       opacity: 0;
       transform: translateY(20px);
-      transition: opacity 1.5s ease, transform 1.5s ease;
+      transition: opacity 0.5s ease, transform 0.5s ease;
     }
-
     #youtubeCard .side-info {
       opacity: 0;
       transform: translateX(30px);
-      transition: opacity 1.5s ease, transform 1.5s ease;
+      transition: opacity 0.5s ease, transform 0.5s ease;
     }
-
-    /* ShopCard Animation */
     #shopCard .shop-item {
       opacity: 0;
       transform: translate(-50%, -50%) scale(1.3);
-      transition: opacity 2s ease, transform 2s ease;
+      transition: opacity 0.67s ease, transform 0.67s ease;
     }
-
-    #shopCard .shop-item-1 {
-      transform: translate(-280px, -280px) scale(1.3);
-    }
-
-    #shopCard .shop-item-2 {
-      transform: translate(-400px, -280px) scale(1.3);
-    }
-
-    #shopCard .shop-item-3 {
-      transform: translate(-90px, -280px) scale(1.3);
-    }
-
     #shopCard .side-info {
       opacity: 0;
       transform: translateX(30px);
-      transition: opacity 1.5s ease, transform 1.5s ease;
+      transition: opacity 0.5s ease, transform 0.5s ease;
     }
-
-    /* DownloadTheApp Animation */
     #downloadTheApp .phone {
       opacity: 0;
       transform: perspective(1200px) rotateY(-35deg) rotateX(8deg) scale(0.9);
-      transition: opacity 2s ease, transform 2s ease;
+      transition: opacity 0.67s ease, transform 0.67s ease;
     }
-
     #downloadTheApp .app-promo-text-1,
     #downloadTheApp .qr-codes-container,
     #downloadTheApp .app-promo-text-2 {
       opacity: 0;
       transform: translateY(30px);
-      transition: opacity 1.5s ease, transform 1.5s ease;
+      transition: opacity 0.5s ease, transform 0.5s ease;
     }
   </style>
 </head>
@@ -728,32 +711,35 @@
     const YOUTUBE_API_KEY = 'AIzaSyCxZwYO46mdurmZ6W4bt7n_lTX_4ys5uus';
     const profilePictureCache = {};
 
-    // Function to adjust font size to fit container
+    // -------------------------------
+    // ANIMATION DURATION PARAMETERS:
+    // Adjust these constants to control the animation speeds and delays.
+    const FADE_IN_DURATION = 0;         // in ms: New fade-in duration
+    const SHORT_TRANSITION_DURATION = 0;  // in ms: For YouTube title/side-info
+    const SHOP_ITEM_DURATION = 0;         // in ms: For shop items
+    const DOWNLOAD_PHONE_DURATION = 0;    // in ms: For DownloadTheApp phone
+    const ZOOM_DURATION = 250;              // in ms: Duration of the zoom effect
+    const ZOOM_SCALE = 1.25;                // Zoom scale factor (1.25 times bigger)
+    const SEQUENTIAL_DELAY = 1500;          // in ms: Delay between each element's animation
+    // -------------------------------
+
+    // Function to adjust font size in the shop URL container
     function adjustShopUrlFontSize() {
       const container = document.querySelector('.shop-url-container');
       const textElement = document.querySelector('.shop-url');
-      
       if (!container || !textElement) return;
-      
-      // Reset font size before measuring
       textElement.style.fontSize = '32px';
-      
-      // Check if text overflows container
       const containerWidth = container.clientWidth;
       const textWidth = textElement.scrollWidth;
-      
-      if (textWidth > containerWidth - 20) { // 20px buffer for padding
-        // Calculate the ideal font size
+      if (textWidth > containerWidth - 20) {
         const ratio = (containerWidth - 20) / textWidth;
         const newFontSize = Math.floor(32 * ratio);
         textElement.style.fontSize = `${newFontSize}px`;
       }
     }
-
-    // Add resize event listener
     window.addEventListener('resize', adjustShopUrlFontSize);
 
-    // Function to extract channel name from URL (for both Twitch and YouTube)
+    // Extract channel name from URL
     function extractChannelName(url) {
       if (!url) return "";
       const regex = /^(?:https?:\/\/)?(?:www\.)?(?:twitch\.tv\/|youtube\.com\/@)([^\/?]+)/i;
@@ -774,6 +760,22 @@
       return twitchLogoURL;
     }
 
+    // Apply a zoom effect to an element after its animation
+    function applyZoomEffect(el, zoomDuration = ZOOM_DURATION) {
+      const finalTransform = el.style.transform;
+      let zoomTransform = finalTransform;
+      if(finalTransform.includes("scale(")){
+        zoomTransform = finalTransform.replace(/scale\(\s*1(?:\.0+)?\s*\)/, `scale(${ZOOM_SCALE})`);
+      } else {
+        zoomTransform = finalTransform + ` scale(${ZOOM_SCALE})`;
+      }
+      el.style.transition = `transform ${zoomDuration}ms ease`;
+      el.style.transform = zoomTransform;
+      setTimeout(() => {
+        el.style.transform = finalTransform;
+      }, zoomDuration);
+    }
+
     // Create HTML for MatchCard (type 1)
     function createMatchCardHTML(match, game) {
       const { date, time } = formatDateTime(match.live_datetime);
@@ -782,7 +784,6 @@
       const platformLogo = getPlatformLogo(twitchLink);
       const gameLogoURL = game?.dark_logo_url || "";
       const gameColor = game?.secondary_color || "#F77514";
-      
       return `
         <div id="matchCard-${match.id}" class="card matchCard">
           <div class="card-header" style="background-color: ${gameColor};">
@@ -821,7 +822,6 @@
       const teamBName = teamB?.name || "Team B";
       const teamALogoURL = teamA?.dark_logo_url || "";
       const teamBLogoURL = teamB?.dark_logo_url || "";
-      
       return `
         <div id="matchCard2-${match.id}" class="card matchCard2">
           <div class="card-header" style="background-color: ${gameColor};">
@@ -863,14 +863,10 @@
       const youtubeId = videoData.youtube_id;
       const thumbnailUrl = `https://i.ytimg.com/vi/${youtubeId}/maxresdefault.jpg`;
       const title = videoData.title_fr;
-      
-      // Check if video is less than 3 days old
       const postDate = new Date(videoData.post_date);
       const threeDaysAgo = new Date();
       threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
-      
       const newVideoText = postDate > threeDaysAgo ? "NOUVELLE VIDÉO" : "DERNIÈRE VIDÉO";
-      
       return `
         <div id="youtubeCard" class="card">
           <div class="card-header">
@@ -905,64 +901,52 @@
       `;
     }
 
-    // Format date and time
+    // Format date and time function
     function formatDateTime(dateTimeStr) {
       const dateObj = new Date(dateTimeStr);
       const now = new Date();
-      
-      // Check if date is today
       const isToday = dateObj.getDate() === now.getDate() &&
                       dateObj.getMonth() === now.getMonth() &&
                       dateObj.getFullYear() === now.getFullYear();
-      
-      // Check if date is tomorrow
       const tomorrow = new Date(now);
       tomorrow.setDate(tomorrow.getDate() + 1);
       const isTomorrow = dateObj.getDate() === tomorrow.getDate() &&
                          dateObj.getMonth() === tomorrow.getMonth() &&
                          dateObj.getFullYear() === tomorrow.getFullYear();
-      
       let formattedDate;
-      
       if (isToday) {
         formattedDate = "Aujourd'hui";
       } else if (isTomorrow) {
         formattedDate = "Demain";
       } else {
-        // Original format for other dates: weekday, day, and month in French
         const dateOptions = { weekday: "long", day: "numeric", month: "long" };
         formattedDate = dateObj.toLocaleDateString("fr-FR", dateOptions);
-        
-        // Capitalize each word
-        formattedDate = formattedDate
-          .split(" ")
-          .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-          .join(" ");
+        formattedDate = formattedDate.split(" ").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
       }
-      
-      // Format the time as HHHMM (e.g. "21H30")
       const hours = dateObj.getHours();
       const minutes = dateObj.getMinutes();
-      const formattedTime = `${hours.toString().padStart(2, "0")}H${minutes
-        .toString()
-        .padStart(2, "0")}`;
-      
+      const formattedTime = `${hours.toString().padStart(2, "0")}H${minutes.toString().padStart(2, "0")}`;
       return { date: formattedDate, time: formattedTime };
     }
 
-    // API call: Get Twitch profile picture
+    // ---------------------------
+    // PROFILE PICTURE FUNCTIONS
+    // The following functions fetch and update the profile pictures.
+    // If the API calls fail (e.g. due to CORS issues or incorrect channel URLs), the images won't be updated.
+    // ---------------------------
+
     async function getTwitchProfilePicture(channelUrl) {
       if (profilePictureCache[channelUrl]) return profilePictureCache[channelUrl];
       const channelName = extractChannelName(channelUrl).toLowerCase();
       try {
-        // Get OAuth token
+        // Added Content-Type header for POST request
         const tokenResponse = await fetch(`https://id.twitch.tv/oauth2/token?client_id=${TWITCH_CLIENT_ID}&client_secret=${TWITCH_CLIENT_SECRET}&grant_type=client_credentials`, {
-          method: 'POST'
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
         });
         const tokenData = await tokenResponse.json();
         const token = tokenData.access_token;
         if (!token) return null;
-        // Get user info
         const userResponse = await fetch(`https://api.twitch.tv/helix/users?login=${channelName}`, {
           headers: {
             'Client-ID': TWITCH_CLIENT_ID,
@@ -981,12 +965,10 @@
       return null;
     }
 
-    // API call: Get YouTube profile picture
     async function getYoutubeProfilePicture(channelUrl) {
       if (profilePictureCache[channelUrl]) return profilePictureCache[channelUrl];
       const channelName = extractChannelName(channelUrl);
       try {
-        // Use the YouTube search API to find the channel
         const response = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&type=channel&q=${channelName}&key=${YOUTUBE_API_KEY}`);
         const data = await response.json();
         if (data.items && data.items.length > 0) {
@@ -1000,7 +982,6 @@
       return null;
     }
 
-    // Update profile pictures for all live-logo-link elements
     async function updateProfilePictures() {
       const liveLogoLinks = document.querySelectorAll('.live-logo-link');
       liveLogoLinks.forEach(link => {
@@ -1026,259 +1007,235 @@
       });
     }
 
-    // Main function to load all cards
-    async function loadCards() {
-      const container = document.querySelector('.carousel-container');
-      const shopCard = document.getElementById('shopCard');
-      const downloadTheAppCard = document.getElementById('downloadTheApp');
-      const loadingIndicator = document.querySelector('.loading');
-      
-      try {
-        // Import required libraries
-        const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm');
-        const { DateTime } = await import('https://cdn.jsdelivr.net/npm/luxon/+esm');
-        
-        // Supabase setup
-        const SUPABASE_URL = 'https://gmrxbbhhyyrtmsftofdp.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdtcnhiYmhoeXlydG1zZnRvZmRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDc0MDAxNTEsImV4cCI6MjAyMjk3NjE1MX0.JYVVlCII2iL97cevWvQi0Hlz0Gt_nZjonb9ApnNDscc';
-        const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        
-        // Fetch upcoming matches
-        async function fetchUpcomingMatches() {
-          const now = new Date().toISOString();
-          const { data, error } = await supabase
-              .from('matches')
-              .select('*')
-              .gt('live_datetime', now)
-              .order('live_datetime', { ascending: true })
-              .limit(3);
-          
-          if (error) {
-            console.error('Error fetching matches:', error);
-            return [];
-          }
-          return data;
-        }
-        
-        // Fetch game by ID
-        async function fetchGameById(gameId) {
-          const { data, error } = await supabase
-              .from('games')
-              .select('*')
-              .eq('id', gameId)
-              .single();
-          
-          if (error) {
-            console.error(`Error fetching game with id ${gameId}:`, error);
-            return null;
-          }
-          return data;
-        }
-        
-        // Fetch team by ID
-        async function fetchTeamById(teamId) {
-          if (!teamId) return null;
-          
-          const { data, error } = await supabase
-              .from('teams')
-              .select('*')
-              .eq('id', teamId)
-              .single();
-          
-          if (error) {
-            console.error(`Error fetching team with id ${teamId}:`, error);
-            return null;
-          }
-          return data;
-        }
-        
-        // Fetch latest YouTube video
-        async function fetchLatestYoutubeVideo() {
-          const { data, error } = await supabase
-              .from('youtube_videos')
-              .select('*')
-              .order('post_date', { ascending: false })
-              .limit(1)
-              .single();
-          
-          if (error) {
-            console.error('Error fetching latest youtube video:', error);
-            return null;
-          }
-          return data;
-        }
-        
-        // Process matches and create cards
-        const matches = await fetchUpcomingMatches();
-        const latestVideo = await fetchLatestYoutubeVideo();
-        
-        const matchCards = [];
-        
-        for (const match of matches) {
-          const game = await fetchGameById(match.game_id);
-          
-          if (match.team_b_id === null) {
-            // Create MatchCard (type 1)
-            const matchCardHTML = createMatchCardHTML(match, game);
-            matchCards.push(matchCardHTML);
-          } else {
-            // Create MatchCard2 (type 2)
-            const teamA = await fetchTeamById(match.team_a_id);
-            const teamB = await fetchTeamById(match.team_b_id);
-            const matchCard2HTML = createMatchCard2HTML(match, game, teamA, teamB);
-            matchCards.push(matchCard2HTML);
-          }
-        }
-        
-        // Create YouTube card
-        let youtubeCardHTML = '';
-        if (latestVideo) {
-          youtubeCardHTML = createYoutubeCardHTML(latestVideo);
-        }
-        
-        // Insert cards in container in the correct order
-        shopCard.remove();
-        downloadTheAppCard.remove();
-        
-        // Insert match cards and YouTube card
-        container.innerHTML = matchCards.join('') + youtubeCardHTML;
-        
-        // Re-add shop card and download app card
-        container.appendChild(shopCard);
-        container.appendChild(downloadTheAppCard);
-        
-        // Set up carousel
-        setupCarousel();
-        
-        // Adjust shop URL font size after cards are loaded
-        adjustShopUrlFontSize();
+    // ---------------------------
+    // ANIMATE ELEMENT FUNCTIONS:
+    // To adjust the delays between each element's animation inside a card,
+    // change the delay values in the setTimeout calls in the functions below.
+    // Also, to change the zoom effect duration, modify the ZOOM_DURATION parameter above.
+    // ---------------------------
 
-        // Update profile pictures for channels
-        updateProfilePictures();
+    function animateMatchCard(card) {
+      const elements = [];
+      elements.push(card.querySelector('.game-logo'));
+      elements.push(card.querySelector('.date-text'));
+      elements.push(card.querySelector('.info-container'));
+      if (card.classList.contains('matchCard')) {
+        elements.push(card.querySelector('.match-name-container'));
+      } else if (card.classList.contains('matchCard2')) {
+        const teamContainers = card.querySelectorAll('.team-container');
+        teamContainers.forEach(container => {
+          if (container) elements.push(container);
+        });
+        elements.push(card.querySelector('.match-name-container-small'));
+      }
+      elements.push(card.querySelector('.live-logo-link'));
+      setTimeout(() => {
+        let delay = 0;
+        elements.forEach((el, index) => {
+          if (el) {
+            setTimeout(() => {
+              el.style.opacity = '1';
+              el.style.transform = 'translateY(0)';
+              setTimeout(() => { applyZoomEffect(el); }, 100);
+            }, delay);
+            delay += SEQUENTIAL_DELAY;
+          }
+        });
+      }, 50);
+    }
 
-      } catch (error) {
-        console.error('Error loading cards:', error);
-      } finally {
-        // Hide loading indicator
-        loadingIndicator.style.display = 'none';
+    function animateYoutubeCard(card) {
+      const thumbnail = card.querySelector('.youtube-thumbnail');
+      const title = card.querySelector('.youtube-title');
+      const sideInfo = card.querySelector('.side-info');
+      setTimeout(() => {
+        if (thumbnail) {
+          setTimeout(() => {
+            thumbnail.style.opacity = '1';
+            thumbnail.style.transform = 'scale(1)';
+            setTimeout(() => { thumbnail; }, 100);
+          }, 0);
+        }
+        if (title) {
+          setTimeout(() => {
+            title.style.opacity = '1';
+            title.style.transform = 'translateY(0)';
+            setTimeout(() => { title; }, 100);
+          }, 1000);
+        }
+        if (sideInfo) {
+          setTimeout(() => {
+            sideInfo.style.opacity = '1';
+            sideInfo.style.transform = 'translateX(0)';
+            setTimeout(() => { applyZoomEffect(sideInfo); }, 100);
+          }, 2000);
+        }
+      }, 50);
+    }
+
+    function animateShopCard(card) {
+      const shopItem1 = card.querySelector('.shop-item-1');
+      const shopItem2 = card.querySelector('.shop-item-2');
+      const shopItem3 = card.querySelector('.shop-item-3');
+      const sideInfo = card.querySelector('.side-info');
+      setTimeout(() => {
+        if (shopItem2) {
+          setTimeout(() => {
+            shopItem2.style.opacity = '1';
+            shopItem2.style.transform = 'translate(-400px, -280px) scale(1)';
+            setTimeout(() => { shopItem2; }, 100);
+          }, 0);
+        }
+        if (shopItem3) {
+          setTimeout(() => {
+            shopItem3.style.opacity = '1';
+            shopItem3.style.transform = 'translate(-90px, -280px) scale(1)';
+            setTimeout(() => { shopItem3; }, 100);
+          }, 750);
+        }
+        if (shopItem1) {
+          setTimeout(() => {
+            shopItem1.style.opacity = '1';
+            shopItem1.style.transform = 'translate(-280px, -280px) scale(1)';
+            setTimeout(() => { shopItem1; }, 100);
+          }, 1500);
+        }
+        if (sideInfo) {
+          setTimeout(() => {
+            sideInfo.style.opacity = '1';
+            sideInfo.style.transform = 'translateX(0)';
+            setTimeout(() => { applyZoomEffect(sideInfo); }, 100);
+          }, 2500);
+        }
+      }, 50);
+    }
+
+    function animateDownloadAppCard(card) {
+      const phone = card.querySelector('.phone');
+      const promoText1 = card.querySelector('.app-promo-text-1');
+      const qrCodesContainer = card.querySelector('.qr-codes-container');
+      const promoText2 = card.querySelector('.app-promo-text-2');
+      setTimeout(() => {
+        if (phone) {
+          setTimeout(() => {
+            phone.style.opacity = '1';
+            phone.style.transform = 'perspective(1200px) rotateY(-35deg) rotateX(8deg) scale(1)';
+            setTimeout(() => { phone; }, 100);
+          }, 0);
+        }
+        if (promoText1) {
+          setTimeout(() => {
+            promoText1.style.opacity = '1';
+            promoText1.style.transform = 'translateY(0)';
+            setTimeout(() => { promoText1; }, 100);
+          }, 1000);
+        }
+        if (qrCodesContainer) {
+          setTimeout(() => {
+            qrCodesContainer.style.opacity = '1';
+            qrCodesContainer.style.transform = 'translateY(0)';
+            setTimeout(() => { qrCodesContainer; }, 100);
+          }, 2000);
+        }
+        if (promoText2) {
+          setTimeout(() => {
+            promoText2.style.opacity = '1';
+            promoText2.style.transform = 'translateY(0)';
+            setTimeout(() => { applyZoomEffect(promoText2); }, 100);
+          }, 3000);
+        }
+      }, 50);
+    }
+
+    function resetCardElements(card) {
+      if (!card) return;
+      if (card.classList.contains('matchCard') || card.classList.contains('matchCard2')) {
+        const matchElements = [
+          card.querySelector('.game-logo'),
+          card.querySelector('.date-text'),
+          card.querySelector('.info-container'),
+          card.querySelector('.match-name-container'),
+          card.querySelector('.live-logo-link')
+        ];
+        if (card.classList.contains('matchCard2')) {
+          const teamContainers = card.querySelectorAll('.team-container');
+          teamContainers.forEach(container => {
+            if (container) matchElements.push(container);
+          });
+          matchElements.push(card.querySelector('.match-name-container-small'));
+        }
+        matchElements.forEach(el => {
+          if (el) {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+          }
+        });
+      } else if (card.id === 'youtubeCard') {
+        const thumbnail = card.querySelector('.youtube-thumbnail');
+        const title = card.querySelector('.youtube-title');
+        const sideInfo = card.querySelector('.side-info');
+        if (thumbnail) {
+          thumbnail.style.opacity = '0';
+          thumbnail.style.transform = 'scale(1.3)';
+        }
+        if (title) {
+          title.style.opacity = '0';
+          title.style.transform = 'translateY(20px)';
+        }
+        if (sideInfo) {
+          sideInfo.style.opacity = '0';
+          sideInfo.style.transform = 'translateX(30px)';
+        }
+      } else if (card.id === 'shopCard') {
+        const shopItem1 = card.querySelector('.shop-item-1');
+        const shopItem2 = card.querySelector('.shop-item-2');
+        const shopItem3 = card.querySelector('.shop-item-3');
+        const sideInfo = card.querySelector('.side-info');
+        if (shopItem1) {
+          shopItem1.style.opacity = '0';
+          shopItem1.style.transform = 'translate(-280px, -280px) scale(1.3)';
+        }
+        if (shopItem2) {
+          shopItem2.style.opacity = '0';
+          shopItem2.style.transform = 'translate(-400px, -280px) scale(1.3)';
+        }
+        if (shopItem3) {
+          shopItem3.style.opacity = '0';
+          shopItem3.style.transform = 'translate(-90px, -280px) scale(1.3)';
+        }
+        if (sideInfo) {
+          sideInfo.style.opacity = '0';
+          sideInfo.style.transform = 'translateX(30px)';
+        }
+      } else if (card.id === 'downloadTheApp') {
+        const phone = card.querySelector('.phone');
+        const promoText1 = card.querySelector('.app-promo-text-1');
+        const qrCodesContainer = card.querySelector('.qr-codes-container');
+        const promoText2 = card.querySelector('.app-promo-text-2');
+        if (phone) {
+          phone.style.opacity = '0';
+          phone.style.transform = 'perspective(1200px) rotateY(-35deg) rotateX(8deg) scale(0.9)';
+        }
+        [promoText1, qrCodesContainer, promoText2].forEach(el => {
+          if (el) {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+          }
+        });
       }
     }
-    
-    // Set up carousel functionality with improved fade transition
+
     function setupCarousel() {
       const cards = document.querySelectorAll('.card');
       let currentCardIndex = 0;
       let previousCardIndex = null;
-      
-      // Set durations for each card
       const durations = Array(cards.length).fill(15000);
-      // Find the index of downloadTheApp card and set its duration to 15 seconds
       const downloadAppIndex = Array.from(cards).findIndex(card => card.id === 'downloadTheApp');
       if (downloadAppIndex !== -1) {
         durations[downloadAppIndex] = 20000;
       }
-      
-      // Function to reset all animated elements in a card to their initial state
-      function resetCardElements(card) {
-        if (!card) return;
-        
-        if (card.classList.contains('matchCard') || card.classList.contains('matchCard2')) {
-          // Reset MatchCard elements
-          const matchElements = [
-            card.querySelector('.game-logo'),
-            card.querySelector('.date-text'),
-            card.querySelector('.info-container'),
-            card.querySelector('.match-name-container'),
-            card.querySelector('.live-logo-link')
-          ];
-          
-          // Add team containers for MatchCard2
-          if (card.classList.contains('matchCard2')) {
-            const teamContainers = card.querySelectorAll('.team-container');
-            teamContainers.forEach(container => {
-              if (container) matchElements.push(container);
-            });
-            matchElements.push(card.querySelector('.match-name-container-small'));
-          }
-          
-          matchElements.forEach(el => {
-            if (el) {
-              el.style.opacity = '0';
-              el.style.transform = 'translateY(20px)';
-            }
-          });
-        } else if (card.id === 'youtubeCard') {
-          // Reset YoutubeCard elements
-          const thumbnail = card.querySelector('.youtube-thumbnail');
-          const title = card.querySelector('.youtube-title');
-          const sideInfo = card.querySelector('.side-info');
-          
-          if (thumbnail) {
-            thumbnail.style.opacity = '0';
-            thumbnail.style.transform = 'scale(1.3)';
-          }
-          
-          if (title) {
-            title.style.opacity = '0';
-            title.style.transform = 'translateY(20px)';
-          }
-          
-          if (sideInfo) {
-            sideInfo.style.opacity = '0';
-            sideInfo.style.transform = 'translateX(30px)';
-          }
-        } else if (card.id === 'shopCard') {
-          // Reset ShopCard elements
-          const shopItem1 = card.querySelector('.shop-item-1');
-          const shopItem2 = card.querySelector('.shop-item-2');
-          const shopItem3 = card.querySelector('.shop-item-3');
-          const sideInfo = card.querySelector('.side-info');
-          
-          if (shopItem1) {
-            shopItem1.style.opacity = '0';
-            shopItem1.style.transform = 'translate(-280px, -280px) scale(1.3)';
-          }
-          
-          if (shopItem2) {
-            shopItem2.style.opacity = '0';
-            shopItem2.style.transform = 'translate(-400px, -280px) scale(1.3)';
-          }
-          
-          if (shopItem3) {
-            shopItem3.style.opacity = '0';
-            shopItem3.style.transform = 'translate(-90px, -280px) scale(1.3)';
-          }
-          
-          if (sideInfo) {
-            sideInfo.style.opacity = '0';
-            sideInfo.style.transform = 'translateX(30px)';
-          }
-        } else if (card.id === 'downloadTheApp') {
-          // Reset DownloadTheApp elements
-          const phone = card.querySelector('.phone');
-          const promoText1 = card.querySelector('.app-promo-text-1');
-          const qrCodesContainer = card.querySelector('.qr-codes-container');
-          const promoText2 = card.querySelector('.app-promo-text-2');
-          
-          if (phone) {
-            phone.style.opacity = '0';
-            phone.style.transform = 'perspective(1200px) rotateY(-35deg) rotateX(8deg) scale(0.9)';
-          }
-          
-          [promoText1, qrCodesContainer, promoText2].forEach(el => {
-            if (el) {
-              el.style.opacity = '0';
-              el.style.transform = 'translateY(30px)';
-            }
-          });
-        }
-      }
-      
-      // Function to animate elements sequentially for all card types
       function animateCardElements(card) {
         if (!card) return;
-        
-        // Different animation strategies based on card type
         if (card.classList.contains('matchCard') || card.classList.contains('matchCard2')) {
           animateMatchCard(card);
         } else if (card.id === 'youtubeCard') {
@@ -1289,212 +1246,145 @@
           animateDownloadAppCard(card);
         }
       }
-      
-      // Animate MatchCard and MatchCard2
-      function animateMatchCard(card) {
-        // Get elements to animate based on card type
-        const elements = [];
-        
-        // Step 1: Header elements (Game logo and date)
-        elements.push(card.querySelector('.game-logo'));
-        elements.push(card.querySelector('.date-text'));
-        
-        // Step 2: Time info
-        elements.push(card.querySelector('.info-container'));
-        
-        // Step 3: Match name or team info
-        if (card.classList.contains('matchCard')) {
-          elements.push(card.querySelector('.match-name-container'));
-        } else if (card.classList.contains('matchCard2')) {
-          // For MatchCard2, add team containers and match name
-          const teamContainers = card.querySelectorAll('.team-container');
-          teamContainers.forEach(container => {
-            if (container) elements.push(container);
-          });
-          elements.push(card.querySelector('.match-name-container-small'));
-        }
-        
-        // Step 4: Footer with platform info
-        elements.push(card.querySelector('.live-logo-link'));
-        
-        // Short timeout to ensure the reset takes effect
-        setTimeout(() => {
-          // Animate elements sequentially with delay
-          let delay = 0;
-          elements.forEach((el, index) => {
-            if (el) {
-              setTimeout(() => {
-                el.style.opacity = '1';
-                el.style.transform = 'translateY(0)';
-              }, delay);
-              delay += (index === 0) ? 0 : 1000; // 1s delay between elements
-            }
-          });
-        }, 50);
-      }
-      
-      // Animate YoutubeCard
-      function animateYoutubeCard(card) {
-        const thumbnail = card.querySelector('.youtube-thumbnail');
-        const title = card.querySelector('.youtube-title');
-        const sideInfo = card.querySelector('.side-info');
-        
-        setTimeout(() => {
-          if (thumbnail) {
-            setTimeout(() => {
-              thumbnail.style.opacity = '1';
-              thumbnail.style.transform = 'scale(1)';
-            }, 0);
-          }
-          
-          if (title) {
-            setTimeout(() => {
-              title.style.opacity = '1';
-              title.style.transform = 'translateY(0)';
-            }, 2500);
-          }
-          
-          if (sideInfo) {
-            setTimeout(() => {
-              sideInfo.style.opacity = '1';
-              sideInfo.style.transform = 'translateX(0)';
-            }, 4000);
-          }
-        }, 50);
-      }
-      
-      // Animate ShopCard
-      function animateShopCard(card) {
-        const shopItem1 = card.querySelector('.shop-item-1');
-        const shopItem2 = card.querySelector('.shop-item-2');
-        const shopItem3 = card.querySelector('.shop-item-3');
-        const sideInfo = card.querySelector('.side-info');
-        
-        setTimeout(() => {
-          if (shopItem2) {
-            setTimeout(() => {
-              shopItem2.style.opacity = '1';
-              shopItem2.style.transform = 'translate(-400px, -280px) scale(1)';
-            }, 0);
-          }
-          
-          if (shopItem3) {
-            setTimeout(() => {
-              shopItem3.style.opacity = '1';
-              shopItem3.style.transform = 'translate(-90px, -280px) scale(1)';
-            }, 2000);
-          }
-          
-          if (shopItem1) {
-            setTimeout(() => {
-              shopItem1.style.opacity = '1';
-              shopItem1.style.transform = 'translate(-280px, -280px) scale(1)';
-            }, 4000);
-          }
-          
-          if (sideInfo) {
-            setTimeout(() => {
-              sideInfo.style.opacity = '1';
-              sideInfo.style.transform = 'translateX(0)';
-            }, 6000);
-          }
-        }, 50);
-      }
-      
-      // Animate DownloadTheApp card
-      function animateDownloadAppCard(card) {
-        const phone = card.querySelector('.phone');
-        const promoText1 = card.querySelector('.app-promo-text-1');
-        const qrCodesContainer = card.querySelector('.qr-codes-container');
-        const promoText2 = card.querySelector('.app-promo-text-2');
-        
-        setTimeout(() => {
-          if (phone) {
-            setTimeout(() => {
-              phone.style.opacity = '1';
-              phone.style.transform = 'perspective(1200px) rotateY(-35deg) rotateX(8deg) scale(1)';
-            }, 0);
-          }
-          
-          if (promoText1) {
-            setTimeout(() => {
-              promoText1.style.opacity = '1';
-              promoText1.style.transform = 'translateY(0)';
-            }, 2000);
-          }
-          
-          if (qrCodesContainer) {
-            setTimeout(() => {
-              qrCodesContainer.style.opacity = '1';
-              qrCodesContainer.style.transform = 'translateY(0)';
-            }, 3500);
-          }
-          
-          if (promoText2) {
-            setTimeout(() => {
-              promoText2.style.opacity = '1';
-              promoText2.style.transform = 'translateY(0)';
-            }, 5000);
-          }
-        }, 50);
-      }
-      
-      // Function to show a specific card with improved fade transition
       function showCard(nextIndex) {
         if (previousCardIndex !== null) {
           cards[previousCardIndex].classList.remove('previous');
         }
-        
         resetCardElements(cards[nextIndex]);
-        
         cards[currentCardIndex].classList.add('previous');
         cards[currentCardIndex].classList.remove('active');
-        
         cards[nextIndex].classList.add('active');
-        
         setTimeout(() => {
           animateCardElements(cards[nextIndex]);
         }, 500);
-        
         setTimeout(() => {
           previousCardIndex = currentCardIndex;
           currentCardIndex = nextIndex;
-          
           cards.forEach((card, index) => {
             if (index !== currentCardIndex && index !== previousCardIndex) {
               card.classList.remove('active', 'previous');
               resetCardElements(card);
             }
           });
-          
           if (cards[nextIndex].id === 'shopCard') {
             adjustShopUrlFontSize();
           }
         }, 1000);
       }
-      
       function nextCard() {
         const nextIndex = (currentCardIndex + 1) % cards.length;
         showCard(nextIndex);
         setTimeout(nextCard, durations[nextIndex]);
       }
-      
       cards.forEach(card => {
         resetCardElements(card);
       });
-      
       cards[currentCardIndex].classList.add('active');
-      
       setTimeout(() => {
         animateCardElements(cards[currentCardIndex]);
       }, 500);
-      
       setTimeout(nextCard, durations[0]);
-      
       adjustShopUrlFontSize();
     }
-    
-    // Start loading cards
+
+    async function loadCards() {
+      const container = document.querySelector('.carousel-container');
+      const shopCard = document.getElementById('shopCard');
+      const downloadTheAppCard = document.getElementById('downloadTheApp');
+      const loadingIndicator = document.querySelector('.loading');
+      
+      try {
+        const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm');
+        const { DateTime } = await import('https://cdn.jsdelivr.net/npm/luxon/+esm');
+        const SUPABASE_URL = 'https://gmrxbbhhyyrtmsftofdp.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdtcnhiYmhoeXlydG1zZnRvZmRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDc0MDAxNTEsImV4cCI6MjAyMjk3NjE1MX0.JYVVlCII2iL97cevWvQi0Hlz0Gt_nZjonb9ApnNDscc';
+        const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        async function fetchUpcomingMatches() {
+          const now = new Date().toISOString();
+          const { data, error } = await supabase
+              .from('matches')
+              .select('*')
+              .gt('live_datetime', now)
+              .order('live_datetime', { ascending: true })
+              .limit(3);
+          if (error) {
+            console.error('Error fetching matches:', error);
+            return [];
+          }
+          return data;
+        }
+        async function fetchGameById(gameId) {
+          const { data, error } = await supabase
+              .from('games')
+              .select('*')
+              .eq('id', gameId)
+              .single();
+          if (error) {
+            console.error(`Error fetching game with id ${gameId}:`, error);
+            return null;
+          }
+          return data;
+        }
+        async function fetchTeamById(teamId) {
+          if (!teamId) return null;
+          const { data, error } = await supabase
+              .from('teams')
+              .select('*')
+              .eq('id', teamId)
+              .single();
+          if (error) {
+            console.error(`Error fetching team with id ${teamId}:`, error);
+            return null;
+          }
+          return data;
+        }
+        async function fetchLatestYoutubeVideo() {
+          const { data, error } = await supabase
+              .from('youtube_videos')
+              .select('*')
+              .order('post_date', { ascending: false })
+              .limit(1)
+              .single();
+          if (error) {
+            console.error('Error fetching latest youtube video:', error);
+            return null;
+          }
+          return data;
+        }
+        const matches = await fetchUpcomingMatches();
+        const latestVideo = await fetchLatestYoutubeVideo();
+        const matchCards = [];
+        for (const match of matches) {
+          const game = await fetchGameById(match.game_id);
+          if (match.team_b_id === null) {
+            const matchCardHTML = createMatchCardHTML(match, game);
+            matchCards.push(matchCardHTML);
+          } else {
+            const teamA = await fetchTeamById(match.team_a_id);
+            const teamB = await fetchTeamById(match.team_b_id);
+            const matchCard2HTML = createMatchCard2HTML(match, game, teamA, teamB);
+            matchCards.push(matchCard2HTML);
+          }
+        }
+        let youtubeCardHTML = '';
+        if (latestVideo) {
+          youtubeCardHTML = createYoutubeCardHTML(latestVideo);
+        }
+        shopCard.remove();
+        downloadTheAppCard.remove();
+        container.innerHTML = matchCards.join('') + youtubeCardHTML;
+        container.appendChild(shopCard);
+        container.appendChild(downloadTheAppCard);
+        setupCarousel();
+        adjustShopUrlFontSize();
+        updateProfilePictures();
+      } catch (error) {
+        console.error('Error loading cards:', error);
+      } finally {
+        loadingIndicator.style.display = 'none';
+      }
+    }
+
     document.addEventListener('DOMContentLoaded', async function() {
       try {
         await loadCards();
