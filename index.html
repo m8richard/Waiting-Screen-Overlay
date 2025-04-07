@@ -718,9 +718,9 @@
     const SHORT_TRANSITION_DURATION = 0;  // in ms: For YouTube title/side-info
     const SHOP_ITEM_DURATION = 0;         // in ms: For shop items
     const DOWNLOAD_PHONE_DURATION = 0;    // in ms: For DownloadTheApp phone
-    const ZOOM_DURATION = 250;              // in ms: Duration of the zoom effect
-    const ZOOM_SCALE = 1.25;                // Zoom scale factor (1.25 times bigger)
-    const SEQUENTIAL_DELAY = 1500;          // in ms: Delay between each element's animation
+    const ZOOM_DURATION = 150;              // in ms: Duration of the zoom effect
+    const ZOOM_SCALE = 1.3;                // Zoom scale factor (1.3 times bigger)
+    const SEQUENTIAL_DELAY = 1300;          // in ms: Delay between each element's animation
     // -------------------------------
 
     // Function to adjust font size in the shop URL container
@@ -1229,10 +1229,10 @@
       const cards = document.querySelectorAll('.card');
       let currentCardIndex = 0;
       let previousCardIndex = null;
-      const durations = Array(cards.length).fill(15000);
+      const durations = Array(cards.length).fill(18000);
       const downloadAppIndex = Array.from(cards).findIndex(card => card.id === 'downloadTheApp');
       if (downloadAppIndex !== -1) {
-        durations[downloadAppIndex] = 20000;
+        durations[downloadAppIndex] = 23000;
       }
       function animateCardElements(card) {
         if (!card) return;
