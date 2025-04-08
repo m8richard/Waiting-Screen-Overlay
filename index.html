@@ -509,6 +509,77 @@
       border: 8px solid #D6D2D3;
     }
 
+    /* ----------------- Updated styles for date-time-fullscreen -----------------
+   Now includes game logo styling */
+
+    .date-time-fullscreen {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 4;
+      opacity: 0;
+      transform: scale(0.8);
+      transition: opacity 0.83s ease, transform 0.83s ease;
+      background-color: rgba(255, 255, 255, 0.95);
+      border-radius: 40px;
+    }
+
+    .date-time-fullscreen.active {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .fullscreen-game-logo {
+      width: 320px;
+      height: auto;
+      margin-bottom: 48px;
+    }
+
+    .fullscreen-date, .fullscreen-time {
+      color: #2D2D2D;
+      font-family: 'HelveticaNeue-Bold', sans-serif;
+      text-align: center;
+    }
+
+    .fullscreen-date {
+      font-size: 96px;
+      margin-bottom: 24px;
+    }
+
+    .fullscreen-time {
+      font-size: 128px;
+      font-family: 'TuskerGrotesk', sans-serif;
+    }
+
+    /* Update the sequential animation styles to specify which elements should zoom */
+    .matchCard .game-logo,
+    .matchCard .live-logo-link,
+    .matchCard2 .game-logo,
+    .matchCard2 .live-logo-link {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.83s ease, transform 0.83s ease;
+    }
+
+    /* Regular fade-in animation without zoom for these elements */
+    .matchCard .date-text,
+    .matchCard .info-container,
+    .matchCard .match-name-container,
+    .matchCard2 .date-text,
+    .matchCard2 .info-container,
+    .matchCard2 .team-container,
+    .matchCard2 .match-name-container-small {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.83s ease, transform 0.83s ease;
+    }
+
     /* ----------------- PHONE ANIMATION ----------------- */
     .phone {
       position: relative;
@@ -718,9 +789,9 @@
     const SHORT_TRANSITION_DURATION = 0;  // in ms: For YouTube title/side-info
     const SHOP_ITEM_DURATION = 0;         // in ms: For shop items
     const DOWNLOAD_PHONE_DURATION = 0;    // in ms: For DownloadTheApp phone
-    const ZOOM_DURATION = 150;              // in ms: Duration of the zoom effect
+    const ZOOM_DURATION = 500;              // in ms: Duration of the zoom effect
     const ZOOM_SCALE = 1.3;                // Zoom scale factor (1.3 times bigger)
-    const SEQUENTIAL_DELAY = 1300;          // in ms: Delay between each element's animation
+    const SEQUENTIAL_DELAY = 2000;          // in ms: Delay between each element's animation
     // -------------------------------
 
     // Function to adjust font size in the shop URL container
@@ -776,7 +847,7 @@
       }, zoomDuration);
     }
 
-    // Create HTML for MatchCard (type 1)
+    // Update the createMatchCardHTML function to include the game logo in the date-time-fullscreen
     function createMatchCardHTML(match, game) {
       const { date, time } = formatDateTime(match.live_datetime);
       const twitchLink = match.twitch_live_link;
@@ -786,6 +857,11 @@
       const gameColor = game?.secondary_color || "#F77514";
       return `
         <div id="matchCard-${match.id}" class="card matchCard">
+          <div class="date-time-fullscreen">
+            <img class="fullscreen-game-logo" src="${gameLogoURL}" alt="Game Logo">
+            <div class="fullscreen-date">${date}</div>
+            <div class="fullscreen-time">${time}</div>
+          </div>
           <div class="card-header" style="background-color: ${gameColor};">
             <img class="game-logo" src="${gameLogoURL}" alt="Game Logo">
             <div class="date-text">${date}</div>
@@ -810,7 +886,7 @@
       `;
     }
 
-    // Create HTML for MatchCard2 (type 2)
+    // Update the createMatchCard2HTML function to include the game logo in the date-time-fullscreen
     function createMatchCard2HTML(match, game, teamA, teamB) {
       const { date, time } = formatDateTime(match.live_datetime);
       const twitchLink = match.twitch_live_link;
@@ -824,6 +900,11 @@
       const teamBLogoURL = teamB?.dark_logo_url || "";
       return `
         <div id="matchCard2-${match.id}" class="card matchCard2">
+          <div class="date-time-fullscreen">
+            <img class="fullscreen-game-logo" src="${gameLogoURL}" alt="Game Logo">
+            <div class="fullscreen-date">${date}</div>
+            <div class="fullscreen-time">${time}</div>
+          </div>
           <div class="card-header" style="background-color: ${gameColor};">
             <img class="game-logo" src="${gameLogoURL}" alt="Game Logo">
             <div class="date-text">${date}</div>
@@ -1013,12 +1094,17 @@
     // change the delay values in the setTimeout calls in the functions below.
     // Also, to change the zoom effect duration, modify the ZOOM_DURATION parameter above.
     // ---------------------------
+    const DATE_TIME_FULLSCREEN_DURATION = 5000;
+    const DATE_TIME_ANIMATION_DURATION = 400;    // Animation duration for date/time transition
 
+    // Updated animateMatchCard function to include the date/time fullscreen animation
     function animateMatchCard(card) {
       const elements = [];
-      elements.push(card.querySelector('.game-logo'));
+      const dateTimeFullscreen = card.querySelector('.date-time-fullscreen');
+      elements.push(card.querySelector('.game-logo')); // Will be zoomed
       elements.push(card.querySelector('.date-text'));
       elements.push(card.querySelector('.info-container'));
+      
       if (card.classList.contains('matchCard')) {
         elements.push(card.querySelector('.match-name-container'));
       } else if (card.classList.contains('matchCard2')) {
@@ -1028,20 +1114,50 @@
         });
         elements.push(card.querySelector('.match-name-container-small'));
       }
-      elements.push(card.querySelector('.live-logo-link'));
+      
+      elements.push(card.querySelector('.live-logo-link')); // Will be zoomed
+
+      // Show date-time fullscreen first
+      if (dateTimeFullscreen) {
+        dateTimeFullscreen.classList.add('active');
+        
+        // Apply zoom effect to the game logo in the fullscreen
+        const fullscreenGameLogo = dateTimeFullscreen.querySelector('.fullscreen-game-logo');
+        if (fullscreenGameLogo) {
+          setTimeout(() => {
+            applyZoomEffect(fullscreenGameLogo);
+          }, 1000);
+        }
+      }
+
+      // After DATE_TIME_FULLSCREEN_DURATION, hide the fullscreen and start regular animation
       setTimeout(() => {
-        let delay = 0;
-        elements.forEach((el, index) => {
-          if (el) {
-            setTimeout(() => {
-              el.style.opacity = '1';
-              el.style.transform = 'translateY(0)';
-              setTimeout(() => { applyZoomEffect(el); }, 100);
-            }, delay);
-            delay += SEQUENTIAL_DELAY;
-          }
-        });
-      }, 50);
+        if (dateTimeFullscreen) {
+          dateTimeFullscreen.classList.remove('active');
+        }
+        
+        // Wait for the fullscreen to fade out before showing the other elements
+        setTimeout(() => {
+          let delay = 0;
+          elements.forEach((el, index) => {
+            if (el) {
+              setTimeout(() => {
+                el.style.opacity = '1';
+                el.style.transform = 'translateY(0)';
+                
+                // Only apply zoom effect to game logo and live-logo-link
+                if (el === card.querySelector('.game-logo') || 
+                    el === card.querySelector('.live-logo-link')) {
+                  setTimeout(() => { 
+                    applyZoomEffect(el); 
+                  }, 100);
+                }
+              }, delay);
+              delay += SEQUENTIAL_DELAY;
+            }
+          });
+        }, DATE_TIME_ANIMATION_DURATION);
+      }, DATE_TIME_FULLSCREEN_DURATION);
     }
 
     function animateYoutubeCard(card) {
@@ -1149,6 +1265,13 @@
 
     function resetCardElements(card) {
       if (!card) return;
+      
+      // Reset date-time-fullscreen
+      const dateTimeFullscreen = card.querySelector('.date-time-fullscreen');
+      if (dateTimeFullscreen) {
+        dateTimeFullscreen.classList.remove('active');
+      }
+      
       if (card.classList.contains('matchCard') || card.classList.contains('matchCard2')) {
         const matchElements = [
           card.querySelector('.game-logo'),
@@ -1171,6 +1294,7 @@
           }
         });
       } else if (card.id === 'youtubeCard') {
+        // Rest of the existing code for youtubeCard...
         const thumbnail = card.querySelector('.youtube-thumbnail');
         const title = card.querySelector('.youtube-title');
         const sideInfo = card.querySelector('.side-info');
@@ -1187,6 +1311,7 @@
           sideInfo.style.transform = 'translateX(30px)';
         }
       } else if (card.id === 'shopCard') {
+        // Rest of the existing code for shopCard...
         const shopItem1 = card.querySelector('.shop-item-1');
         const shopItem2 = card.querySelector('.shop-item-2');
         const shopItem3 = card.querySelector('.shop-item-3');
@@ -1208,6 +1333,7 @@
           sideInfo.style.transform = 'translateX(30px)';
         }
       } else if (card.id === 'downloadTheApp') {
+        // Rest of the existing code for downloadTheApp...
         const phone = card.querySelector('.phone');
         const promoText1 = card.querySelector('.app-promo-text-1');
         const qrCodesContainer = card.querySelector('.qr-codes-container');
@@ -1229,10 +1355,10 @@
       const cards = document.querySelectorAll('.card');
       let currentCardIndex = 0;
       let previousCardIndex = null;
-      const durations = Array(cards.length).fill(18000);
+      const durations = Array(cards.length).fill(30000);
       const downloadAppIndex = Array.from(cards).findIndex(card => card.id === 'downloadTheApp');
       if (downloadAppIndex !== -1) {
-        durations[downloadAppIndex] = 23000;
+        durations[downloadAppIndex] = 30000;
       }
       function animateCardElements(card) {
         if (!card) return;
