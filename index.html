@@ -605,6 +605,41 @@
       transition: opacity 0.83s ease, transform 0.83s ease;
     }
 
+    /* Add these styles to position headers and footers for the slide-in effect */
+    .matchCard .card-header, .matchCard2 .card-header {
+      transform: translateY(-120px); /* Header height is 120px */
+      opacity: 0;
+      transition: transform 0.83s ease, opacity 0.83s ease;
+    }
+
+    .matchCard .card-footer, .matchCard2 .card-footer {
+      transform: translateY(120px); /* Footer height is 120px */
+      opacity: 0;
+      transition: transform 0.83s ease, opacity 0.83s ease;
+    }
+
+    /* When active, headers and footers will be in their normal position */
+    .card.active .card-header, .card.active .card-footer {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    /* Make header elements immediately visible within the header */
+    .matchCard .card-header .game-logo, 
+    .matchCard .card-header .date-text,
+    .matchCard2 .card-header .game-logo,
+    .matchCard2 .card-header .date-text {
+      opacity: 1 !important; /* Override any opacity settings */
+      transform: none !important; /* Override any transform settings */
+    }
+
+    /* Same for footer elements */
+    .matchCard .card-footer .live-logo-link,
+    .matchCard2 .card-footer .live-logo-link {
+      opacity: 1 !important;
+      transform: none !important;
+    }
+
     /* ----------------- PHONE ANIMATION ----------------- */
     .phone {
       position: relative;
@@ -693,51 +728,65 @@
             - ShopCard shop-items: 2s → now 0.67s; ShopCard side-info: 1.5s → now 0.5s;
             - DownloadTheApp phone: 2s → now 0.67s; DownloadTheApp promo texts: 1.5s → now 0.5s.)
     */
-    .matchCard .game-logo, 
-    .matchCard .date-text,
-    .matchCard .info-container,
-    .matchCard .match-name-container,
-    .matchCard .live-logo-link,
-    .matchCard2 .game-logo,
-    .matchCard2 .date-text,
-    .matchCard2 .info-container,
-    .matchCard2 .team-container,
-    .matchCard2 .match-name-container-small,
-    .matchCard2 .live-logo-link {
+    /* Updated version that only targets body elements */
+    .matchCard .card-body .info-container,
+    .matchCard .card-body .match-name-container,
+    .matchCard2 .card-body .info-container,
+    .matchCard2 .card-body .team-container,
+    .matchCard2 .card-body .match-name-container-small {
       opacity: 0;
       transform: translateY(20px);
       transition: opacity 0.83s ease, transform 0.83s ease;
     }
+
+    /* Game logo needs special handling as it's in the header */
+    .card-header .game-logo {
+      opacity: 1; /* This will be controlled by the header's opacity now */
+      transition: transform 0.83s ease; /* Keep only for zoom effect */
+    }
+
+    /* Live logo link needs special handling as it's in the footer */
+    .card-footer .live-logo-link {
+      opacity: 1; /* This will be controlled by the footer's opacity now */
+      transition: transform 0.83s ease; /* Keep only for zoom effect */
+    }
+    
     #youtubeCard .youtube-thumbnail {
       opacity: 0;
       transform: scale(1.3);
       transition: opacity 0.83s ease, transform 0.83s ease;
     }
+    
     #youtubeCard .youtube-title {
       opacity: 0;
       transform: translateY(20px);
       transition: opacity 0.5s ease, transform 0.5s ease;
     }
+    
     #youtubeCard .side-info {
       opacity: 0;
       transform: translateX(30px);
       transition: opacity 0.5s ease, transform 0.5s ease;
     }
+    
     #shopCard .shop-item {
       opacity: 0;
       transform: translate(-50%, -50%) scale(1.3);
       transition: opacity 0.67s ease, transform 0.67s ease;
     }
+    
     #shopCard .side-info {
       opacity: 0;
       transform: translateX(30px);
       transition: opacity 0.5s ease, transform 0.5s ease;
     }
+    
     #downloadTheApp .phone {
       opacity: 0;
       transform: perspective(1200px) rotateY(-35deg) rotateX(8deg) scale(0.9);
       transition: opacity 0.67s ease, transform 0.67s ease;
     }
+    
     #downloadTheApp .app-promo-text-1,
     #downloadTheApp .qr-codes-container,
     #downloadTheApp .app-promo-text-2 {
@@ -818,6 +867,34 @@
     const ZOOM_SCALE = 1.3;                // Zoom scale factor (1.3 times bigger)
     const SEQUENTIAL_DELAY = 2000;          // in ms: Delay between each element's animation
     // -------------------------------
+    // Animation delay configuration for MatchCard and MatchCard2
+    const MatchCardTimings = {
+    // Fullscreen animation
+    fullscreenDuration: 5000,               // How long the fullscreen date/time stays visible
+    fullscreenFadeOutDuration: 200,         // How long it takes for fullscreen to fade out
+    fullscreenLogoZoomDelay: 1000,          // When to apply zoom effect to fullscreen logo
+    
+    // Header/Footer animations
+    headerSlideInDelay: 0,                  // Delay before header slides in after fullscreen fades
+    headerLogoZoomDelay: 300,               // Delay before zooming the header logo after it appears
+    footerSlideInDelay: 2000,               // Delay before footer slides in after header
+    footerLogoZoomDelay: 300,               // Delay before zooming the footer logo after it appears
+    
+    // Body elements animation
+    bodyElementsStartDelay: 2000,           // Delay before body elements start animating after footer
+    
+    // MatchCard specific timings
+    matchCard: {
+        elementDelay: 2000,                   // Delay between each element animation
+    },
+    
+    // MatchCard2 specific timings
+    matchCard2: {
+        infoContainerDelay: 0,                // Delay for info container animation
+        teamContainersDelay: 2000,            // Delay for team containers animation
+        matchNameDelay: 2000                  // Delay for match name container animation
+    }
+    };
 
     // Function to adjust font size in the shop URL container
     function adjustShopUrlFontSize() {
@@ -882,7 +959,9 @@
       const gameColor = game?.secondary_color || "#F77514";
       return `
         <div id="matchCard-${match.id}" class="card matchCard">
+          <div class="background-image"></div>
           <div class="date-time-fullscreen">
+            <div class="background-image"></div>
             <img class="fullscreen-game-logo" src="${gameLogoURL}" alt="Game Logo">
             <div class="fullscreen-date">${date}</div>
             <div class="fullscreen-time">${time}</div>
@@ -892,7 +971,6 @@
             <div class="date-text">${date}</div>
           </div>
           <div class="card-body row">
-            <div class="background-image"></div>
             <div class="match-name-container">
               <div class="match-name">${match.name}</div>
             </div>
@@ -925,7 +1003,9 @@
       const teamBLogoURL = teamB?.dark_logo_url || "";
       return `
         <div id="matchCard2-${match.id}" class="card matchCard2">
+          <div class="background-image"></div>
           <div class="date-time-fullscreen">
+            <div class="background-image"></div>
             <img class="fullscreen-game-logo" src="${gameLogoURL}" alt="Game Logo">
             <div class="fullscreen-date">${date}</div>
             <div class="fullscreen-time">${time}</div>
@@ -935,7 +1015,6 @@
             <div class="date-text">${date}</div>
           </div>
           <div class="card-body column">
-            <div class="background-image"></div>
             <div class="body-container">
               <div class="team-container">
                 <img class="team-logo" src="${teamALogoURL}" alt="${teamAName} Logo">
@@ -1163,66 +1242,123 @@
 
     // Updated animateMatchCard function to include the date/time fullscreen animation
     function animateMatchCard(card) {
-      const elements = [];
-      const dateTimeFullscreen = card.querySelector('.date-time-fullscreen');
-      elements.push(card.querySelector('.game-logo')); // Will be zoomed
-      elements.push(card.querySelector('.date-text'));
-      elements.push(card.querySelector('.info-container'));
-      
-      if (card.classList.contains('matchCard')) {
-        elements.push(card.querySelector('.match-name-container'));
-      } else if (card.classList.contains('matchCard2')) {
-        const teamContainers = card.querySelectorAll('.team-container');
-        teamContainers.forEach(container => {
-          if (container) elements.push(container);
-        });
-        elements.push(card.querySelector('.match-name-container-small'));
-      }
-      
-      elements.push(card.querySelector('.live-logo-link')); // Will be zoomed
-
-      // Show date-time fullscreen first
-      if (dateTimeFullscreen) {
-        dateTimeFullscreen.classList.add('active');
+        const bodyElements = [];
+        const dateTimeFullscreen = card.querySelector('.date-time-fullscreen');
+        const header = card.querySelector('.card-header');
+        const footer = card.querySelector('.card-footer');
         
-        // Apply zoom effect to the game logo in the fullscreen
-        const fullscreenGameLogo = dateTimeFullscreen.querySelector('.fullscreen-game-logo');
-        if (fullscreenGameLogo) {
-          setTimeout(() => {
-            applyZoomEffect(fullscreenGameLogo);
-          }, 1000);
+        // Collect body elements (excluding header/footer elements)
+        bodyElements.push(card.querySelector('.card-body .info-container'));
+        
+        if (card.classList.contains('matchCard')) {
+            bodyElements.push(card.querySelector('.match-name-container'));
+        } else if (card.classList.contains('matchCard2')) {
+            // For MatchCard2, we'll handle team containers separately
+            bodyElements.push(card.querySelector('.match-name-container-small'));
         }
-      }
-
-      // After DATE_TIME_FULLSCREEN_DURATION, hide the fullscreen and start regular animation
-      setTimeout(() => {
+        
+        // Show date-time fullscreen first
         if (dateTimeFullscreen) {
-          dateTimeFullscreen.classList.remove('active');
-        }
-        
-        // Wait for the fullscreen to fade out before showing the other elements
-        setTimeout(() => {
-          let delay = 0;
-          elements.forEach((el, index) => {
-            if (el) {
-              setTimeout(() => {
-                el.style.opacity = '1';
-                el.style.transform = 'translateY(0)';
-                
-                // Only apply zoom effect to game logo and live-logo-link
-                if (el === card.querySelector('.game-logo') || 
-                    el === card.querySelector('.live-logo-link')) {
-                  setTimeout(() => { 
-                    applyZoomEffect(el); 
-                  }, 100);
-                }
-              }, delay);
-              delay += SEQUENTIAL_DELAY;
+            dateTimeFullscreen.classList.add('active');
+            
+            // Apply zoom effect to the game logo in the fullscreen
+            const fullscreenGameLogo = dateTimeFullscreen.querySelector('.fullscreen-game-logo');
+            if (fullscreenGameLogo) {
+            setTimeout(() => {
+                applyZoomEffect(fullscreenGameLogo);
+            }, MatchCardTimings.fullscreenLogoZoomDelay);
             }
-          });
-        }, DATE_TIME_ANIMATION_DURATION);
-      }, DATE_TIME_FULLSCREEN_DURATION);
-    }
+        }
+
+        // After fullscreenDuration, hide the fullscreen and start animations
+        setTimeout(() => {
+            if (dateTimeFullscreen) {
+            dateTimeFullscreen.classList.remove('active');
+            }
+            
+            // Wait for the fullscreen to fade out before showing the other elements
+            setTimeout(() => {
+            // 1. First animate the header sliding in from above
+            if (header) {
+                header.style.opacity = '1';
+                header.style.transform = 'translateY(0)';
+                
+                // Apply zoom effect to game logo after header appears
+                setTimeout(() => {
+                const gameLogo = header.querySelector('.game-logo');
+                if (gameLogo) {
+                    applyZoomEffect(gameLogo);
+                }
+                }, MatchCardTimings.headerLogoZoomDelay);
+            }
+            
+            // 2. Then animate the footer with a configured delay after header
+            setTimeout(() => {
+                if (footer) {
+                footer.style.opacity = '1';
+                footer.style.transform = 'translateY(0)';
+                
+                // Apply zoom effect to live-logo-link after footer appears
+                setTimeout(() => {
+                    const liveLogo = footer.querySelector('.live-logo-link');
+                    if (liveLogo) {
+                    applyZoomEffect(liveLogo);
+                    }
+                }, MatchCardTimings.footerLogoZoomDelay);
+                }
+                
+                // 3. Then animate the body elements with a configured delay after footer
+                setTimeout(() => {
+                // Special handling for MatchCard2 - make both team containers appear at the same time
+                if (card.classList.contains('matchCard2')) {
+                    
+                    // Info container animation
+                    const infoContainer = card.querySelector('.card-body .info-container');
+                    if (infoContainer) {
+                    setTimeout(() => {
+                        infoContainer.style.opacity = '1';
+                        infoContainer.style.transform = 'translateY(0)';
+                    }, MatchCardTimings.matchCard2.infoContainerDelay);
+                    }
+
+                    // Team containers animation
+                    const teamContainers = card.querySelectorAll('.team-container');
+                    teamContainers.forEach(container => {
+                    if (container) {
+                        setTimeout(() => {
+                        container.style.opacity = '1';
+                        container.style.transform = 'translateY(0)';
+                        }, MatchCardTimings.matchCard2.teamContainersDelay);
+                    }
+                    });
+                    
+                    // Match name container animation
+                    const matchNameContainer = card.querySelector('.match-name-container-small');
+                    if (matchNameContainer) {
+                    setTimeout(() => {
+                        matchNameContainer.style.opacity = '1';
+                        matchNameContainer.style.transform = 'translateY(0)';
+                    }, MatchCardTimings.matchCard2.matchNameDelay);
+                    }
+                } 
+                // Regular handling for MatchCard
+                else {
+                    bodyElements.forEach((el, index) => {
+                    if (el) {
+                        setTimeout(() => {
+                        el.style.opacity = '1';
+                        el.style.transform = 'translateY(0)';
+                        }, index * MatchCardTimings.matchCard.elementDelay);
+                    }
+                    });
+                }
+                }, MatchCardTimings.bodyElementsStartDelay);
+                
+            }, MatchCardTimings.footerSlideInDelay);
+            
+            }, MatchCardTimings.fullscreenFadeOutDuration);
+        }, MatchCardTimings.fullscreenDuration);
+        }
 
     function animateYoutubeCard(card) {
       const thumbnail = card.querySelector('.youtube-thumbnail');
@@ -1247,7 +1383,7 @@
           setTimeout(() => {
             sideInfo.style.opacity = '1';
             sideInfo.style.transform = 'translateX(0)';
-            setTimeout(() => { applyZoomEffect(sideInfo); }, 100);
+            setTimeout(() => { sideInfo; }, 100);
           }, 2000);
         }
       }, 50);
@@ -1284,7 +1420,7 @@
           setTimeout(() => {
             sideInfo.style.opacity = '1';
             sideInfo.style.transform = 'translateX(0)';
-            setTimeout(() => { applyZoomEffect(sideInfo); }, 100);
+            setTimeout(() => { sideInfo; }, 100);
           }, 2500);
         }
       }, 50);
@@ -1328,35 +1464,51 @@
     }
 
     function resetCardElements(card) {
-      if (!card) return;
-      
-      // Reset date-time-fullscreen
-      const dateTimeFullscreen = card.querySelector('.date-time-fullscreen');
-      if (dateTimeFullscreen) {
-        dateTimeFullscreen.classList.remove('active');
-      }
-      
-      if (card.classList.contains('matchCard') || card.classList.contains('matchCard2')) {
-        const matchElements = [
-          card.querySelector('.game-logo'),
-          card.querySelector('.date-text'),
-          card.querySelector('.info-container'),
-          card.querySelector('.match-name-container'),
-          card.querySelector('.live-logo-link')
-        ];
-        if (card.classList.contains('matchCard2')) {
-          const teamContainers = card.querySelectorAll('.team-container');
-          teamContainers.forEach(container => {
-            if (container) matchElements.push(container);
-          });
-          matchElements.push(card.querySelector('.match-name-container-small'));
+        if (!card) return;
+        
+        // Reset date-time-fullscreen
+        const dateTimeFullscreen = card.querySelector('.date-time-fullscreen');
+        if (dateTimeFullscreen) {
+            dateTimeFullscreen.classList.remove('active');
         }
-        matchElements.forEach(el => {
-          if (el) {
-            el.style.opacity = '0';
-            el.style.transform = 'translateY(20px)';
-          }
-        });
+        
+        if (card.classList.contains('matchCard') || card.classList.contains('matchCard2')) {
+            // Reset header position
+            const header = card.querySelector('.card-header');
+            if (header) {
+            header.style.transform = 'translateY(-120px)';
+            header.style.opacity = '0';
+            }
+            
+            // Reset footer position
+            const footer = card.querySelector('.card-footer');
+            if (footer) {
+            footer.style.transform = 'translateY(120px)';
+            footer.style.opacity = '0';
+            }
+            
+            // Reset card body elements
+            const matchElements = [
+            card.querySelector('.game-logo'),
+            card.querySelector('.date-text'),
+            card.querySelector('.info-container'),
+            card.querySelector('.match-name-container'),
+            card.querySelector('.live-logo-link')
+            ];
+            if (card.classList.contains('matchCard2')) {
+            const teamContainers = card.querySelectorAll('.team-container');
+            teamContainers.forEach(container => {
+                if (container) matchElements.push(container);
+            });
+            matchElements.push(card.querySelector('.match-name-container-small'));
+            }
+            matchElements.forEach(el => {
+            if (el) {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(20px)';
+            }
+            });
+  } else if (card.id === 'youtubeCard') {
       } else if (card.id === 'youtubeCard') {
         // Rest of the existing code for youtubeCard...
         const thumbnail = card.querySelector('.youtube-thumbnail');
