@@ -14,13 +14,13 @@
     }
     @font-face {
       font-family: 'HelveticaNeue';
-      src: local('HelveticaNeue-Bold'), local('Helvetica Neue Bold');
+      src: url('https://gmrxbbhhyyrtmsftofdp.supabase.co/storage/v1/object/public/gentle-mates-assets/livedata-overlay/HelveticaNeueBold.ttf') format('truetype');
       font-weight: 700;
       font-style: normal;
     }
     @font-face {
       font-family: 'HelveticaNeue-Bold';
-      src: local('HelveticaNeue-Bold'), local('Helvetica Neue Bold');
+      src: url('https://gmrxbbhhyyrtmsftofdp.supabase.co/storage/v1/object/public/gentle-mates-assets/livedata-overlay/HelveticaNeueBold.ttf') format('truetype');
       font-weight: bold;
       font-style: normal;
     }
@@ -58,7 +58,7 @@
       width: 1204px;
       height: 633px;
       position: relative;
-      border-radius: 40px;
+      border-radius: 44px;
       overflow: hidden;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
       background-color: #FFFFFF;
@@ -534,6 +534,66 @@
       border: 8px solid #D6D2D3;
     }
 
+    /* ----------------- FORTNITE MAP CARD STYLES ----------------- */
+
+    /* Update these styles in your CSS */
+    .fortnite-image-container {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: flex-start;
+    }
+
+    .fortnite-map-image {
+      width: 92%;
+      height: 75%;
+      object-fit: contain;
+      margin: 0 auto; /* This centers the image horizontally */
+    }
+
+    /* You might also want to ensure the map-code-container is centered */
+    .map-code-container {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .map-code-container {
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      position: absolute;
+      bottom: 40px;
+      left: 0px;
+    }
+
+    .map-title {
+      color: #FFFFFF;
+      width: 100%;
+      font-family: 'HelveticaBoldExtended', sans-serif;
+      font-size: 40px;
+      text-align: center;
+      margin-left: 96px;
+      margin-bottom: 16px;
+    }
+
+    .map-code {
+      font-family: 'HelveticaBoldExtended', sans-serif;
+      font-size: 96px;
+      text-align: center;
+      background: linear-gradient(to bottom, #FF8C00, #F77514, #FF4500);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: none; /* Remove the previous text shadow */
+    }
+
+
     /* ----------------- Updated styles for date-time-fullscreen -----------------
    Now includes game logo styling */
 
@@ -794,6 +854,30 @@
       transform: translateY(30px);
       transition: opacity 0.5s ease, transform 0.5s ease;
     }
+
+    #fortniteMapCard {
+      background-color: #F77514;
+    }
+
+    #fortniteMapCard .background-image {
+      background-image: url('https://gmrxbbhhyyrtmsftofdp.supabase.co/storage/v1/object/public/gentle-mates-assets/livedata-overlay/Overlay%20Map%20Fortnite/BACKGROUND.png');
+      background-size: contain;
+      background-position: center;
+      opacity: 1; /* Make sure it's fully visible */
+    }
+
+    #fortniteMapCard .fortnite-map-image {
+        opacity: 0;
+        transform: scale(1.3);
+        transition: opacity 0.83s ease, transform 0.83s ease;
+    }
+
+    #fortniteMapCard .map-info-container,
+    #fortniteMapCard .map-code {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.5s ease, transform 0.5s ease;
+    }
   </style>
 </head>
 <body>
@@ -814,7 +898,7 @@
         <div class="shop-images-container">
           <img class="shop-item shop-item-1" src="https://cdn.shopify.com/s/files/1/0727/9575/0735/files/M8_Maillot2025_Frontcopie.png?v=1733336697" alt="Shop Item 1">
           <img class="shop-item shop-item-2" src="https://cdn.shopify.com/s/files/1/0727/9575/0735/files/M8_NOEL_MERCH_ZIP_FRONT.png?v=1733263364" alt="Shop Item 2">
-          <img class="shop-item shop-item-3" src="https://cdn.shopify.com/s/files/1/0727/9575/0735/files/M8_NOEL_MERCH_POLAIRE_GREEN_FRONTV3.png?v=1733336980" alt="Shop Item 3">
+          <img class="shop-item shop-item-3" src="https://cdn.shopify.com/s/files/1/0727/9575/0735/files/M8_Merch_Rentree2024_Hoodie_Car_Front.png?v=1726086072" alt="Shop Item 3">
         </div>
         <div class="side-info">
           <div class="merch-text">MERCH DISPONIBLE</div>
@@ -1120,6 +1204,25 @@
                 <div class="new-video-text">${newVideoText}</div>
               </div>
             </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Create HTML for FortniteMapCard
+    // Update the createFortniteMapCardHTML function
+    function createFortniteMapCardHTML() {
+      return `
+        <div id="fortniteMapCard" class="card">
+            <div class="background-image"></div>
+            <div class="fortnite-image-container">
+              <img class="fortnite-map-image" src="https://gmrxbbhhyyrtmsftofdp.supabase.co/storage/v1/object/public/gentle-mates-assets/livedata-overlay/Overlay%20Map%20Fortnite/Fortnite-Map-Thumbnail-Cropped.png" alt="Fortnite Map">
+              <div class="map-code-container">
+                <div class="map-info-container">
+                  <div class="map-title">MAP FORTNITE GENTLE MATES</div>
+                </div>
+                <div class="map-code">4163-3140-1867</div>
+              </div>
           </div>
         </div>
       `;
@@ -1463,6 +1566,36 @@
       }, 50);
     }
 
+    function animateFortniteMapCard(card) {
+      const mapImage = card.querySelector('.fortnite-map-image');
+      const mapInfoContainer = card.querySelector('.map-info-container');
+      const mapCode = card.querySelector('.map-code');
+      
+      setTimeout(() => {
+        if (mapImage) {
+          setTimeout(() => {
+            mapImage.style.opacity = '1';
+            mapImage.style.transform = 'scale(1)';
+            setTimeout(() => { mapImage; }, 100);
+          }, 0);
+        }
+        if (mapInfoContainer) {
+          setTimeout(() => {
+            mapInfoContainer.style.opacity = '1';
+            mapInfoContainer.style.transform = 'translateY(0)';
+            setTimeout(() => { mapInfoContainer; }, 100);
+          }, 1000);
+        }
+        if (mapCode) {
+          setTimeout(() => {
+            mapCode.style.opacity = '1';
+            mapCode.style.transform = 'translateY(0)';
+            setTimeout(() => { applyZoomEffect(mapCode); }, 100);
+          }, 2000);
+        }
+      }, 50);
+    }
+
     function resetCardElements(card) {
         if (!card) return;
         
@@ -1564,6 +1697,23 @@
             el.style.transform = 'translateY(30px)';
           }
         });
+      } else if (card.id === 'fortniteMapCard') {
+        const mapImage = card.querySelector('.fortnite-map-image');
+        const mapInfoContainer = card.querySelector('.map-info-container');
+        const mapCode = card.querySelector('.map-code');
+        
+        if (mapImage) {
+          mapImage.style.opacity = '0';
+          mapImage.style.transform = 'scale(1.3)';
+        }
+        if (mapInfoContainer) {
+          mapInfoContainer.style.opacity = '0';
+          mapInfoContainer.style.transform = 'translateY(20px)';
+        }
+        if (mapCode) {
+          mapCode.style.opacity = '0';
+          mapCode.style.transform = 'translateY(20px)';
+        }
       }
     }
 
@@ -1576,6 +1726,10 @@
       if (downloadAppIndex !== -1) {
         durations[downloadAppIndex] = 30000;
       }
+    const fortniteMapIndex = Array.from(cards).findIndex(card => card.id === 'fortniteMapCard');
+        if (fortniteMapIndex !== -1) {
+        durations[fortniteMapIndex] = 30000; // 100 seconds for FortniteMapCard (can be changed later)
+        }
       function animateCardElements(card) {
         if (!card) return;
         if (card.classList.contains('matchCard') || card.classList.contains('matchCard2')) {
@@ -1586,6 +1740,8 @@
           animateShopCard(card);
         } else if (card.id === 'downloadTheApp') {
           animateDownloadAppCard(card);
+        } else if (card.id === 'fortniteMapCard') {
+            animateFortniteMapCard(card);
         }
       }
       function showCard(nextIndex) {
@@ -1700,6 +1856,7 @@
         const matches = await fetchUpcomingMatches();
         const latestVideo = await fetchLatestYoutubeVideo();
         const matchCards = [];
+        const fortniteMapCardHTML = createFortniteMapCardHTML();
         for (const match of matches) {
           const game = await fetchGameById(match.game_id);
           if (match.team_b_id === null) {
@@ -1721,7 +1878,7 @@
         }
         shopCard.remove();
         downloadTheAppCard.remove();
-        container.innerHTML = matchCards.join('') + youtubeCardHTML;
+        container.innerHTML = fortniteMapCardHTML + matchCards.join('') + youtubeCardHTML;
         container.appendChild(shopCard);
         container.appendChild(downloadTheAppCard);
         setupCarousel();
