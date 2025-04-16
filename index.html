@@ -203,10 +203,17 @@
 
     .match-name {
       color: #2D2D2D;
-      font-family: 'TuskerGrotesk', sans-serif;
-      font-size: 96px;
+      font-family: 'HelveticaBoldExtended', sans-serif;
+      font-size: 64px;
       text-align: center;
-      margin-right: 24px;
+      margin-right: 16px;
+      /* Limiting to 3 lines with ellipsis */
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .info-container {
@@ -227,6 +234,7 @@
       font-family: 'TuskerGrotesk', sans-serif;
       font-size: 96px;
       text-align: center;
+      letter-spacing: 2px;
     }
 
     /* ----------------- MATCHCARD2 STYLES ----------------- */
@@ -640,6 +648,7 @@
     .fullscreen-time {
       font-size: 128px;
       font-family: 'TuskerGrotesk', sans-serif;
+      letter-spacing: 2px;
     }
 
     /* Update the sequential animation styles to specify which elements should zoom */
@@ -881,6 +890,20 @@
   </style>
 </head>
 <body>
+  <svg width="0" height="0" style="position: absolute;">
+    <defs>
+      <filter id="colorize-white">
+        <feFlood flood-color="#FFFFFF" result="white-color"/>
+        <feComposite in="white-color" in2="SourceAlpha" operator="in" result="white-shape"/>
+        <feComposite in="white-shape" in2="SourceGraphic" operator="over"/>
+      </filter>
+      <filter id="colorize-dark">
+        <feFlood flood-color="#2D2D2D" result="dark-color"/>
+        <feComposite in="dark-color" in2="SourceAlpha" operator="in" result="dark-shape"/>
+        <feComposite in="dark-shape" in2="SourceGraphic" operator="over"/>
+      </filter>
+    </defs>
+  </svg>
   <div class="loading">
     <div class="spinner"></div>
   </div>
@@ -1033,6 +1056,43 @@
       }, zoomDuration);
     }
 
+    // Get Accessible Color
+    function isColorLight(hexColor) {
+      // Remove # if present
+      hexColor = hexColor.toUpperCase();
+
+      // Special case handling for your specific colors
+      if (hexColor === "#8936FF") { //RL
+        return false;
+      } else if (hexColor === "#F77514") { //Fortnite
+        return true;
+      } else if (hexColor === "#39B8FF") { //LOL
+        return true;
+      } else if (hexColor === "#EE0073") { //Valorant
+        return true;
+      } else if (hexColor === "#55E6A6") { //TFT
+        return true;
+      } else if (hexColor === "#FEB200") { //AOE
+        return true;
+      } else if (hexColor === "#EC8FFF") { //COD
+        return true;
+      } else if (hexColor === "#CEF930") { //WZ
+        return true;
+      }
+      
+      // Convert to RGB
+      const r = parseInt(hexColor.substr(0, 2), 16) / 255;
+      const g = parseInt(hexColor.substr(2, 2), 16) / 255;
+      const b = parseInt(hexColor.substr(4, 2), 16) / 255;
+      
+      // Calculate perceived brightness using common formula
+      // (0.299*R + 0.587*G + 0.114*B)
+      const brightness = 0.299 * r + 0.587 * g + 0.114 * b;
+      
+      // Return true if the color is light (brightness > 0.35)
+      return brightness > 0.5;
+    }
+
     // Update the createMatchCardHTML function to include the game logo in the date-time-fullscreen
     function createMatchCardHTML(match, game) {
       const { date, time } = formatDateTime(match.live_datetime);
@@ -1041,6 +1101,14 @@
       const platformLogo = getPlatformLogo(twitchLink);
       const gameLogoURL = game?.dark_logo_url || "";
       const gameColor = game?.secondary_color || "#F77514";
+
+      // Determine which filter to use based on the background color
+      const filterClass = isColorLight(gameColor) ? "filter: url(#colorize-dark)" : "filter: url(#colorize-white)";
+      
+      // Determine text color based on background color
+      const isLight = isColorLight(gameColor);
+      const textColor = isLight ? "#2D2D2D" : "#FFFFFF";
+      
       return `
         <div id="matchCard-${match.id}" class="card matchCard">
           <div class="background-image"></div>
@@ -1051,15 +1119,15 @@
             <div class="fullscreen-time">${time}</div>
           </div>
           <div class="card-header" style="background-color: ${gameColor};">
-            <img class="game-logo" src="${gameLogoURL}" alt="Game Logo">
-            <div class="date-text">${date}</div>
+            <img class="game-logo" src="${gameLogoURL}" alt="Game Logo" style="${filterClass}">
+            <div class="date-text" style="color: ${textColor};">${date}</div>
           </div>
           <div class="card-body row">
             <div class="match-name-container">
               <div class="match-name">${match.name}</div>
             </div>
             <div class="info-container" style="background-color: ${gameColor};">
-              <div class="info-text">${time}</div>
+              <div class="info-text" style="color: ${textColor};">${time}</div>
             </div>
           </div>
           <div class="card-footer">
@@ -1081,10 +1149,19 @@
       const platformLogo = getPlatformLogo(twitchLink);
       const gameLogoURL = game?.dark_logo_url || "";
       const gameColor = game?.secondary_color || "#EE0073";
+
+      // Determine which filter to use based on the background color
+      const filterClass = isColorLight(gameColor) ? "filter: url(#colorize-dark)" : "filter: url(#colorize-white)";
+      
+      // Determine text color based on background color
+      const isLight = isColorLight(gameColor);
+      const textColor = isLight ? "#2D2D2D" : "#FFFFFF";
+      
       const teamAName = teamA?.name || "Team A";
       const teamBName = teamB?.name || "Team B";
       const teamALogoURL = teamA?.dark_logo_url || "";
       const teamBLogoURL = teamB?.dark_logo_url || "";
+      
       return `
         <div id="matchCard2-${match.id}" class="card matchCard2">
           <div class="background-image"></div>
@@ -1095,8 +1172,8 @@
             <div class="fullscreen-time">${time}</div>
           </div>
           <div class="card-header" style="background-color: ${gameColor};">
-            <img class="game-logo" src="${gameLogoURL}" alt="Game Logo">
-            <div class="date-text">${date}</div>
+            <img class="game-logo" src="${gameLogoURL}" alt="Game Logo" style="${filterClass}">
+            <div class="date-text" style="color: ${textColor};">${date}</div>
           </div>
           <div class="card-body column">
             <div class="body-container">
@@ -1105,7 +1182,7 @@
                 <div class="team-name">${teamAName}</div>
               </div>
               <div class="info-container" style="background-color: ${gameColor};">
-                <div class="info-text">${time}</div>
+                <div class="info-text" style="color: ${textColor};">${time}</div>
               </div>
               <div class="team-container">
                 <img class="team-logo" src="${teamBLogoURL}" alt="${teamBName} Logo">
@@ -1721,14 +1798,14 @@
       const cards = document.querySelectorAll('.card');
       let currentCardIndex = 0;
       let previousCardIndex = null;
-      const durations = Array(cards.length).fill(30000);
+      const durations = Array(cards.length).fill(25000);
       const downloadAppIndex = Array.from(cards).findIndex(card => card.id === 'downloadTheApp');
       if (downloadAppIndex !== -1) {
         durations[downloadAppIndex] = 30000;
       }
     const fortniteMapIndex = Array.from(cards).findIndex(card => card.id === 'fortniteMapCard');
         if (fortniteMapIndex !== -1) {
-        durations[fortniteMapIndex] = 45000; // 45 seconds for FortniteMapCard (can be changed later)
+        durations[fortniteMapIndex] = 60000; // 60 seconds for FortniteMapCard (can be changed later)
         }
       function animateCardElements(card) {
         if (!card) return;
