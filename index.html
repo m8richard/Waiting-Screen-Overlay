@@ -1933,7 +1933,7 @@
         const matches = await fetchUpcomingMatches();
         const latestVideo = await fetchLatestYoutubeVideo();
         const matchCards = [];
-        // const fortniteMapCardHTML = createFortniteMapCardHTML();
+        const fortniteMapCardHTML = createFortniteMapCardHTML();
         for (const match of matches) {
           const game = await fetchGameById(match.game_id);
           if (match.team_b_id === null) {
@@ -1955,7 +1955,7 @@
         }
         shopCard.remove();
         downloadTheAppCard.remove();
-        container.innerHTML = matchCards.join('') + youtubeCardHTML;
+        container.innerHTML = fortniteMapCardHTML + matchCards.join('') + youtubeCardHTML;
         container.appendChild(shopCard);
         container.appendChild(downloadTheAppCard);
         setupCarousel();
