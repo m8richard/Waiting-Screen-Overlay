@@ -902,6 +902,68 @@
         transform: translateY(20px);
         transition: opacity 0.5s ease, transform 0.5s ease;
     }
+
+    #fortniteMapCard .map-code {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+
+    /* ----------------- RLSKIN CARD STYLES ----------------- */
+    #rlSkinCard {
+      background: radial-gradient(circle at center, #2D2D2D 30%, #000000 100%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .rl-skin-container {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .rl-advertisement {
+      color: #5c5c5c;
+      font-family: 'HelveticaBoldExtended', sans-serif;
+      font-size: 32px;
+      position: absolute;
+      top: 32px;
+      left: 32px;
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+      opacity: 0;
+      z-index: 10;
+      transition: opacity 0.83s ease, transform 0.83s ease;
+    }
+
+    .rl-skin-image {
+      width: auto;
+      height: 100%;
+      object-fit: contain;
+      opacity: 0;
+      transform: scale(1.3);
+      transition: opacity 0.83s ease, transform 0.83s ease, height 0.83s ease, top 0.83s ease;
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%) scale(1.3);
+    }
+
+    .rl-code-image {
+      width: 100%;
+      height: auto;
+      object-fit: cover;
+      opacity: 0;
+      transform: translateY(100%);
+      transition: opacity 0.83s ease, transform 0.83s ease;
+      position: absolute;
+      bottom: 24px;
+    }
   </style>
 </head>
 <body>
@@ -1321,6 +1383,18 @@
       `;
     }
 
+    function createRLSkinCardHTML() {
+      return `
+        <div id="rlSkinCard" class="card">
+          <div class="rl-advertisement">PUBLICITÉ</div>
+          <div class="rl-skin-container">
+            <img class="rl-skin-image" src="https://gmrxbbhhyyrtmsftofdp.supabase.co/storage/v1/object/public/gentle-mates-assets/livedata-overlay/Overlay%20Rocket%20League%20Skin/DecalRL2025.png" alt="RL Skin">
+            <img class="rl-code-image" src="https://gmrxbbhhyyrtmsftofdp.supabase.co/storage/v1/object/public/gentle-mates-assets/livedata-overlay/Overlay%20Rocket%20League%20Skin/RLSKinCreatorCode.png" alt="Creator Code">
+          </div>
+        </div>
+      `;
+    }
+
     // Format date and time function
     function formatDateTime(dateTimeStr) {
       const dateObj = new Date(dateTimeStr);
@@ -1697,6 +1771,42 @@
       }, 50);
     }
 
+    function animateRLSkinCard(card) {
+      const skinImage = card.querySelector('.rl-skin-image');
+      const codeImage = card.querySelector('.rl-code-image');
+      const advertisement = card.querySelector('.rl-advertisement');
+      
+      setTimeout(() => {
+        if (advertisement) {
+          setTimeout(() => {
+            advertisement.style.opacity = '0.5';
+            advertisement.style.transform = 'rotate(180deg) scale(1)';
+            setTimeout(() => { advertisement; }, 100);
+          }, 0);
+        }
+        if (skinImage) {
+          setTimeout(() => {
+            skinImage.style.opacity = '1';
+            skinImage.style.transform = 'translateX(-50%) scale(0.8)';
+            setTimeout(() => { skinImage; }, 100);
+          }, 0);
+        }
+
+        // After 5 seconds, animate the transition
+        setTimeout(() => {
+          if (skinImage) {
+            skinImage.style.height = '50%';
+            skinImage.style.top = '24px';
+            skinImage.style.transform = 'translateX(-50%) scale(1)';
+          }
+          if (codeImage) {
+            codeImage.style.opacity = '1';
+            codeImage.style.transform = 'translateY(0)';
+          }
+        }, 5000);
+      }, 50);
+    }
+
     function resetCardElements(card) {
         if (!card) return;
         
@@ -1820,6 +1930,25 @@
           mapCode.style.opacity = '0';
           mapCode.style.transform = 'translateY(20px)';
         }
+      } else if (card.id === 'rlSkinCard') {
+        const skinImage = card.querySelector('.rl-skin-image');
+        const codeImage = card.querySelector('.rl-code-image');
+        const advertisement = card.querySelector('.rl-advertisement');
+        
+        if (skinImage) {
+          skinImage.style.opacity = '0';
+          skinImage.style.height = '100%';
+          skinImage.style.top = '0';
+          skinImage.style.transform = 'translateX(-50%) scale(1.3)';
+        }
+        if (codeImage) {
+          codeImage.style.opacity = '0';
+          codeImage.style.transform = 'translateY(100%)';
+        }
+        if (advertisement) {
+          advertisement.style.opacity = '0';
+          advertisement.style.transform = 'rotate(180deg) scale(1.3)';
+        }
       }
     }
 
@@ -1830,12 +1959,17 @@
       const durations = Array(cards.length).fill(25000);
       const downloadAppIndex = Array.from(cards).findIndex(card => card.id === 'downloadTheApp');
       if (downloadAppIndex !== -1) {
-        durations[downloadAppIndex] = 30000;
+        durations[downloadAppIndex] = 60000;
       }
-    const fortniteMapIndex = Array.from(cards).findIndex(card => card.id === 'fortniteMapCard');
-        if (fortniteMapIndex !== -1) {
-        durations[fortniteMapIndex] = 60000; // 60 seconds for FortniteMapCard (can be changed later)
-        }
+      const fortniteMapIndex = Array.from(cards).findIndex(card => card.id === 'fortniteMapCard');
+      if (fortniteMapIndex !== -1) {
+        durations[fortniteMapIndex] = 60000;
+      }
+      const rlSkinIndex = Array.from(cards).findIndex(card => card.id === 'rlSkinCard');
+      if (rlSkinIndex !== -1) {
+        durations[rlSkinIndex] = 60000;
+      }
+
       function animateCardElements(card) {
         if (!card) return;
         if (card.classList.contains('matchCard') || card.classList.contains('matchCard2')) {
@@ -1847,7 +1981,9 @@
         } else if (card.id === 'downloadTheApp') {
           animateDownloadAppCard(card);
         } else if (card.id === 'fortniteMapCard') {
-            animateFortniteMapCard(card);
+          animateFortniteMapCard(card);
+        } else if (card.id === 'rlSkinCard') {
+          animateRLSkinCard(card);
         }
       }
       function showCard(nextIndex) {
@@ -1963,6 +2099,7 @@
         const latestVideo = await fetchLatestYoutubeVideo();
         const matchCards = [];
         const fortniteMapCardHTML = createFortniteMapCardHTML();
+        const rlSkinCardHTML = createRLSkinCardHTML();
         for (const match of matches) {
           const game = await fetchGameById(match.game_id);
           if (match.team_b_id === null) {
@@ -1984,7 +2121,7 @@
         }
         shopCard.remove();
         downloadTheAppCard.remove();
-        container.innerHTML = fortniteMapCardHTML + matchCards.join('') + youtubeCardHTML;
+        container.innerHTML = rlSkinCardHTML + fortniteMapCardHTML + matchCards.join('') + youtubeCardHTML;
         container.appendChild(shopCard);
         container.appendChild(downloadTheAppCard);
         setupCarousel();
