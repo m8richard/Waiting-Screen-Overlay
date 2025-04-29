@@ -60,7 +60,6 @@
       position: relative;
       border-radius: 44px;
       overflow: hidden;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
       background-color: transparent;
     }
 
@@ -427,29 +426,32 @@
 
     .shop-item {
       position: absolute;
-      top: 50%;
-      left: 50%;
+      top: 54%;
+      left: 54%;
     }
 
     .shop-item-1 {
-      height: 560px;
-      width: 560px;
+      height: 520px;
+      width: 520px;
       z-index: 2;
-      transform: translate(-280px, -280px);
+      transform: translate(-280px, -230px);
+      object-fit: contain;
     }
 
     .shop-item-2 {
-      height: 480px;
-      width: 480px;
+      height: 440px;
+      width: 440px;
       z-index: 1;
-      transform: translate(-400px, -280px);
+      transform: translate(-400px, -260px);
+      object-fit: contain;
     }
 
     .shop-item-3 {
-      height: 480px;
-      width: 480px;
+      height: 440px;
+      width: 440px;
       z-index: 1;
-      transform: translate(-90px, -280px);
+      transform: translate(-90px, -260px);
+      object-fit: contain;
     }
 
     .shop-url-container {
@@ -964,6 +966,55 @@
       position: absolute;
       bottom: 24px;
     }
+
+    /* ----------------- PROKIT2025 CARD STYLES ----------------- */
+    #prokit2025Card {
+      background-color: transparent;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .prokit-background {
+      position: absolute;
+      width: 100%;
+      height: 90%;
+      bottom: 0;
+      background-image: url('https://gmrxbbhhyyrtmsftofdp.supabase.co/storage/v1/object/public/gentle-mates-assets/livedata-overlay/Overlay%20Pro%20Kit%202025/BACKGROUND_cropped.png');
+      background-size: cover;
+      background-position: center;
+      opacity: 0;
+      transition: opacity 0.83s ease;
+      border-radius: 48px;
+      border-color: #EDEDED;
+      border-width: 4px;
+      border-style: solid;
+    }
+
+    .prokit-veste {
+      position: absolute;
+      width: auto;
+      height: 100%;
+      object-fit: contain;
+      opacity: 0;
+      transform: scale(1.3);
+      transition: opacity 0.83s ease, transform 0.83s ease;
+      bottom: 10%;
+      left: 50%;
+      transform: translateX(-50%) scale(1.3);
+    }
+
+    .prokit-titrage {
+      position: absolute;
+      width: auto;
+      height: 100%;
+      object-fit: contain;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.83s ease, transform 0.83s ease;
+      bottom: 3%;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+    }
   </style>
 </head>
 <body style="background-color: transparent;">
@@ -1395,6 +1446,16 @@
       `;
     }
 
+    function createProkit2025CardHTML() {
+      return `
+        <div id="prokit2025Card" class="card">
+          <div class="prokit-background"></div>
+          <img class="prokit-veste" src="https://gmrxbbhhyyrtmsftofdp.supabase.co/storage/v1/object/public/gentle-mates-assets/livedata-overlay/Overlay%20Pro%20Kit%202025/VESTE-PROKIT.png" alt="Pro Kit Veste">
+          <img class="prokit-titrage" src="https://gmrxbbhhyyrtmsftofdp.supabase.co/storage/v1/object/public/gentle-mates-assets/livedata-overlay/Overlay%20Pro%20Kit%202025/TITRAGE.png" alt="Pro Kit Titrage">
+        </div>
+      `;
+    }
+
     // Format date and time function
     function formatDateTime(dateTimeStr) {
       const dateObj = new Date(dateTimeStr);
@@ -1807,6 +1868,35 @@
       }, 50);
     }
 
+    function animateProkit2025Card(card) {
+      const background = card.querySelector('.prokit-background');
+      const veste = card.querySelector('.prokit-veste');
+      const titrage = card.querySelector('.prokit-titrage');
+      
+      setTimeout(() => {
+        if (background) {
+          setTimeout(() => {
+            background.style.opacity = '1';
+            setTimeout(() => { background; }, 100);
+          }, 0);
+        }
+        if (veste) {
+          setTimeout(() => {
+            veste.style.opacity = '1';
+            veste.style.transform = 'translateX(-50%) scale(1)';
+            setTimeout(() => { veste; }, 100);
+          }, 1000);
+        }
+        if (titrage) {
+          setTimeout(() => {
+            titrage.style.opacity = '1';
+            titrage.style.transform = 'translateX(-50%) translateY(0)';
+            setTimeout(() => { titrage; }, 100);
+          }, 2000);
+        }
+      }, 50);
+    }
+
     function resetCardElements(card) {
         if (!card) return;
         
@@ -1949,6 +2039,22 @@
           advertisement.style.opacity = '0';
           advertisement.style.transform = 'rotate(180deg) scale(1.3)';
         }
+      } else if (card.id === 'prokit2025Card') {
+        const background = card.querySelector('.prokit-background');
+        const veste = card.querySelector('.prokit-veste');
+        const titrage = card.querySelector('.prokit-titrage');
+        
+        if (background) {
+          background.style.opacity = '0';
+        }
+        if (veste) {
+          veste.style.opacity = '0';
+          veste.style.transform = 'translateX(-50%) scale(1.3)';
+        }
+        if (titrage) {
+          titrage.style.opacity = '0';
+          titrage.style.transform = 'translateX(-50%) translateY(20px)';
+        }
       }
     }
 
@@ -1969,6 +2075,10 @@
       if (rlSkinIndex !== -1) {
         durations[rlSkinIndex] = 60000;
       }
+      const prokit2025Index = Array.from(cards).findIndex(card => card.id === 'prokit2025Card');
+      if (prokit2025Index !== -1) {
+        durations[prokit2025Index] = 60000;
+      }
 
       function animateCardElements(card) {
         if (!card) return;
@@ -1984,6 +2094,8 @@
           animateFortniteMapCard(card);
         } else if (card.id === 'rlSkinCard') {
           animateRLSkinCard(card);
+        } else if (card.id === 'prokit2025Card') {
+          animateProkit2025Card(card);
         }
       }
       function showCard(nextIndex) {
@@ -2100,6 +2212,7 @@
         const matchCards = [];
         const fortniteMapCardHTML = createFortniteMapCardHTML();
         const rlSkinCardHTML = createRLSkinCardHTML();
+        const prokit2025CardHTML = createProkit2025CardHTML();
         for (const match of matches) {
           const game = await fetchGameById(match.game_id);
           if (match.team_b_id === null) {
@@ -2121,7 +2234,7 @@
         }
         shopCard.remove();
         downloadTheAppCard.remove();
-        container.innerHTML = rlSkinCardHTML + fortniteMapCardHTML + matchCards.join('') + youtubeCardHTML;
+        container.innerHTML = prokit2025CardHTML + fortniteMapCardHTML + matchCards.join('') + youtubeCardHTML;
         container.appendChild(shopCard);
         container.appendChild(downloadTheAppCard);
         setupCarousel();
