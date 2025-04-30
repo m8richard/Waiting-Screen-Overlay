@@ -1415,7 +1415,6 @@
     }
 
     // Create HTML for FortniteMapCard
-    // Update the createFortniteMapCardHTML function
     function createFortniteMapCardHTML() {
       return `
         <div id="fortniteMapCard" class="card">
@@ -1942,142 +1941,141 @@
                 el.style.transform = 'translateY(20px)';
             }
             });
-  } else if (card.id === 'youtubeCard') {
-      } else if (card.id === 'youtubeCard') {
-        // Rest of the existing code for youtubeCard...
-        const thumbnail = card.querySelector('.youtube-thumbnail');
-        const title = card.querySelector('.youtube-title');
-        const sideInfo = card.querySelector('.side-info');
-        if (thumbnail) {
-          thumbnail.style.opacity = '0';
-          thumbnail.style.transform = 'scale(1.3)';
-        }
-        if (title) {
-          title.style.opacity = '0';
-          title.style.transform = 'translateY(20px)';
-        }
-        if (sideInfo) {
-          sideInfo.style.opacity = '0';
-          sideInfo.style.transform = 'translateX(30px)';
-        }
-      } else if (card.id === 'shopCard') {
-        // Rest of the existing code for shopCard...
-        const shopItem1 = card.querySelector('.shop-item-1');
-        const shopItem2 = card.querySelector('.shop-item-2');
-        const shopItem3 = card.querySelector('.shop-item-3');
-        const sideInfo = card.querySelector('.side-info');
-        if (shopItem1) {
-          shopItem1.style.opacity = '0';
-          shopItem1.style.transform = 'translate(-280px, -280px) scale(1.3)';
-        }
-        if (shopItem2) {
-          shopItem2.style.opacity = '0';
-          shopItem2.style.transform = 'translate(-400px, -280px) scale(1.3)';
-        }
-        if (shopItem3) {
-          shopItem3.style.opacity = '0';
-          shopItem3.style.transform = 'translate(-90px, -280px) scale(1.3)';
-        }
-        if (sideInfo) {
-          sideInfo.style.opacity = '0';
-          sideInfo.style.transform = 'translateX(30px)';
-        }
-      } else if (card.id === 'downloadTheApp') {
-        // Rest of the existing code for downloadTheApp...
-        const phone = card.querySelector('.phone');
-        const promoText1 = card.querySelector('.app-promo-text-1');
-        const qrCodesContainer = card.querySelector('.qr-codes-container');
-        const promoText2 = card.querySelector('.app-promo-text-2');
-        if (phone) {
-          phone.style.opacity = '0';
-          phone.style.transform = 'perspective(1200px) rotateY(-35deg) rotateX(8deg) scale(0.9)';
-        }
-        [promoText1, qrCodesContainer, promoText2].forEach(el => {
-          if (el) {
-            el.style.opacity = '0';
-            el.style.transform = 'translateY(30px)';
+        } else if (card.id === 'youtubeCard') {
+          // Rest of the existing code for youtubeCard...
+          const thumbnail = card.querySelector('.youtube-thumbnail');
+          const title = card.querySelector('.youtube-title');
+          const sideInfo = card.querySelector('.side-info');
+          if (thumbnail) {
+            thumbnail.style.opacity = '0';
+            thumbnail.style.transform = 'scale(1.3)';
           }
-        });
-      } else if (card.id === 'fortniteMapCard') {
-        const mapImage = card.querySelector('.fortnite-map-image');
-        const mapInfoContainer = card.querySelector('.map-info-container');
-        const mapCode = card.querySelector('.map-code');
-        const advertisement = card.querySelector('.advertisement');
-        
-        if (mapImage) {
-          mapImage.style.opacity = '0';
-          mapImage.style.transform = 'scale(1.3)';
+          if (title) {
+            title.style.opacity = '0';
+            title.style.transform = 'translateY(20px)';
+          }
+          if (sideInfo) {
+            sideInfo.style.opacity = '0';
+            sideInfo.style.transform = 'translateX(30px)';
+          }
+        } else if (card.id === 'shopCard') {
+          // Rest of the existing code for shopCard...
+          const shopItem1 = card.querySelector('.shop-item-1');
+          const shopItem2 = card.querySelector('.shop-item-2');
+          const shopItem3 = card.querySelector('.shop-item-3');
+          const sideInfo = card.querySelector('.side-info');
+          if (shopItem1) {
+            shopItem1.style.opacity = '0';
+            shopItem1.style.transform = 'translate(-280px, -280px) scale(1.3)';
+          }
+          if (shopItem2) {
+            shopItem2.style.opacity = '0';
+            shopItem2.style.transform = 'translate(-400px, -280px) scale(1.3)';
+          }
+          if (shopItem3) {
+            shopItem3.style.opacity = '0';
+            shopItem3.style.transform = 'translate(-90px, -280px) scale(1.3)';
+          }
+          if (sideInfo) {
+            sideInfo.style.opacity = '0';
+            sideInfo.style.transform = 'translateX(30px)';
+          }
+        } else if (card.id === 'downloadTheApp') {
+          // Rest of the existing code for downloadTheApp...
+          const phone = card.querySelector('.phone');
+          const promoText1 = card.querySelector('.app-promo-text-1');
+          const qrCodesContainer = card.querySelector('.qr-codes-container');
+          const promoText2 = card.querySelector('.app-promo-text-2');
+          if (phone) {
+            phone.style.opacity = '0';
+            phone.style.transform = 'perspective(1200px) rotateY(-35deg) rotateX(8deg) scale(0.9)';
+          }
+          [promoText1, qrCodesContainer, promoText2].forEach(el => {
+            if (el) {
+              el.style.opacity = '0';
+              el.style.transform = 'translateY(30px)';
+            }
+          });
+        } else if (card.id === 'fortniteMapCard') {
+          const mapImage = card.querySelector('.fortnite-map-image');
+          const mapInfoContainer = card.querySelector('.map-info-container');
+          const mapCode = card.querySelector('.map-code');
+          const advertisement = card.querySelector('.advertisement');
+          
+          if (mapImage) {
+            mapImage.style.opacity = '0';
+            mapImage.style.transform = 'scale(1.3)';
+          }
+          if (advertisement) {
+            advertisement.style.opacity = '0';
+            advertisement.style.transform = 'translateX(-50%) scale(1.3)';
+          }
+          if (mapInfoContainer) {
+            mapInfoContainer.style.opacity = '0';
+            mapInfoContainer.style.transform = 'translateY(20px)';
+          }
+          if (mapCode) {
+            mapCode.style.opacity = '0';
+            mapCode.style.transform = 'translateY(20px)';
+          }
+        } else if (card.id === 'rlSkinCard') {
+          const skinImage = card.querySelector('.rl-skin-image');
+          const codeImage = card.querySelector('.rl-code-image');
+          const advertisement = card.querySelector('.rl-advertisement');
+          
+          if (skinImage) {
+            skinImage.style.opacity = '0';
+            skinImage.style.height = '100%';
+            skinImage.style.top = '0';
+            skinImage.style.transform = 'translateX(-50%) scale(1.3)';
+          }
+          if (codeImage) {
+            codeImage.style.opacity = '0';
+            codeImage.style.transform = 'translateY(100%)';
+          }
+          if (advertisement) {
+            advertisement.style.opacity = '0';
+            advertisement.style.transform = 'rotate(180deg) scale(1.3)';
+          }
+        } else if (card.id === 'prokit2025Card') {
+          const background = card.querySelector('.prokit-background');
+          const veste = card.querySelector('.prokit-veste');
+          const titrage = card.querySelector('.prokit-titrage');
+          
+          if (background) {
+            background.style.opacity = '0';
+          }
+          if (veste) {
+            veste.style.opacity = '0';
+            veste.style.transform = 'translateX(-50%) scale(1.3)';
+          }
+          if (titrage) {
+            titrage.style.opacity = '0';
+            titrage.style.transform = 'translateX(-50%) translateY(20px)';
+          }
         }
-        if (advertisement) {
-          advertisement.style.opacity = '0';
-          advertisement.style.transform = 'translateX(-50%) scale(1.3)';
-        }
-        if (mapInfoContainer) {
-          mapInfoContainer.style.opacity = '0';
-          mapInfoContainer.style.transform = 'translateY(20px)';
-        }
-        if (mapCode) {
-          mapCode.style.opacity = '0';
-          mapCode.style.transform = 'translateY(20px)';
-        }
-      } else if (card.id === 'rlSkinCard') {
-        const skinImage = card.querySelector('.rl-skin-image');
-        const codeImage = card.querySelector('.rl-code-image');
-        const advertisement = card.querySelector('.rl-advertisement');
-        
-        if (skinImage) {
-          skinImage.style.opacity = '0';
-          skinImage.style.height = '100%';
-          skinImage.style.top = '0';
-          skinImage.style.transform = 'translateX(-50%) scale(1.3)';
-        }
-        if (codeImage) {
-          codeImage.style.opacity = '0';
-          codeImage.style.transform = 'translateY(100%)';
-        }
-        if (advertisement) {
-          advertisement.style.opacity = '0';
-          advertisement.style.transform = 'rotate(180deg) scale(1.3)';
-        }
-      } else if (card.id === 'prokit2025Card') {
-        const background = card.querySelector('.prokit-background');
-        const veste = card.querySelector('.prokit-veste');
-        const titrage = card.querySelector('.prokit-titrage');
-        
-        if (background) {
-          background.style.opacity = '0';
-        }
-        if (veste) {
-          veste.style.opacity = '0';
-          veste.style.transform = 'translateX(-50%) scale(1.3)';
-        }
-        if (titrage) {
-          titrage.style.opacity = '0';
-          titrage.style.transform = 'translateX(-50%) translateY(20px)';
-        }
-      }
     }
 
     function setupCarousel() {
       const cards = document.querySelectorAll('.card');
       let currentCardIndex = 0;
       let previousCardIndex = null;
-      const durations = Array(cards.length).fill(25000);
+      const durations = Array(cards.length).fill(23000);
       const downloadAppIndex = Array.from(cards).findIndex(card => card.id === 'downloadTheApp');
       if (downloadAppIndex !== -1) {
-        durations[downloadAppIndex] = 60000;
+        durations[downloadAppIndex] = 17000;
       }
       const fortniteMapIndex = Array.from(cards).findIndex(card => card.id === 'fortniteMapCard');
       if (fortniteMapIndex !== -1) {
-        durations[fortniteMapIndex] = 60000;
+        durations[fortniteMapIndex] = 17000;
       }
       const rlSkinIndex = Array.from(cards).findIndex(card => card.id === 'rlSkinCard');
       if (rlSkinIndex !== -1) {
-        durations[rlSkinIndex] = 60000;
+        durations[rlSkinIndex] = 17000;
       }
       const prokit2025Index = Array.from(cards).findIndex(card => card.id === 'prokit2025Card');
       if (prokit2025Index !== -1) {
-        durations[prokit2025Index] = 60000;
+        durations[prokit2025Index] = 17000;
       }
 
       function animateCardElements(card) {
@@ -2148,7 +2146,6 @@
       const shopCard = document.getElementById('shopCard');
       const downloadTheAppCard = document.getElementById('downloadTheApp');
       const loadingIndicator = document.querySelector('.loading');
-      
       try {
         const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm');
         const { DateTime } = await import('https://cdn.jsdelivr.net/npm/luxon/+esm');
@@ -2207,12 +2204,12 @@
           }
           return data;
         }
-        const matches = await fetchUpcomingMatches();
         const latestVideo = await fetchLatestYoutubeVideo();
-        const matchCards = [];
         const fortniteMapCardHTML = createFortniteMapCardHTML();
         const rlSkinCardHTML = createRLSkinCardHTML();
         const prokit2025CardHTML = createProkit2025CardHTML();
+        const matchCards = [];
+        const matches = await fetchUpcomingMatches();
         for (const match of matches) {
           const game = await fetchGameById(match.game_id);
           if (match.team_b_id === null) {
