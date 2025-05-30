@@ -982,50 +982,6 @@
   
   <div class="carousel-container">
     <!-- Cards will be dynamically loaded here -->
-
-    <!-- ShopCard -->
-    <div id="shopCard" class="card">
-      <div class="card-header">
-        <div class="header-text">MERCH GENTLE MATES</div>
-      </div>
-      <div class="card-body row">
-        <div class="background-image"></div>
-        <div class="shop-images-container">
-          <img class="shop-item shop-item-1" src="https://cdn.shopify.com/s/files/1/0727/9575/0735/files/M8_Prokit2025_Boutique_Jacket_Front.png?v=1744806954" alt="Shop Item 1">
-          <img class="shop-item shop-item-2" src="https://cdn.shopify.com/s/files/1/0727/9575/0735/files/M8_Maillot2025_Frontcopie.png?v=1733336697" alt="Shop Item 2">
-          <img class="shop-item shop-item-3" src="https://cdn.shopify.com/s/files/1/0727/9575/0735/files/M8_NOEL_MERCH_ZIP_FRONT.png?v=1733263364" alt="Shop Item 3">
-        </div>
-        <div class="side-info">
-          <div class="merch-text">MERCH DISPONIBLE</div>
-          <div class="shop-url-container">
-            <div class="shop-url">GENTLEMATES.COM/SHOP</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- DownloadTheApp -->
-    <div id="downloadTheApp" class="card">
-      <div class="card-body row">
-        <div class="background-image"></div>
-        <div class="phone-animation-container">
-          <div class="phone">
-            <div class="inner-bevel"></div>
-            <div class="screen">
-              <img class="screen-image" src="https://gmrxbbhhyyrtmsftofdp.supabase.co/storage/v1/object/public/gentle-mates-assets/livedata-overlay/gentle-mates-app-screen.png" alt="App Screen">
-            </div>
-          </div>
-        </div>
-        <div class="side-info-container">
-          <div class="app-promo-text-1">L'EXPÉRIENCE GENTLE MATES À PORTÉE DE MAIN</div>
-          <div class="qr-codes-container">
-            <img class="qr-code" src="https://gmrxbbhhyyrtmsftofdp.supabase.co/storage/v1/object/public/gentle-mates-assets/livedata-overlay/app_store_qr.png" alt="App Store QR">
-            <img class="qr-code" src="https://gmrxbbhhyyrtmsftofdp.supabase.co/storage/v1/object/public/gentle-mates-assets/livedata-overlay/play_store_qr.png" alt="Play Store QR">
-          </div>
-          <div class="app-promo-text-2">Téléchargez l'App !</div>
-        </div>
-      </div>
-    </div>
   </div>
 
   <script type="module">
@@ -2015,15 +1971,15 @@
 
     async function loadCards() {
       const container = document.querySelector('.carousel-container');
-      const shopCard = document.getElementById('shopCard');
-      const downloadTheAppCard = document.getElementById('downloadTheApp');
       const loadingIndicator = document.querySelector('.loading');
+      
       try {
         const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm');
         const { DateTime } = await import('https://cdn.jsdelivr.net/npm/luxon/+esm');
         const SUPABASE_URL = 'https://gmrxbbhhyyrtmsftofdp.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdtcnhiYmhoeXlydG1zZnRvZmRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDc0MDAxNTEsImV4cCI6MjAyMjk3NjE1MX0.JYVVlCII2iL97cevWvQi0Hlz0Gt_nZjonb9ApnNDscc';
         const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
         async function fetchUpcomingMatches() {
           const now = new Date().toISOString();
           const { data, error } = await supabase
@@ -2038,6 +1994,7 @@
           }
           return data;
         }
+        
         async function fetchGameById(gameId) {
           const { data, error } = await supabase
               .from('games')
@@ -2050,6 +2007,7 @@
           }
           return data;
         }
+        
         async function fetchTeamById(teamId) {
           if (!teamId) return null;
           const { data, error } = await supabase
@@ -2063,6 +2021,7 @@
           }
           return data;
         }
+        
         async function fetchLatestYoutubeVideo() {
           const { data, error } = await supabase
               .from('youtube_videos')
@@ -2076,11 +2035,17 @@
           }
           return data;
         }
+        
+        // Fetch data
         const latestVideo = await fetchLatestYoutubeVideo();
-        const fortniteMapCardHTML = createFortniteMapCardHTML();
-        const prokit2025CardHTML = createProkit2025CardHTML();
-        const matchCards = [];
         const matches = await fetchUpcomingMatches();
+        
+        // Create all card HTML
+        const prokit2025CardHTML = createProkit2025CardHTML();
+        const fortniteMapCardHTML = createFortniteMapCardHTML();
+        
+        // Create match cards
+        const matchCards = [];
         for (const match of matches) {
           const game = await fetchGameById(match.game_id);
           if (match.team_b_id === null) {
@@ -2093,21 +2058,39 @@
             matchCards.push(matchCard2HTML);
           }
         }
+        
+        // Create YouTube card if video exists
         let youtubeCardHTML = '';
         if (latestVideo) {
           youtubeCardHTML = createYoutubeCardHTML(latestVideo);
+        }
+        
+        // Create shop and download app cards
+        const shopCardHTML = createShopCardHTML();
+        const downloadTheAppCardHTML = createDownloadTheAppCardHTML();
+        
+        // Combine all cards in the correct order
+        container.innerHTML = prokit2025CardHTML + 
+                            fortniteMapCardHTML + 
+                            matchCards.join('') + 
+                            youtubeCardHTML + 
+                            shopCardHTML + 
+                            downloadTheAppCardHTML;
+        
+        // Setup carousel and adjust font sizes
+        setupCarousel();
+        adjustShopUrlFontSize();
+        
+        // Adjust YouTube title size if the card exists
+        if (latestVideo) {
           setTimeout(() => {
             adjustYoutubeTitleSize();
           }, 500);
         }
-        shopCard.remove();
-        downloadTheAppCard.remove();
-        container.innerHTML = prokit2025CardHTML + fortniteMapCardHTML + matchCards.join('') + youtubeCardHTML;
-        container.appendChild(shopCard);
-        container.appendChild(downloadTheAppCard);
-        setupCarousel();
-        adjustShopUrlFontSize();
+        
+        // Update profile pictures for match cards
         updateProfilePictures();
+        
       } catch (error) {
         console.error('Error loading cards:', error);
       } finally {
@@ -2123,6 +2106,58 @@
         document.querySelector('.loading').textContent = 'Error loading carousel. Please refresh the page.';
       }
     });
+
+    // Create HTML for ShopCard
+    function createShopCardHTML() {
+      return `
+        <div id="shopCard" class="card">
+          <div class="card-header">
+            <div class="header-text">MERCH GENTLE MATES</div>
+          </div>
+          <div class="card-body row">
+            <div class="background-image"></div>
+            <div class="shop-images-container">
+              <img class="shop-item shop-item-1" src="https://cdn.shopify.com/s/files/1/0727/9575/0735/files/M8_Prokit2025_Boutique_Jacket_Front.png?v=1744806954" alt="Shop Item 1">
+              <img class="shop-item shop-item-2" src="https://cdn.shopify.com/s/files/1/0727/9575/0735/files/M8_Maillot2025_Frontcopie.png?v=1733336697" alt="Shop Item 2">
+              <img class="shop-item shop-item-3" src="https://cdn.shopify.com/s/files/1/0727/9575/0735/files/M8_NOEL_MERCH_ZIP_FRONT.png?v=1733263364" alt="Shop Item 3">
+            </div>
+            <div class="side-info">
+              <div class="merch-text">MERCH DISPONIBLE</div>
+              <div class="shop-url-container">
+                <div class="shop-url">GENTLEMATES.COM/SHOP</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Create HTML for DownloadTheApp Card
+    function createDownloadTheAppCardHTML() {
+      return `
+        <div id="downloadTheApp" class="card">
+          <div class="card-body row">
+            <div class="background-image"></div>
+            <div class="phone-animation-container">
+              <div class="phone">
+                <div class="inner-bevel"></div>
+                <div class="screen">
+                  <img class="screen-image" src="https://gmrxbbhhyyrtmsftofdp.supabase.co/storage/v1/object/public/gentle-mates-assets/livedata-overlay/gentle-mates-app-screen.png" alt="App Screen">
+                </div>
+              </div>
+            </div>
+            <div class="side-info-container">
+              <div class="app-promo-text-1">L'EXPÉRIENCE GENTLE MATES À PORTÉE DE MAIN</div>
+              <div class="qr-codes-container">
+                <img class="qr-code" src="https://gmrxbbhhyyrtmsftofdp.supabase.co/storage/v1/object/public/gentle-mates-assets/livedata-overlay/app_store_qr.png" alt="App Store QR">
+                <img class="qr-code" src="https://gmrxbbhhyyrtmsftofdp.supabase.co/storage/v1/object/public/gentle-mates-assets/livedata-overlay/play_store_qr.png" alt="Play Store QR">
+              </div>
+              <div class="app-promo-text-2">Téléchargez l'App !</div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
   </script>
 </body>
 </html>
