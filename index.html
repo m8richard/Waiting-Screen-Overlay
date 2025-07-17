@@ -1024,7 +1024,7 @@
       background-image: url('https://gmrxbbhhyyrtmsftofdp.supabase.co/storage/v1/object/public/gentle-mates-assets//M8_Maillot2025_Banniere%20(1).png');
       background-size: cover;
       background-position: center;
-      opacity: 0.95;
+      opacity: 1;
     }
 
     #tclMonitorCard .tcl-monitor-image {
@@ -1129,6 +1129,54 @@
           0 0 50px #CEF930,
           0 0 60px #CEF930;
       }
+    }
+
+    /* ----------------- TOUCHING GRASS CARD STYLES ----------------- */
+    #touchingGrassCard {
+      background-color: transparent;
+    }
+
+    #touchingGrassCard .background-image {
+      background-image: url('https://gmrxbbhhyyrtmsftofdp.supabase.co/storage/v1/object/public/gentle-mates-assets/livedata-overlay/Overlay%20Merch%20Touching%20Grass/grass.png');
+      background-size: cover;
+      background-position: center;
+      opacity: 1;
+    }
+
+    #touchingGrassCard .grass-images-container {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      top: 0;
+      left: 0;
+    }
+
+    #touchingGrassCard .grass-merch-image {
+      height: 100%;
+      width: auto;
+      max-width: 47.5%;
+      object-fit: contain;
+      opacity: 0;
+      transform: scale(1.3);
+      transition: opacity 0.83s ease, transform 0.83s ease, left 1s ease;
+      position: absolute;
+      left: 50%;
+      transform-origin: center;
+      margin-left: 20px;
+    }
+
+    #touchingGrassCard .grass-typo-image {
+      height: auto;
+      width: 47.5%;
+      object-fit: contain;
+      opacity: 0;
+      transform: translateX(100vw);
+      transition: opacity 0.83s ease, transform 1s ease;
+      position: absolute;
+      right: 10px; 
     }
   </style>
 </head>
@@ -1544,6 +1592,19 @@
           <div class="background-image"></div>
           <img class="vct-bundle-image" src="https://gmrxbbhhyyrtmsftofdp.supabase.co/storage/v1/object/public/gentle-mates-assets/livedata-overlay/Overlay%20VCT%20Bundle/VCT%20x%20M8%20Capsule.webp" alt="VCT Bundle">
           <div class="vct-bundle-text">M8 VCT BUNDLE 2025</div>
+        </div>
+      `;
+    }
+
+    // Create HTML for Touching Grass Card
+    function createTouchingGrassCardHTML() {
+      return `
+        <div id="touchingGrassCard" class="card">
+          <div class="background-image"></div>
+          <div class="grass-images-container">
+            <img class="grass-merch-image" src="https://gmrxbbhhyyrtmsftofdp.supabase.co/storage/v1/object/public/gentle-mates-assets/livedata-overlay/Overlay%20Merch%20Touching%20Grass/asset-merch-grass-cropped.png" alt="Touching Grass Merch">
+            <img class="grass-typo-image" src="https://gmrxbbhhyyrtmsftofdp.supabase.co/storage/v1/object/public/gentle-mates-assets/livedata-overlay/Overlay%20Merch%20Touching%20Grass/typo-merch-grass.png" alt="Touching Grass Typography">
+          </div>
         </div>
       `;
     }
@@ -2085,6 +2146,35 @@
       }, 50);
     }
 
+    function animateTouchingGrassCard(card) {
+      const merchImage = card.querySelector('.grass-merch-image');
+      const typoImage = card.querySelector('.grass-typo-image');
+      
+      setTimeout(() => {
+        // First, fade in the merch image in the center
+        if (merchImage) {
+          setTimeout(() => {
+            merchImage.style.opacity = '1';
+            merchImage.style.transform = 'translateX(-50%) scale(1)';
+            setTimeout(() => { merchImage; }, 100);
+          }, 0);
+        }
+        // Then, slide in the typo image from the right and reposition both images in space-between layout
+        if (typoImage) {
+          setTimeout(() => {
+            typoImage.style.opacity = '1';
+            typoImage.style.transform = 'translateX(0)';
+            // Move the merch image to the left side with small padding
+            if (merchImage) {
+              merchImage.style.left = '10px';
+              merchImage.style.transform = 'translateX(0) scale(1)';
+            }
+            setTimeout(() => { typoImage; }, 100);
+          }, 2000); // Slide in after 2 seconds
+        }
+      }, 50);
+    }
+
     function resetCardElements(card) {
         if (!card) return;
         
@@ -2264,6 +2354,19 @@
             bundleText.style.opacity = '0';
             bundleText.style.transform = 'translateY(20px)';
           }
+        } else if (card.id === 'touchingGrassCard') {
+          const merchImage = card.querySelector('.grass-merch-image');
+          const typoImage = card.querySelector('.grass-typo-image');
+          
+          if (merchImage) {
+            merchImage.style.opacity = '0';
+            merchImage.style.transform = 'translateX(-50%) scale(1.3)';
+            merchImage.style.left = '50%';
+          }
+          if (typoImage) {
+            typoImage.style.opacity = '0';
+            typoImage.style.transform = 'translateX(100vw)';
+          }
         }
     }
 
@@ -2271,30 +2374,34 @@
       const cards = document.querySelectorAll('.card');
       let currentCardIndex = 0;
       let previousCardIndex = null;
-      const durations = Array(cards.length).fill(23000);
+      const durations = Array(cards.length).fill(23000); //23000
       const downloadAppIndex = Array.from(cards).findIndex(card => card.id === 'downloadTheApp');
       if (downloadAppIndex !== -1) {
-        durations[downloadAppIndex] = 17000;
+        durations[downloadAppIndex] = 17000; //17000
       }
       const fortniteMapIndex = Array.from(cards).findIndex(card => card.id === 'fortniteMapCard');
       if (fortniteMapIndex !== -1) {
-        durations[fortniteMapIndex] = 17000;
+        durations[fortniteMapIndex] = 17000; //17000
       }
       const prokit2025Index = Array.from(cards).findIndex(card => card.id === 'prokit2025Card');
       if (prokit2025Index !== -1) {
-        durations[prokit2025Index] = 17000;
+        durations[prokit2025Index] = 17000; //17000
       }
       const rlSkinIndex = Array.from(cards).findIndex(card => card.id === 'rlSkinCard');
       if (rlSkinIndex !== -1) {
-        durations[rlSkinIndex] = 17000;
+        durations[rlSkinIndex] = 17000; //17000
       }
       const tclMonitorIndex = Array.from(cards).findIndex(card => card.id === 'tclMonitorCard');
       if (tclMonitorIndex !== -1) {
-        durations[tclMonitorIndex] = 17000;
+        durations[tclMonitorIndex] = 17000; //17000
       }
       const vctBundleIndex = Array.from(cards).findIndex(card => card.id === 'vctBundleCard');
       if (vctBundleIndex !== -1) {
-        durations[vctBundleIndex] = 17000;
+        durations[vctBundleIndex] = 17000; //17000
+      }
+      const touchingGrassIndex = Array.from(cards).findIndex(card => card.id === 'touchingGrassCard');
+      if (touchingGrassIndex !== -1) {
+        durations[touchingGrassIndex] = 17000; //17000
       }
 
       function animateCardElements(card) {
@@ -2317,6 +2424,8 @@
           animateTclMonitorCard(card);
         } else if (card.id === 'vctBundleCard') {
           animateVctBundleCard(card);
+        } else if (card.id === 'touchingGrassCard') {
+          animateTouchingGrassCard(card);
         }
       }
       function showCard(nextIndex) {
@@ -2440,6 +2549,7 @@
         const tclMonitorCardHTML = createTclMonitorCardHTML();
         const fortniteMapCardHTML = createFortniteMapCardHTML();
         const vctBundleCardHTML = createVctBundleCardHTML();
+        const touchingGrassCardHTML = createTouchingGrassCardHTML();
         const rlSkinCardHTML = createRlSkinCardHTML();
         
         // Create match cards
@@ -2473,6 +2583,7 @@
                             rlSkinCardHTML + 
                             fortniteMapCardHTML + 
                             vctBundleCardHTML + 
+                            touchingGrassCardHTML + 
                             matchCards.join('') + 
                             youtubeCardHTML + 
                             shopCardHTML + 
