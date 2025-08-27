@@ -911,54 +911,6 @@
         transition: opacity 0.5s ease, transform 0.5s ease;
     }
 
-    /* ----------------- PROKIT2025 CARD STYLES ----------------- */
-    #prokit2025Card {
-      background-color: transparent;
-      position: relative;
-      overflow: hidden;
-    }
-
-    #prokit2025Card .prokit-background {
-      position: absolute;
-      width: 100%;
-      height: 90%;
-      bottom: 0;
-      background-image: url('https://gmrxbbhhyyrtmsftofdp.supabase.co/storage/v1/object/public/gentle-mates-assets/livedata-overlay/Overlay%20Pro%20Kit%202025/BACKGROUND_cropped.png');
-      background-size: cover;
-      background-position: center;
-      opacity: 0;
-      transition: opacity 0.83s ease;
-      border-radius: 48px;
-      border-color: #EDEDED;
-      border-width: 4px;
-      border-style: solid;
-    }
-
-    #prokit2025Card .prokit-veste {
-      position: absolute;
-      width: auto;
-      height: 100%;
-      object-fit: contain;
-      opacity: 0;
-      transform: scale(1.3);
-      transition: opacity 0.83s ease, transform 0.83s ease;
-      bottom: 10%;
-      left: 50%;
-      transform: translateX(-50%) scale(1.3);
-    }
-
-    #prokit2025Card .prokit-titrage {
-      position: absolute;
-      width: auto;
-      height: 100%;
-      object-fit: contain;
-      opacity: 0;
-      transform: translateY(20px);
-      transition: opacity 0.83s ease, transform 0.83s ease;
-      bottom: 3%;
-      left: 50%;
-      transform: translateX(-50%) translateY(20px);
-    }
 
     /* ----------------- RL SKIN CARD STYLES ----------------- */
     #rlSkinCard {
@@ -1552,16 +1504,6 @@
       `;
     }
 
-    // Create HTML for Prokit2025Card
-    function createProkit2025CardHTML() {
-      return `
-        <div id="prokit2025Card" class="card">
-          <div class="prokit-background"></div>
-          <img class="prokit-veste" src="https://gmrxbbhhyyrtmsftofdp.supabase.co/storage/v1/object/public/gentle-mates-assets/livedata-overlay/Overlay%20Pro%20Kit%202025/VESTE-PROKIT.png" alt="Pro Kit Veste">
-          <img class="prokit-titrage" src="https://gmrxbbhhyyrtmsftofdp.supabase.co/storage/v1/object/public/gentle-mates-assets/livedata-overlay/Overlay%20Pro%20Kit%202025/TITRAGE.png" alt="Pro Kit Titrage">
-        </div>
-      `;
-    }
 
     // Create HTML for RlSkinCard
     function createRlSkinCardHTML() {
@@ -2037,34 +1979,6 @@
       }, 50);
     }
 
-    function animateProkit2025Card(card) {
-      const background = card.querySelector('.prokit-background');
-      const veste = card.querySelector('.prokit-veste');
-      const titrage = card.querySelector('.prokit-titrage');
-      
-      setTimeout(() => {
-        if (background) {
-          setTimeout(() => {
-            background.style.opacity = '1';
-            setTimeout(() => { background; }, 100);
-          }, 0);
-        }
-        if (veste) {
-          setTimeout(() => {
-            veste.style.opacity = '1';
-            veste.style.transform = 'translateX(-50%) scale(1)';
-            setTimeout(() => { veste; }, 100);
-          }, 1000);
-        }
-        if (titrage) {
-          setTimeout(() => {
-            titrage.style.opacity = '1';
-            titrage.style.transform = 'translateX(-50%) translateY(0)';
-            setTimeout(() => { titrage; }, 100);
-          }, 2000);
-        }
-      }, 50);
-    }
 
     function animateRlSkinCard(card) {
       const advertisement = card.querySelector('.rl-advertisement');
@@ -2297,22 +2211,6 @@
             mapCode.style.opacity = '0';
             mapCode.style.transform = 'translateY(20px)';
           }
-        } else if (card.id === 'prokit2025Card') {
-          const background = card.querySelector('.prokit-background');
-          const veste = card.querySelector('.prokit-veste');
-          const titrage = card.querySelector('.prokit-titrage');
-          
-          if (background) {
-            background.style.opacity = '0';
-          }
-          if (veste) {
-            veste.style.opacity = '0';
-            veste.style.transform = 'translateX(-50%) scale(1.3)';
-          }
-          if (titrage) {
-            titrage.style.opacity = '0';
-            titrage.style.transform = 'translateX(-50%) translateY(20px)';
-          }
         } else if (card.id === 'rlSkinCard') {
           const advertisement = card.querySelector('.rl-advertisement');
           const decal = card.querySelector('.rl-decal-image');
@@ -2383,10 +2281,6 @@
       if (fortniteMapIndex !== -1) {
         durations[fortniteMapIndex] = 17000; //17000
       }
-      const prokit2025Index = Array.from(cards).findIndex(card => card.id === 'prokit2025Card');
-      if (prokit2025Index !== -1) {
-        durations[prokit2025Index] = 17000; //17000
-      }
       const rlSkinIndex = Array.from(cards).findIndex(card => card.id === 'rlSkinCard');
       if (rlSkinIndex !== -1) {
         durations[rlSkinIndex] = 17000; //17000
@@ -2416,8 +2310,6 @@
           animateDownloadAppCard(card);
         } else if (card.id === 'fortniteMapCard') {
           animateFortniteMapCard(card);
-        } else if (card.id === 'prokit2025Card') {
-          animateProkit2025Card(card);
         } else if (card.id === 'rlSkinCard') {
           animateRlSkinCard(card);
         } else if (card.id === 'tclMonitorCard') {
@@ -2545,7 +2437,6 @@
         const matches = await fetchUpcomingMatches();
         
         // Create all card HTML
-        const prokit2025CardHTML = createProkit2025CardHTML();
         const tclMonitorCardHTML = createTclMonitorCardHTML();
         const fortniteMapCardHTML = createFortniteMapCardHTML();
         const vctBundleCardHTML = createVctBundleCardHTML();
@@ -2578,8 +2469,7 @@
         const downloadTheAppCardHTML = createDownloadTheAppCardHTML();
         
         // Combine all cards in the correct order
-        container.innerHTML = prokit2025CardHTML + 
-                            tclMonitorCardHTML + 
+        container.innerHTML = tclMonitorCardHTML + 
                             rlSkinCardHTML + 
                             fortniteMapCardHTML + 
                             vctBundleCardHTML + 
