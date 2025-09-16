@@ -1087,6 +1087,22 @@
       }
     }
 
+    /* ----------------- RAZER MOUSEPAD CARD STYLES ----------------- */
+    #razerMousepadCard {
+      background-color: #1c1c1c;
+    }
+
+    #razerMousepadCard .razer-mousepad-video {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 40px;
+      border: 8px solid #cd5e9b;
+    }
+
     /* ----------------- TOUCHING GRASS CARD STYLES ----------------- */
     #touchingGrassCard {
       background-color: transparent;
@@ -1516,6 +1532,17 @@
           <div class="rl-advertisement">PUBLICITÉ</div>
           <img class="rl-decal-image" src="https://gmrxbbhhyyrtmsftofdp.supabase.co/storage/v1/object/public/gentle-mates-assets/livedata-overlay/Overlay%20Rocket%20League%20Skin/DecalRL2025.png" alt="RL Decal">
           <img class="rl-creator-code-image" src="https://gmrxbbhhyyrtmsftofdp.supabase.co/storage/v1/object/public/gentle-mates-assets/livedata-overlay/Overlay%20Rocket%20League%20Skin/RLSKinCreatorCode.png" alt="RL Creator Code">
+        </div>
+      `;
+    }
+
+    // Create HTML for Razer Mousepad Card
+    function createRazerMousepadCardHTML() {
+      return `
+        <div id="razerMousepadCard" class="card">
+          <video class="razer-mousepad-video" autoplay muted loop>
+            <source src="https://gmrxbbhhyyrtmsftofdp.supabase.co/storage/v1/object/public/gentle-mates-assets/livedata-overlay/Overlay%20Tapis%20Razer/razer-mousepad.mp4" type="video/mp4">
+          </video>
         </div>
       `;
     }
@@ -2010,6 +2037,19 @@
       }, 3000);
     }
 
+    function animateRazerMousepadCard(card) {
+      const mousepadVideo = card.querySelector('.razer-mousepad-video');
+      
+      // Set video playback rate and ensure it's playing
+      if (mousepadVideo) {
+        setTimeout(() => {
+          mousepadVideo.playbackRate = 0.75; // Set to half speed
+          mousepadVideo.volume = 0; // Ensure no sound
+          mousepadVideo.play().catch(e => console.log('Video autoplay prevented:', e));
+        }, 100);
+      }
+    }
+
     function animateTclMonitorCard(card) {
       const monitorImage = card.querySelector('.tcl-monitor-image');
       const monitorText = card.querySelector('.tcl-monitor-text');
@@ -2230,6 +2270,13 @@
           if (creatorCode) {
             creatorCode.classList.remove('visible');
           }
+        } else if (card.id === 'razerMousepadCard') {
+          const mousepadVideo = card.querySelector('.razer-mousepad-video');
+          
+          if (mousepadVideo) {
+            mousepadVideo.pause();
+            mousepadVideo.currentTime = 0;
+          }
         } else if (card.id === 'tclMonitorCard') {
           const monitorImage = card.querySelector('.tcl-monitor-image');
           const monitorText = card.querySelector('.tcl-monitor-text');
@@ -2289,6 +2336,10 @@
       if (rlSkinIndex !== -1) {
         durations[rlSkinIndex] = 17000; //17000
       }
+      const razerMousepadIndex = Array.from(cards).findIndex(card => card.id === 'razerMousepadCard');
+      if (razerMousepadIndex !== -1) {
+        durations[razerMousepadIndex] = 23000; //23000
+      }
       const tclMonitorIndex = Array.from(cards).findIndex(card => card.id === 'tclMonitorCard');
       if (tclMonitorIndex !== -1) {
         durations[tclMonitorIndex] = 17000; //17000
@@ -2316,6 +2367,8 @@
           animateFortniteMapCard(card);
         } else if (card.id === 'rlSkinCard') {
           animateRlSkinCard(card);
+        } else if (card.id === 'razerMousepadCard') {
+          animateRazerMousepadCard(card);
         } else if (card.id === 'tclMonitorCard') {
           animateTclMonitorCard(card);
         } else if (card.id === 'vctBundleCard') {
@@ -2441,6 +2494,7 @@
         const matches = await fetchUpcomingMatches();
         
         // Create all card HTML
+        const razerMousepadCardHTML = createRazerMousepadCardHTML();
         const tclMonitorCardHTML = createTclMonitorCardHTML();
         const fortniteMapCardHTML = createFortniteMapCardHTML();
         const vctBundleCardHTML = createVctBundleCardHTML();
@@ -2473,11 +2527,11 @@
         const downloadTheAppCardHTML = createDownloadTheAppCardHTML();
         
         // Combine all cards in the correct order
-        container.innerHTML = tclMonitorCardHTML + 
+        container.innerHTML = razerMousepadCardHTML + 
+                            tclMonitorCardHTML + 
                             rlSkinCardHTML + 
                             fortniteMapCardHTML + 
                             vctBundleCardHTML + 
-                            touchingGrassCardHTML + 
                             matchCards.join('') + 
                             youtubeCardHTML + 
                             shopCardHTML + 
