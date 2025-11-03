@@ -1019,73 +1019,6 @@
       color: #ef00ec;
     }
 
-    /* ----------------- VCT BUNDLE CARD STYLES ----------------- */
-    #vctBundleCard {
-      background-color: transparent;
-    }
-
-    #vctBundleCard .background-image {
-      background-image: url('https://gmrxbbhhyyrtmsftofdp.supabase.co/storage/v1/object/public/gentle-mates-assets/livedata-overlay/carbon-background.png');
-      background-size: cover;
-      background-position: center;
-      opacity: 0;
-    }
-
-    #vctBundleCard .vct-bundle-image {
-      position: absolute;
-      width: auto;
-      height: 88%;
-      object-fit: contain;
-      opacity: 0;
-      transform: scale(1.3);
-      transition: opacity 0.83s ease, transform 0.83s ease, height 0.5s ease, top 0.5s ease;
-      top: 6%;
-      left: 50%;
-      transform: translateX(-50%) scale(1.3);
-    }
-
-    #vctBundleCard .vct-bundle-image.shrunk {
-      height: 72%;
-      top: 5%;
-    }
-
-    #vctBundleCard .vct-bundle-text {
-      position: absolute;
-      width: 100%;
-      text-align: center;
-      opacity: 0;
-      transform: translateY(20px);
-      transition: opacity 0.5s ease, transform 0.5s ease;
-      bottom: 5%;
-      left: 0;
-      font-family: 'HelveticaBoldExtended', sans-serif;
-      font-size: 64px;
-      color: #2d2d2d;
-      text-shadow: 
-        0 0 10px #CEF930,
-        0 0 20px #CEF930,
-        0 0 30px #CEF930,
-        0 0 40px #CEF930;
-      animation: vctTextGlow 2s ease-in-out infinite alternate;
-    }
-
-    @keyframes vctTextGlow {
-      from {
-        text-shadow: 
-          0 0 10px #CEF930,
-          0 0 20px #CEF930,
-          0 0 30px #CEF930,
-          0 0 40px #CEF930;
-      }
-      to {
-        text-shadow: 
-          0 0 20px #CEF930,
-          0 0 30px #CEF930,
-          0 0 40px #CEF930,
-          0 0 50px #CEF930,
-          0 0 60px #CEF930;
-      }
-    }
 
     /* ----------------- RAZER MOUSEPAD CARD STYLES ----------------- */
     #razerMousepadCard {
@@ -1103,53 +1036,6 @@
       border: 8px solid #cd5e9b;
     }
 
-    /* ----------------- TOUCHING GRASS CARD STYLES ----------------- */
-    #touchingGrassCard {
-      background-color: transparent;
-    }
-
-    #touchingGrassCard .background-image {
-      background-image: url('https://gmrxbbhhyyrtmsftofdp.supabase.co/storage/v1/object/public/gentle-mates-assets/livedata-overlay/Overlay%20Merch%20Touching%20Grass/grass.png');
-      background-size: cover;
-      background-position: center;
-      opacity: 1;
-    }
-
-    #touchingGrassCard .grass-images-container {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      top: 0;
-      left: 0;
-    }
-
-    #touchingGrassCard .grass-merch-image {
-      height: 100%;
-      width: auto;
-      max-width: 47.5%;
-      object-fit: contain;
-      opacity: 0;
-      transform: scale(1.3);
-      transition: opacity 0.83s ease, transform 0.83s ease, left 1s ease;
-      position: absolute;
-      left: 50%;
-      transform-origin: center;
-      margin-left: 20px;
-    }
-
-    #touchingGrassCard .grass-typo-image {
-      height: auto;
-      width: 47.5%;
-      object-fit: contain;
-      opacity: 0;
-      transform: translateX(100vw);
-      transition: opacity 0.83s ease, transform 1s ease;
-      position: absolute;
-      right: 10px; 
-    }
   </style>
 </head>
 <body style="background-color: transparent;">
@@ -1558,29 +1444,6 @@
       `;
     }
 
-    // Create HTML for VCT Bundle Card
-    function createVctBundleCardHTML() {
-      return `
-        <div id="vctBundleCard" class="card">
-          <div class="background-image"></div>
-          <img class="vct-bundle-image" src="https://gmrxbbhhyyrtmsftofdp.supabase.co/storage/v1/object/public/gentle-mates-assets/livedata-overlay/Overlay%20VCT%20Bundle/VCT%20x%20M8%20Capsule.webp" alt="VCT Bundle">
-          <div class="vct-bundle-text">M8 VCT BUNDLE 2025</div>
-        </div>
-      `;
-    }
-
-    // Create HTML for Touching Grass Card
-    function createTouchingGrassCardHTML() {
-      return `
-        <div id="touchingGrassCard" class="card">
-          <div class="background-image"></div>
-          <div class="grass-images-container">
-            <img class="grass-merch-image" src="https://gmrxbbhhyyrtmsftofdp.supabase.co/storage/v1/object/public/gentle-mates-assets/livedata-overlay/Overlay%20Merch%20Touching%20Grass/asset-merch-grass-cropped.png" alt="Touching Grass Merch">
-            <img class="grass-typo-image" src="https://gmrxbbhhyyrtmsftofdp.supabase.co/storage/v1/object/public/gentle-mates-assets/livedata-overlay/Overlay%20Merch%20Touching%20Grass/typo-merch-grass.png" alt="Touching Grass Typography">
-          </div>
-        </div>
-      `;
-    }
 
     // Create HTML for ShopCard
     function createShopCardHTML() {
@@ -2077,61 +1940,7 @@
       }, 50);
     }
 
-    function animateVctBundleCard(card) {
-      const bundleImage = card.querySelector('.vct-bundle-image');
-      const bundleText = card.querySelector('.vct-bundle-text');
-      
-      setTimeout(() => {
-        if (bundleImage) {
-          setTimeout(() => {
-            bundleImage.style.opacity = '1';
-            bundleImage.style.transform = 'translateX(-50%) scale(1)';
-            setTimeout(() => { bundleImage; }, 100);
-          }, 0);
-        }
-        if (bundleText) {
-          setTimeout(() => {
-            // Add shrunk class to bundle image to make it smaller
-            if (bundleImage) {
-              bundleImage.classList.add('shrunk');
-            }
-            // Show text
-            bundleText.style.opacity = '1';
-            bundleText.style.transform = 'translateY(0)';
-            setTimeout(() => { bundleText; }, 100);
-          }, 5000); // Show text after 5 seconds
-        }
-      }, 50);
-    }
 
-    function animateTouchingGrassCard(card) {
-      const merchImage = card.querySelector('.grass-merch-image');
-      const typoImage = card.querySelector('.grass-typo-image');
-      
-      setTimeout(() => {
-        // First, fade in the merch image in the center
-        if (merchImage) {
-          setTimeout(() => {
-            merchImage.style.opacity = '1';
-            merchImage.style.transform = 'translateX(-50%) scale(1)';
-            setTimeout(() => { merchImage; }, 100);
-          }, 0);
-        }
-        // Then, slide in the typo image from the right and reposition both images in space-between layout
-        if (typoImage) {
-          setTimeout(() => {
-            typoImage.style.opacity = '1';
-            typoImage.style.transform = 'translateX(0)';
-            // Move the merch image to the left side with small padding
-            if (merchImage) {
-              merchImage.style.left = '10px';
-              merchImage.style.transform = 'translateX(0) scale(1)';
-            }
-            setTimeout(() => { typoImage; }, 100);
-          }, 2000); // Slide in after 2 seconds
-        }
-      }, 50);
-    }
 
     function resetCardElements(card) {
         if (!card) return;
@@ -2290,32 +2099,6 @@
             monitorText.style.opacity = '0';
             monitorText.style.transform = 'translateY(20px)';
           }
-        } else if (card.id === 'vctBundleCard') {
-          const bundleImage = card.querySelector('.vct-bundle-image');
-          const bundleText = card.querySelector('.vct-bundle-text');
-          
-          if (bundleImage) {
-            bundleImage.style.opacity = '0';
-            bundleImage.style.transform = 'translateX(-50%) scale(1.3)';
-            bundleImage.classList.remove('shrunk');
-          }
-          if (bundleText) {
-            bundleText.style.opacity = '0';
-            bundleText.style.transform = 'translateY(20px)';
-          }
-        } else if (card.id === 'touchingGrassCard') {
-          const merchImage = card.querySelector('.grass-merch-image');
-          const typoImage = card.querySelector('.grass-typo-image');
-          
-          if (merchImage) {
-            merchImage.style.opacity = '0';
-            merchImage.style.transform = 'translateX(-50%) scale(1.3)';
-            merchImage.style.left = '50%';
-          }
-          if (typoImage) {
-            typoImage.style.opacity = '0';
-            typoImage.style.transform = 'translateX(100vw)';
-          }
         }
     }
 
@@ -2344,14 +2127,6 @@
       if (tclMonitorIndex !== -1) {
         durations[tclMonitorIndex] = 17000; //17000
       }
-      const vctBundleIndex = Array.from(cards).findIndex(card => card.id === 'vctBundleCard');
-      if (vctBundleIndex !== -1) {
-        durations[vctBundleIndex] = 17000; //17000
-      }
-      const touchingGrassIndex = Array.from(cards).findIndex(card => card.id === 'touchingGrassCard');
-      if (touchingGrassIndex !== -1) {
-        durations[touchingGrassIndex] = 17000; //17000
-      }
 
       function animateCardElements(card) {
         if (!card) return;
@@ -2371,10 +2146,6 @@
           animateRazerMousepadCard(card);
         } else if (card.id === 'tclMonitorCard') {
           animateTclMonitorCard(card);
-        } else if (card.id === 'vctBundleCard') {
-          animateVctBundleCard(card);
-        } else if (card.id === 'touchingGrassCard') {
-          animateTouchingGrassCard(card);
         }
       }
       function showCard(nextIndex) {
@@ -2497,8 +2268,6 @@
         const razerMousepadCardHTML = createRazerMousepadCardHTML();
         const tclMonitorCardHTML = createTclMonitorCardHTML();
         const fortniteMapCardHTML = createFortniteMapCardHTML();
-        const vctBundleCardHTML = createVctBundleCardHTML();
-        const touchingGrassCardHTML = createTouchingGrassCardHTML();
         const rlSkinCardHTML = createRlSkinCardHTML();
         
         // Create match cards
@@ -2527,14 +2296,13 @@
         const downloadTheAppCardHTML = createDownloadTheAppCardHTML();
         
         // Combine all cards in the correct order
-        container.innerHTML = razerMousepadCardHTML + 
-                            tclMonitorCardHTML + 
-                            rlSkinCardHTML + 
-                            fortniteMapCardHTML + 
-                            vctBundleCardHTML + 
-                            matchCards.join('') + 
-                            youtubeCardHTML + 
-                            shopCardHTML + 
+        container.innerHTML = razerMousepadCardHTML +
+                            tclMonitorCardHTML +
+                            rlSkinCardHTML +
+                            fortniteMapCardHTML +
+                            matchCards.join('') +
+                            youtubeCardHTML +
+                            shopCardHTML +
                             downloadTheAppCardHTML;
         
         // Setup carousel and adjust font sizes
