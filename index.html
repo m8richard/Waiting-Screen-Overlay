@@ -2198,8 +2198,8 @@
       const loadingIndicator = document.querySelector('.loading');
       
       try {
-        const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm');
-        const { DateTime } = await import('https://cdn.jsdelivr.net/npm/luxon/+esm');
+        const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/+esm');
+        const { DateTime } = await import('https://cdn.jsdelivr.net/npm/luxon@3.4.4/+esm');
         const SUPABASE_URL = 'https://gmrxbbhhyyrtmsftofdp.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdtcnhiYmhoeXlydG1zZnRvZmRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDc0MDAxNTEsImV4cCI6MjAyMjk3NjE1MX0.JYVVlCII2iL97cevWvQi0Hlz0Gt_nZjonb9ApnNDscc';
         const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
