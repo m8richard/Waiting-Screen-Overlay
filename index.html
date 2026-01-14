@@ -1019,6 +1019,22 @@
       color: #ef00ec;
     }
 
+    /* ----------------- VCT BUNDLE CARD STYLES ----------------- */
+    #vctBundleCard {
+      background-color: #1c1c1c;
+    }
+
+    #vctBundleCard .vct-bundle-video {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 40px;
+      border: 8px solid #fc42fb;
+    }
+
     /* ----------------- JERSEY 2026 CARD STYLES ----------------- */
     #jersey2026Card {
       background-color: #1c1c1c;
@@ -1443,6 +1459,16 @@
       `;
     }
 
+    // Create HTML for VCT Bundle Card
+    function createVctBundleCardHTML() {
+      return `
+        <div id="vctBundleCard" class="card">
+          <video class="vct-bundle-video" autoplay muted loop>
+            <source src="https://auth.gentlemates.com/storage/v1/object/public/gentle-mates-assets/livedata-overlay/Overlay%20VCT%20Bundle/ssstwitter.com_1768386472546.mp4" type="video/mp4">
+          </video>
+        </div>
+      `;
+    }
 
     // Create HTML for ShopCard
     function createShopCardHTML() {
@@ -1939,7 +1965,17 @@ function animateJersey2026Card(card) {
       }, 50);
     }
 
+    function animateVctBundleCard(card) {
+      const vctVideo = card.querySelector('.vct-bundle-video');
 
+      if (vctVideo) {
+        setTimeout(() => {
+          vctVideo.playbackRate = 1;
+          vctVideo.volume = 0;
+          vctVideo.play().catch(e => console.log('Video autoplay prevented:', e));
+        }, 100);
+      }
+    }
 
     function resetCardElements(card) {
         if (!card) return;
@@ -2085,6 +2121,13 @@ function animateJersey2026Card(card) {
             jerseyVideo.pause();
             jerseyVideo.currentTime = 0;
           }
+        } else if (card.id === 'vctBundleCard') {
+          const vctVideo = card.querySelector('.vct-bundle-video');
+
+          if (vctVideo) {
+            vctVideo.pause();
+            vctVideo.currentTime = 0;
+          }
         } else if (card.id === 'tclMonitorCard') {
           const monitorImage = card.querySelector('.tcl-monitor-image');
           const monitorText = card.querySelector('.tcl-monitor-text');
@@ -2126,6 +2169,10 @@ const jersey2026Index = Array.from(cards).findIndex(card => card.id === 'jersey2
       if (tclMonitorIndex !== -1) {
         durations[tclMonitorIndex] = 17000; //17000
       }
+      const vctBundleIndex = Array.from(cards).findIndex(card => card.id === 'vctBundleCard');
+      if (vctBundleIndex !== -1) {
+        durations[vctBundleIndex] = 53000; //53000 - matches video length
+      }
 
       function animateCardElements(card) {
         if (!card) return;
@@ -2145,6 +2192,8 @@ const jersey2026Index = Array.from(cards).findIndex(card => card.id === 'jersey2
           animateJersey2026Card(card);
         } else if (card.id === 'tclMonitorCard') {
           animateTclMonitorCard(card);
+        } else if (card.id === 'vctBundleCard') {
+          animateVctBundleCard(card);
         }
       }
       function showCard(nextIndex) {
@@ -2264,6 +2313,7 @@ const jersey2026Index = Array.from(cards).findIndex(card => card.id === 'jersey2
         const matches = await fetchUpcomingMatches();
         
         // Create all card HTML
+        const vctBundleCardHTML = createVctBundleCardHTML();
         const jersey2026CardHTML = createJersey2026CardHTML();
         const tclMonitorCardHTML = createTclMonitorCardHTML();
         const fortniteMapCardHTML = createFortniteMapCardHTML();
@@ -2295,7 +2345,8 @@ const jersey2026Index = Array.from(cards).findIndex(card => card.id === 'jersey2
         const downloadTheAppCardHTML = createDownloadTheAppCardHTML();
         
         // Combine all cards in the correct order
-        container.innerHTML = tclMonitorCardHTML +
+        container.innerHTML = vctBundleCardHTML +
+                            tclMonitorCardHTML +
                             rlSkinCardHTML +
                             fortniteMapCardHTML +
                             matchCards.join('') +
