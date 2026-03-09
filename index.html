@@ -2144,8 +2144,19 @@ function animateJersey2026Card(card) {
         }
     }
 
+    let carouselTimeoutId = null;
+
+    function stopCarousel() {
+      if (carouselTimeoutId) {
+        clearTimeout(carouselTimeoutId);
+        carouselTimeoutId = null;
+      }
+    }
+
     function setupCarousel() {
+      stopCarousel();
       const cards = document.querySelectorAll('.card');
+      if (cards.length === 0) return;
       let currentCardIndex = 0;
       let previousCardIndex = null;
       const durations = Array(cards.length).fill(23000); //23000
@@ -2228,7 +2239,7 @@ const jersey2026Index = Array.from(cards).findIndex(card => card.id === 'jersey2
       function nextCard() {
         const nextIndex = (currentCardIndex + 1) % cards.length;
         showCard(nextIndex);
-        setTimeout(nextCard, durations[nextIndex]);
+        carouselTimeoutId = setTimeout(nextCard, durations[nextIndex]);
       }
       cards.forEach(card => {
         resetCardElements(card);
@@ -2237,7 +2248,7 @@ const jersey2026Index = Array.from(cards).findIndex(card => card.id === 'jersey2
       setTimeout(() => {
         animateCardElements(cards[currentCardIndex]);
       }, 500);
-      setTimeout(nextCard, durations[0]);
+      carouselTimeoutId = setTimeout(nextCard, durations[0]);
       adjustShopUrlFontSize();
     }
 
@@ -2308,66 +2319,113 @@ const jersey2026Index = Array.from(cards).findIndex(card => card.id === 'jersey2
           return data;
         }
         
+        // Build match card HTML from fetched data
+        async function buildMatchCards() {
+          const matches = await fetchUpcomingMatches();
+          const cards = [];
+          for (const match of matches) {
+            const game = await fetchGameById(match.game_id);
+            if (match.team_b_id === null) {
+              cards.push({ id: `matchCard-${match.id}`, html: createMatchCardHTML(match, game) });
+            } else {
+              const teamA = await fetchTeamById(match.team_a_id);
+              const teamB = await fetchTeamById(match.team_b_id);
+              cards.push({ id: `matchCard2-${match.id}`, html: createMatchCard2HTML(match, game, teamA, teamB) });
+            }
+          }
+          return cards;
+        }
+
+        // Refresh match cards periodically without full page reload
+        async function refreshMatchCards() {
+          try {
+            const newMatchCards = await buildMatchCards();
+            const newIds = newMatchCards.map(c => c.id).sort().join(',');
+
+            const currentMatchEls = document.querySelectorAll('.matchCard, .matchCard2');
+            const currentIds = Array.from(currentMatchEls).map(el => el.id).sort().join(',');
+
+            if (newIds === currentIds) return; // no changes
+
+            // Remove existing match cards from DOM
+            currentMatchEls.forEach(el => el.remove());
+
+            // Find insertion point: before the YouTube card, or before jersey2026, or at end
+            const insertBefore = document.getElementById('youtubeCard')
+                              || document.getElementById('jersey2026Card')
+                              || document.getElementById('shopCard');
+
+            if (newMatchCards.length > 0) {
+              const temp = document.createElement('div');
+              temp.innerHTML = newMatchCards.map(c => c.html).join('');
+              const fragment = document.createDocumentFragment();
+              while (temp.firstChild) {
+                fragment.appendChild(temp.firstChild);
+              }
+              if (insertBefore) {
+                insertBefore.parentNode.insertBefore(fragment, insertBefore);
+              } else {
+                container.appendChild(fragment);
+              }
+            }
+
+            // Restart carousel with updated cards
+            stopCarousel();
+            setupCarousel();
+            updateProfilePictures();
+          } catch (error) {
+            console.error('Error refreshing match cards:', error);
+          }
+        }
+
         // Fetch data
         const latestVideo = await fetchLatestYoutubeVideo();
-        const matches = await fetchUpcomingMatches();
-        
+        const matchCards = await buildMatchCards();
+
         // Create all card HTML
         const vctBundleCardHTML = createVctBundleCardHTML();
         const jersey2026CardHTML = createJersey2026CardHTML();
         const tclMonitorCardHTML = createTclMonitorCardHTML();
         const fortniteMapCardHTML = createFortniteMapCardHTML();
         const rlSkinCardHTML = createRlSkinCardHTML();
-        
-        // Create match cards
-        const matchCards = [];
-        for (const match of matches) {
-          const game = await fetchGameById(match.game_id);
-          if (match.team_b_id === null) {
-            const matchCardHTML = createMatchCardHTML(match, game);
-            matchCards.push(matchCardHTML);
-          } else {
-            const teamA = await fetchTeamById(match.team_a_id);
-            const teamB = await fetchTeamById(match.team_b_id);
-            const matchCard2HTML = createMatchCard2HTML(match, game, teamA, teamB);
-            matchCards.push(matchCard2HTML);
-          }
-        }
-        
+
         // Create YouTube card if video exists
         let youtubeCardHTML = '';
         if (latestVideo) {
           youtubeCardHTML = createYoutubeCardHTML(latestVideo);
         }
-        
+
         // Create shop and download app cards
         const shopCardHTML = createShopCardHTML();
         const downloadTheAppCardHTML = createDownloadTheAppCardHTML();
-        
+
         // Combine all cards in the correct order
         container.innerHTML = vctBundleCardHTML +
                             tclMonitorCardHTML +
                             rlSkinCardHTML +
                             fortniteMapCardHTML +
-                            matchCards.join('') +
+                            matchCards.map(c => c.html).join('') +
                             youtubeCardHTML +
                             jersey2026CardHTML +
                             shopCardHTML +
                             downloadTheAppCardHTML;
-        
+
         // Setup carousel and adjust font sizes
         setupCarousel();
         adjustShopUrlFontSize();
-        
+
         // Adjust YouTube title size if the card exists
         if (latestVideo) {
           setTimeout(() => {
             adjustYoutubeTitleSize();
           }, 500);
         }
-        
+
         // Update profile pictures for match cards
         updateProfilePictures();
+
+        // Refresh match cards every 10 minutes
+        setInterval(refreshMatchCards, 600000);
         
       } catch (error) {
         console.error('Error loading cards:', error);
