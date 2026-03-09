@@ -919,6 +919,20 @@
     /* ----------------- RL SKIN CARD STYLES ----------------- */
     #rlSkinCard {
       background-color: #232323;
+      overflow: hidden;
+    }
+
+    #rlSkinCard .background-image {
+      background-image: url('https://auth.gentlemates.com/storage/v1/object/public/gentle-mates-assets/livedata-overlay/Overlay%20Rocket%20League%20Skin/RLgrass.webp');
+      background-size: cover;
+      background-position: center;
+      filter: blur(16px) brightness(0.3);
+      position: absolute;
+      top: -10px;
+      left: -10px;
+      right: -10px;
+      bottom: -10px;
+      z-index: 0;
     }
 
     #rlSkinCard .rl-decal-image {
@@ -930,14 +944,14 @@
       transform: scale(1);
       transition: all 1s ease;
       top: 5%;
-      left: 6%;
+      left: 22%;
     }
 
     #rlSkinCard .rl-decal-image.shrunk {
       width: auto;
       height: 50%;
       top: 3%;
-      left: 25%;
+      left: 35%;
     }
 
     #rlSkinCard .rl-creator-code-image {
@@ -1430,9 +1444,10 @@
     function createRlSkinCardHTML() {
       return `
         <div id="rlSkinCard" class="card">
+          <div class="background-image"></div>
           <div class="rl-advertisement">PUBLICITÉ</div>
-          <img class="rl-decal-image" src="https://gmrxbbhhyyrtmsftofdp.supabase.co/storage/v1/object/public/gentle-mates-assets/livedata-overlay/Overlay%20Rocket%20League%20Skin/DecalRL2025.png" alt="RL Decal">
-          <img class="rl-creator-code-image" src="https://gmrxbbhhyyrtmsftofdp.supabase.co/storage/v1/object/public/gentle-mates-assets/livedata-overlay/Overlay%20Rocket%20League%20Skin/RLSKinCreatorCode.png" alt="RL Creator Code">
+          <img class="rl-decal-image" src="https://auth.gentlemates.com/storage/v1/object/public/gentle-mates-assets/livedata-overlay/Overlay%20Rocket%20League%20Skin/car-rl.png" alt="RL Decal">
+          <img class="rl-creator-code-image" src="https://auth.gentlemates.com/storage/v1/object/public/gentle-mates-assets/livedata-overlay/Overlay%20Rocket%20League%20Skin/CreatorCodeRLSkin.png" alt="RL Creator Code">
         </div>
       `;
     }
