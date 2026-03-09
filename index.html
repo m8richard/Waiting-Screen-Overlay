@@ -425,36 +425,28 @@
       justify-content: center;
       align-items: center;
       position: relative;
-      height: 100%;
+      height: 85%;
     }
 
     .shop-item {
       position: absolute;
       top: 54%;
-      left: 54%;
+      left: 60%;
     }
 
     .shop-item-1 {
-      height: 520px;
-      width: 520px;
+      height: 550px;
+      width: 550px;
       z-index: 2;
-      transform: translate(-280px, -230px);
+      transform: translate(-500px, -270px);
       object-fit: contain;
     }
 
     .shop-item-2 {
-      height: 440px;
-      width: 440px;
+      height: 550px;
+      width: 550px;
       z-index: 1;
-      transform: translate(-400px, -260px);
-      object-fit: contain;
-    }
-
-    .shop-item-3 {
-      height: 440px;
-      width: 440px;
-      z-index: 1;
-      transform: translate(-90px, -260px);
+      transform: translate(-200px, -270px);
       object-fit: contain;
     }
 
@@ -1495,9 +1487,8 @@
           <div class="card-body row">
             <div class="background-image"></div>
             <div class="shop-images-container">
-              <img class="shop-item shop-item-1" src="https://cdn.shopify.com/s/files/1/0727/9575/0735/files/Polo_Bordeau.png?v=1764151963" alt="Shop Item 1">
-              <img class="shop-item shop-item-2" src="https://cdn.shopify.com/s/files/1/0727/9575/0735/files/Hoodie_Bordeau_64d40ed0-772e-4437-9124-bad25b815a19.png?v=1764172669" alt="Shop Item 2">
-              <img class="shop-item shop-item-3" src="https://cdn.shopify.com/s/files/1/0727/9575/0735/files/Hoodie_Racing_0abcf7ae-2386-44d7-9378-c893f0472c9c.png?v=1764172633" alt="Shop Item 3">
+              <img class="shop-item shop-item-1" src="https://auth.gentlemates.com/storage/v1/object/public/gentle-mates-assets/livedata-overlay/Overlay%20Merch%20M8/MannequinJerseyRose.png" alt="Shop Item 1">
+              <img class="shop-item shop-item-2" src="https://auth.gentlemates.com/storage/v1/object/public/gentle-mates-assets/livedata-overlay/Overlay%20Merch%20M8/MannequinJerseyNoir.png" alt="Shop Item 2">
             </div>
             <div class="side-info">
               <div class="merch-text">MERCH DISPONIBLE</div>
@@ -1804,36 +1795,25 @@
     function animateShopCard(card) {
       const shopItem1 = card.querySelector('.shop-item-1');
       const shopItem2 = card.querySelector('.shop-item-2');
-      const shopItem3 = card.querySelector('.shop-item-3');
       const sideInfo = card.querySelector('.side-info');
       setTimeout(() => {
-        if (shopItem2) {
-          setTimeout(() => {
-            shopItem2.style.opacity = '1';
-            shopItem2.style.transform = 'translate(-400px, -260px) scale(1)';
-            setTimeout(() => { shopItem2; }, 100);
-          }, 0);
-        }
-        if (shopItem3) {
-          setTimeout(() => {
-            shopItem3.style.opacity = '1';
-            shopItem3.style.transform = 'translate(-90px, -260px) scale(1)';
-            setTimeout(() => { shopItem3; }, 100);
-          }, 750);
-        }
         if (shopItem1) {
           setTimeout(() => {
             shopItem1.style.opacity = '1';
-            shopItem1.style.transform = 'translate(-280px, -280px) scale(1)';
-            setTimeout(() => { shopItem1; }, 100);
-          }, 1500);
+            shopItem1.style.transform = 'translate(-500px, -270px) scale(1)';
+          }, 0);
+        }
+        if (shopItem2) {
+          setTimeout(() => {
+            shopItem2.style.opacity = '1';
+            shopItem2.style.transform = 'translate(-200px, -270px) scale(1)';
+          }, 750);
         }
         if (sideInfo) {
           setTimeout(() => {
             sideInfo.style.opacity = '1';
             sideInfo.style.transform = 'translateX(0)';
-            setTimeout(() => { sideInfo; }, 100);
-          }, 2500);
+          }, 1500);
         }
       }, 50);
     }
@@ -2055,22 +2035,16 @@ function animateJersey2026Card(card) {
             sideInfo.style.transform = 'translateX(30px)';
           }
         } else if (card.id === 'shopCard') {
-          // Rest of the existing code for shopCard...
           const shopItem1 = card.querySelector('.shop-item-1');
           const shopItem2 = card.querySelector('.shop-item-2');
-          const shopItem3 = card.querySelector('.shop-item-3');
           const sideInfo = card.querySelector('.side-info');
           if (shopItem1) {
             shopItem1.style.opacity = '0';
-            shopItem1.style.transform = 'translate(-280px, -280px) scale(1.3)';
+            shopItem1.style.transform = 'translate(-500px, -270px) scale(1.3)';
           }
           if (shopItem2) {
             shopItem2.style.opacity = '0';
-            shopItem2.style.transform = 'translate(-400px, -260px) scale(1.3)';
-          }
-          if (shopItem3) {
-            shopItem3.style.opacity = '0';
-            shopItem3.style.transform = 'translate(-90px, -260px) scale(1.3)';
+            shopItem2.style.transform = 'translate(-200px, -270px) scale(1.3)';
           }
           if (sideInfo) {
             sideInfo.style.opacity = '0';
@@ -2174,31 +2148,29 @@ function animateJersey2026Card(card) {
       if (cards.length === 0) return;
       let currentCardIndex = 0;
       let previousCardIndex = null;
-      const durations = Array(cards.length).fill(23000); //23000
-      const downloadAppIndex = Array.from(cards).findIndex(card => card.id === 'downloadTheApp');
-      if (downloadAppIndex !== -1) {
-        durations[downloadAppIndex] = 17000; //17000
-      }
-      const fortniteMapIndex = Array.from(cards).findIndex(card => card.id === 'fortniteMapCard');
-      if (fortniteMapIndex !== -1) {
-        durations[fortniteMapIndex] = 17000; //17000
-      }
-      const rlSkinIndex = Array.from(cards).findIndex(card => card.id === 'rlSkinCard');
-      if (rlSkinIndex !== -1) {
-        durations[rlSkinIndex] = 17000; //17000
-      }
-const jersey2026Index = Array.from(cards).findIndex(card => card.id === 'jersey2026Card');
-      if (jersey2026Index !== -1) {
-        durations[jersey2026Index] = 34500; //34500
-      }
-      const tclMonitorIndex = Array.from(cards).findIndex(card => card.id === 'tclMonitorCard');
-      if (tclMonitorIndex !== -1) {
-        durations[tclMonitorIndex] = 17000; //17000
-      }
-      const vctBundleIndex = Array.from(cards).findIndex(card => card.id === 'vctBundleCard');
-      if (vctBundleIndex !== -1) {
-        durations[vctBundleIndex] = 53000; //53000 - matches video length
-      }
+
+      // ── Card Duration Config (ms) ──
+      // Adjust any card's display duration here.
+      // "default" applies to all cards not listed (including match cards & youtube).
+      const CARD_DURATIONS = {
+        default:          23000,
+        matchCard:        23000,  // applies to all match cards (matchCard & matchCard2)
+        youtubeCard:      23000,
+        shopCard:         23000,
+        downloadTheApp:   17000,
+        fortniteMapCard:  17000,
+        rlSkinCard:       17000,
+        jersey2026Card:   34500,
+        tclMonitorCard:   17000,
+        vctBundleCard:    53000,
+      };
+
+      const durations = Array.from(cards).map(card => {
+        if (card.classList.contains('matchCard') || card.classList.contains('matchCard2')) {
+          return CARD_DURATIONS.matchCard ?? CARD_DURATIONS.default;
+        }
+        return CARD_DURATIONS[card.id] ?? CARD_DURATIONS.default;
+      });
 
       function animateCardElements(card) {
         if (!card) return;
