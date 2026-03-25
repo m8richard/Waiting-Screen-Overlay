@@ -143,6 +143,11 @@
       font-family: 'HelveticaBoldExtended', sans-serif;
       font-size: 80px;
       text-align: center;
+      white-space: nowrap;
+    }
+
+    .channel.channel-url {
+      font-size: 42px;
     }
 
     /* ----------------- CARD BODY ----------------- */
@@ -1261,7 +1266,7 @@
           <div class="card-footer">
             <div class="live-logo-link" data-channel-url="${twitchLink || ''}">
               ${platformLogo ? `<img class="platform-logo" src="${platformLogo}" alt="Platform Logo">` : ''}
-              <div class="channel">${channelName}</div>
+              <div class="channel${platformLogo ? '' : ' channel-url'}">${channelName}</div>
               ${platformLogo ? `<img class="profile-picture" src="" alt="Profile Picture">` : ''}
             </div>
           </div>
@@ -1324,7 +1329,7 @@
           <div class="card-footer">
             <div class="live-logo-link" data-channel-url="${twitchLink || ''}">
               ${platformLogo ? `<img class="platform-logo" src="${platformLogo}" alt="Platform Logo">` : ''}
-              <div class="channel">${channelName}</div>
+              <div class="channel${platformLogo ? '' : ' channel-url'}">${channelName}</div>
               ${platformLogo ? `<img class="profile-picture" src="" alt="Profile Picture">` : ''}
             </div>
           </div>
