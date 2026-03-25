@@ -1150,7 +1150,9 @@
       if (!url) return "";
       const regex = /^(?:https?:\/\/)?(?:www\.)?(?:twitch\.tv\/|youtube\.com\/@)([^\/?]+)/i;
       const match = url.match(regex);
-      return match ? match[1] : "";
+      if (match) return match[1];
+      // For non-Twitch/YouTube URLs, strip protocol and www.
+      return url.replace(/^https?:\/\//, '').replace(/^www\./, '');
     }
 
     // Get platform logo URL. If no URL is provided, force Twitch logo.
@@ -1163,7 +1165,7 @@
       } else if (url.toLowerCase().includes("twitch")) {
         return twitchLogoURL;
       }
-      return twitchLogoURL;
+      return "";
     }
 
     // Apply a zoom effect to an element after its animation
@@ -1258,9 +1260,9 @@
           </div>
           <div class="card-footer">
             <div class="live-logo-link" data-channel-url="${twitchLink || ''}">
-              <img class="platform-logo" src="${platformLogo}" alt="Platform Logo">
+              ${platformLogo ? `<img class="platform-logo" src="${platformLogo}" alt="Platform Logo">` : ''}
               <div class="channel">${channelName}</div>
-              <img class="profile-picture" src="" alt="Profile Picture">
+              ${platformLogo ? `<img class="profile-picture" src="" alt="Profile Picture">` : ''}
             </div>
           </div>
         </div>
@@ -1321,9 +1323,9 @@
           </div>
           <div class="card-footer">
             <div class="live-logo-link" data-channel-url="${twitchLink || ''}">
-              <img class="platform-logo" src="${platformLogo}" alt="Platform Logo">
+              ${platformLogo ? `<img class="platform-logo" src="${platformLogo}" alt="Platform Logo">` : ''}
               <div class="channel">${channelName}</div>
-              <img class="profile-picture" src="" alt="Profile Picture">
+              ${platformLogo ? `<img class="profile-picture" src="" alt="Profile Picture">` : ''}
             </div>
           </div>
         </div>
