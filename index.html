@@ -209,15 +209,10 @@
       color: #2D2D2D;
       font-family: 'HelveticaBoldExtended', sans-serif;
       font-size: 64px;
+      line-height: 1.1;
       text-align: center;
       margin-right: 16px;
-      /* Limiting to 3 lines with ellipsis */
-      display: -webkit-box;
-      -webkit-line-clamp: 3;
-      line-clamp: 3;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      word-break: break-word;
     }
 
     .info-container {
@@ -294,7 +289,9 @@
       color: #2D2D2D;
       font-family: 'HelveticaBoldExtended', sans-serif;
       font-size: 40px;
+      line-height: 1.1;
       text-align: center;
+      word-break: break-word;
     }
 
     /* ----------------- YOUTUBE CARD STYLES ----------------- */
@@ -1304,6 +1301,32 @@
       
       // Return true if the color is light (brightness > 0.35)
       return brightness > 0.5;
+    }
+
+    // Shrink a match-name element's font-size in 2px steps until it fits its budget
+    function fitMatchName(el, { maxFontSize, minFontSize, maxWidth, maxHeight }) {
+      if (!el) return;
+      el.style.lineHeight = '1.1';
+      let size = maxFontSize;
+      el.style.fontSize = size + 'px';
+      while (
+        size > minFontSize &&
+        (el.scrollWidth > maxWidth || el.scrollHeight > maxHeight)
+      ) {
+        size -= 2;
+        el.style.fontSize = size + 'px';
+      }
+    }
+
+    function fitAllMatchNames() {
+      document.fonts.ready.then(() => {
+        document.querySelectorAll('.match-name').forEach(el =>
+          fitMatchName(el, { maxFontSize: 64, minFontSize: 32, maxWidth: 720, maxHeight: 280 })
+        );
+        document.querySelectorAll('.match-name-small').forEach(el =>
+          fitMatchName(el, { maxFontSize: 40, minFontSize: 20, maxWidth: 1108, maxHeight: 72 })
+        );
+      });
     }
 
     // Update the createMatchCardHTML function to include the game logo in the date-time-fullscreen
@@ -2511,6 +2534,7 @@ function animateJersey2026Card(card) {
               } else {
                 container.appendChild(fragment);
               }
+              fitAllMatchNames();
             }
 
             // Restart carousel with updated cards
@@ -2555,6 +2579,8 @@ function animateJersey2026Card(card) {
                             jersey2026CardHTML +
                             shopCardHTML +
                             downloadTheAppCardHTML;
+
+        fitAllMatchNames();
 
         // Setup carousel and adjust font sizes
         setupCarousel();
